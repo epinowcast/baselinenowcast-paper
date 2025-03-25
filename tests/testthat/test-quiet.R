@@ -1,6 +1,6 @@
 test_that("quiet function suppresses output and messages", {
   # Test 1: Suppress print output
-  expect_silent(quiet(print("This should not be visible")))
+  expect_silent(quiet(print("This should not be visible"))) # nolint
 
   # Test 2: Suppress message output
   expect_silent(quiet(message("This message should be suppressed")))
@@ -11,13 +11,15 @@ test_that("quiet function suppresses output and messages", {
 
   # Test 4: Multiple outputs are suppressed
   expect_silent(quiet({
-    print("Print 1")
+    print("Print 1") # nolint
     message("Message 1")
     cat("Cat output\n")
   }))
 
   # Test 5: Error is not suppressed
-  expect_error(quiet(stop("This error should not be suppressed")))
+  expect_error(quiet(stop("This error should not be suppressed",
+    .call = FALSE
+  )))
 
   # Test 6: Complex expressions work
   complex_result <- quiet({

@@ -45,6 +45,7 @@ Suggests:
     withr,
     knitr
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr

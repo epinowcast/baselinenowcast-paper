@@ -17,9 +17,7 @@ test_that("quiet function suppresses output and messages", {
   }))
 
   # Test 5: Error is not suppressed
-  expect_error(quiet(stop("This error should not be suppressed",
-    .call = FALSE
-  )))
+  expect_error(quiet(stop("This error should not be suppressed", .call = FALSE))) # nolint
 
   # Test 6: Complex expressions work
   complex_result <- quiet({

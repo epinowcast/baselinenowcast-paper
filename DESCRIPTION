@@ -1,0 +1,54 @@
+Package: baselinenowcastpaper
+Title: Baseline nowcast evaluation paper
+Version: 0.0.0.1000
+Authors@R:
+  c(person(given = "Kaitlyn",
+           family = "Johnson",
+           role = c("aut", "cre", "cph"),
+           email = "kaitlyn.johnson@lshtm.ac.uk",
+           comment = c(ORCID = "0000-0001-8011-0012")),
+    person(given = "Sam",
+           family = "Abbott",
+           role = c("aut"),
+           email = "contact@samabbott.co.uk",
+           comment = c(ORCID = "0000-0001-8057-8037")),
+    person(given = "Johannes",
+           family = "Bracher",
+           role = c("aut"),
+           email = "johannes.bracher@kit.edu",
+           comment = c(ORCID = "0000-0002-3777-1410")),
+    person(given = "Sebastian",
+           family = "Funk",
+           role = c("aut"),
+           email = "sebastian.funk@lshtm.ac.uk",
+           comment = c(ORCID = "0000-0002-2842-3406")))
+Description: Provides functions that apply the R package `baselinenowcast` to
+  various simulated and real-world data settings and assess its performance.
+License: MIT + file LICENSE
+URL: https://github.com/epinowcast/baselinenowcast-paper/
+BugReports: https://github.com/epinowcast/baselinenowcast-paper/issues
+Depends:
+    R (>= 4.0.0)
+Imports:
+  cli,
+  dplyr,
+  ggplot2,
+  epinowcast,
+  baselinenowcast
+Suggests:
+    bookdown,
+    targets,
+    spelling,
+    rmarkdown,
+    testthat (>= 3.1.9),
+    usethis,
+    withr,
+    knitr
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+VignetteBuilder: knitr
+Remotes:
+  epinowcast=epinowcast/epinowcast@v0.3.0,
+  baselinenowcast=epinowcast/baselinenowcast

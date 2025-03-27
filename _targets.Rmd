@@ -1,0 +1,84 @@
+---
+title: '`baselinenowcast` Analysis Pipeline'
+author: "Kaitlyn Johnson"
+date: "2025-03-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Introduction
+
+This document defines the analysis pipeline used to evaluate the performance
+of the `baselinenowcast` R package, which is intended to be used as a
+baseline method for nowcasting right-truncated epidemiological data.
+More details on the method can be found in the `baselinenowcast` repository.
+
+The performance of the baseline nowcast method will be evaluated as follows:
+1. Applied to real-world data from the German Nowcast Hub from 1 Dec 2021 to
+1 April 2022, nationally, by age group, and by state.
+2. Applied to 4 simulated data scenarios in which we take two age strata, one
+sparse and one rich from the German Nowcast data, and apply a long and short
+delay to the data. For each data scenario, we will assess 24 different
+combinations of model specifications
+3. Applied to real-world data from 1. 2013-2014 Measles outbreak in the
+Netherlands 2. 2023-2024 Norovirus outbreak in the UK and 3. Comparison of
+performance of the mean/median ensemble in the German Nowcast Hub
+
+This workflow uses the `targets` package.
+
+```{r, eval = FALSE}
+rmarkdown::render("_targets.Rmd")
+```
+
+The pipeline can be run using,
+```{r, eval = FALSE}
+tar_make()
+```
+
+# Setup
+
+Set up the workflow pipeline.
+```{r}
+library(targets)
+library(crew)
+library(RcppTOML)
+library(readr)
+
+controller <- crew_controller_local(
+  workers = 8,
+  seconds_idle = 600
+)
+```
+
+Define the shared global options and load the R functions from the `R` folder
+```{targets globals tar_globals = TRUE}
+library(targets)
+library(ggplot2)
+library(purrr, quietly = TRUE)
+library(arrow)
+library(here)
+functions <- list.files(here("R"), full.names = TRUE)
+walk(functions, source)
+rm("functions")
+
+tar_option_set(
+  packages = c(
+    "tibble", "dplyr", "lubridate",
+    "baselinenowcast",
+    "readr"
+  ),
+  workspace_on_error = TRUE,
+  # Run with a pre-specified crew controller
+  controller = controller,
+  # Setup storage on workers vs on the main node.
+  memory = "transient",
+  storage = "worker",
+  retrieval = "worker",
+  format = "parquet", # default storage format
+  error = NULL # tells errored targets to return NULL rather than
+  # have whole pipeline fail
+)
+```

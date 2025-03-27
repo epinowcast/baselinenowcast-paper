@@ -54,7 +54,7 @@ controller <- crew_controller_local(
 ```
 
 Define the shared global options and load the R functions from the `R` folder
-```{targets globals tar_globals = TRUE}
+```{r}
 library(targets)
 library(ggplot2)
 library(purrr, quietly = TRUE)
@@ -82,3 +82,31 @@ tar_option_set(
   # have whole pipeline fail
 )
 ```
+
+# Methods
+
+We'll start by gathering all of the datasets and model specifications that we
+need for each of the component analyses
+
+## Real-world data from German Nowcast Hub
+
+### Create data as of daily nowcast dates
+
+### Create evaluation data
+This will be as of each of the nowcast dates + the evaluation time frame (e.g.
+80 days)
+
+### Model specification for German nowcast data
+Specify the maximum delay, number of reference times to use for delay
+estimation, number of reporting triangles to use for dispersion estimate, and
+whether or not delay estimates/dispersion parameters are being borrowed
+
+## Simulated datam, modified from German Nowcast Hub
+
+## Create simulated data as of nowcast dates from the final reports
+This will be for two different age strata only, and with a long and short
+delay, for 4 distinct datasets
+
+## Create evaluation data for simulated data
+This will be from simulated data as of nowcast data + eval time frame (e.g. 80
+days)

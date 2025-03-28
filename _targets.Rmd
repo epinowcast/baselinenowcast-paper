@@ -90,7 +90,7 @@ need for each of the component analyses
 
 ## Real-world data from German Nowcast Hub
 
-### Create data as of daily nowcast dates
+### Create reporting triangles as of daily nowcast dates
 
 ### Create evaluation data
 This will be as of each of the nowcast dates + the evaluation time frame (e.g.
@@ -101,12 +101,56 @@ Specify the maximum delay, number of reference times to use for delay
 estimation, number of reporting triangles to use for dispersion estimate, and
 whether or not delay estimates/dispersion parameters are being borrowed
 
-## Simulated datam, modified from German Nowcast Hub
+## Simulated data, modified from German Nowcast Hub
 
-## Create simulated data as of nowcast dates from the final reports
-This will be for two different age strata only, and with a long and short
-delay, for 4 distinct datasets
+## Create simulated reporting triangles as of nowcast dates from final reports
+This will be for two age strata only, and with a long and short
+delay, creating 4 distinct datasets
 
-## Create evaluation data for simulated data
-This will be from simulated data as of nowcast data + eval time frame (e.g. 80
+### Create evaluation data for simulated data
+This will be from simulated data as of nowcast date + eval time frame (e.g. 80
 days)
+
+### Model specification(s) for simulated data
+Make all combinations of varying:
+- max delay
+- borrowing for delay estimation
+- borrowing for dispersion estimate
+- number of observations for delay estimation
+- number of reporting triangles for dispersion estimate
+
+## Real-world case data: Measles and norovirus
+
+### Load in measles data
+
+### Create reporting triangles as of daily nowcast dates
+
+### Load in norovirus data
+
+### Create reporting triangles as of daily nowcast dates
+
+### Create evaluation data for both at nowcast dates + eval time frame
+
+### Model specification for each data set
+Based off of the specific dataset, make a single choice about a specification
+
+# Results
+
+## Run `baselinenowcast` model
+
+### Use tar_map or tar_group_by to run the model on all datasets
+
+#### Generate outputs for each model run joined to corresponding metadata
+  - scores (from samples)
+  - scores (from quantiles; e.g. calibration but also WIS scores)
+  - quantiled nowcasts for visual comparison
+
+### Figures for real-world case study German Nowcast Hub
+
+### Figures for simulated data case study with different model specifications
+
+### Figures for norovirus and measles
+
+### Consolidate evaluation data from mean/median ensemble in GNH & our run
+
+### Make figures comparing performance of baselinenowcats and ensembles

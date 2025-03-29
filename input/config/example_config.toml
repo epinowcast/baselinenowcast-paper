@@ -1,7 +1,0 @@
-
-GNH_data_url = ["https://raw.githubusercontent.com/jbracher/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"]
-GNH_age_groups = ["00-04", "60-79"] # Start with just a subset of age groups and states
-GNH_states = ["Hamburg", "Brandenburg"]
-GNH_eval_timeframe = [80]
-
-measles_data_url = ["https://github.com/kassteele/Nowcasting/blob/master/data/measles_NL_2013_2014.dat"]

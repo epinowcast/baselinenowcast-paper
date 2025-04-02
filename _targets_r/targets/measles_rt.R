@@ -1,11 +1,9 @@
-tar_target(measles_rt, {
-  nowcast_date <- "2014-01-21"
-
-  filtered_data <- enw_filter_report_dates(measles_long,
+tar_target(
+  measles_rt,
+  enw_filter_report_dates(measles_long,
     latest_date = nowcast_date
-  )
-  # Make reporting triangle by hand
-  filtered_data |>
+  ) |>
+    # Make reporting triangle by hand
     mutate(delay = as.integer(difftime(report_date,
       reference_date,
       units = "days"
@@ -15,5 +13,6 @@ tar_target(measles_rt, {
     pivot_wider(
       names_from = delay,
       values_from = confirm
-    )
-})
+    ),
+  pattern = map(nowcast_dates)
+)

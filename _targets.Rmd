@@ -46,11 +46,6 @@ library(targets)
 library(crew)
 library(RcppTOML)
 library(readr)
-
-controller <- crew_controller_local(
-  workers = 8,
-  seconds_idle = 600
-)
 ```
 
 Define the shared global options and load the R functions from the `R` folder
@@ -72,12 +67,8 @@ tar_option_set(
     "readr", "epinowcast", "tidyr"
   ),
   workspace_on_error = TRUE,
-  # Run with a pre-specified crew controller
-  controller = controller,
   # Setup storage on workers vs on the main node.
   memory = "transient",
-  storage = "worker",
-  retrieval = "worker",
   format = "rds", # default storage format
   error = NULL # tells errored targets to return NULL rather than
   # have whole pipeline fail
@@ -144,21 +135,17 @@ measles_line_list |>
                                 by = "days")) |>
   mutate(confirm = ifelse(is.na(confirm), 0, confirm))
 ```
-```{targets nowcast_dates}
-tar_group_by(
-  nowcast_dates,
-  data.frame(
+```{targets nowcast_dates, tar_simple = TRUE}
+data.frame(
     nowcast_date = c("2024-01-21", "2024-01-28")
-  ),
-  nowcast_date
-)
+  )
 ```
 ### Create reporting triangles as of daily nowcast dates
 ```{targets measles_rt}
-tar_target(
+tar_group_by(
   measles_rt,
   enw_filter_report_dates(measles_long,
-                          latest_date = nowcast_date) |>
+                          latest_date = nowcast_dates$nowcast_date) |>
 # Make reporting triangle by hand
   mutate(delay = as.integer(difftime(report_date,
                                      reference_date,

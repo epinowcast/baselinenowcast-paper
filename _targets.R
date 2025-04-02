@@ -1,4 +1,5 @@
 library(targets)
+library(tarchetypes)
 library(crew)
 library(RcppTOML)
 library(readr)
@@ -17,7 +18,7 @@ rm("functions")
 tar_option_set(
   packages = c(
     "tibble", "dplyr", "lubridate",
-    "targets",
+    "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
     "epinowcast"
@@ -105,40 +106,92 @@ data_targets <- list(
   ),
 
 
-  ### Create reporting triangles as of daily nowcast dates
+  ### Create reporting triangles as of final nowcast date
   tar_target(
-    name = nowcast_dates,
-    command = tibble(nowcast_date = c("2024-01-21", "2024-01-28")) |>
+    name = measles_nowcast_dates,
+    command = tibble(nowcast_date = c(
+      "2013-07-01", "2013-10-01",
+      "2014-02-25"
+    )) |>
       group_by(nowcast_date) |>
       tar_group(),
     iteration = "group"
   ),
+  # This function will be used to format the data as a reporting triangle
+  # from a long dataframe by report and reference date and as of a particular
+  # nowcast date
   tar_target(
     name = measles_rt,
     command = do.call(
       get_rep_tri_from_long_df,
       c(list(
         long_df = measles_long,
-        nowcast_date = nowcast_dates$nowcast_date
+        nowcast_date = max(measles_long$reference_date),
+        max_delay = 50
       ))
-    ),
-    pattern = map(nowcast_dates)
-  )
+    )
+  ),
 
   ### Load in norovirus data
 
-  ### Create reporting triangles as of daily nowcast dates
+  ### Create reporting triangles as of final nowcast date
 
-  ### Create evaluation data for both at nowcast dates + eval time frame
-
+  ### Create summarised counts as of all nowcast dates + eval time frames
+  tar_target(
+    name = measles_nowcasts_df,
+    command = do.call(
+      get_eval_data_from_long_df,
+      c(list(
+        long_df = measles_long,
+        # replace with nowcast date + eval time frame
+        as_of_date = ymd(measles_nowcast_dates$nowcast_date) + days(50)
+      ))
+    ),
+    pattern = map(measles_nowcast_dates)
+  ),
+  tar_target(
+    name = plot_measles_data,
+    command = get_plot_data_as_of(measles_nowcasts_df),
+    format = "rds"
+  ),
   ### Model specification for each data set
-  # Based off of the specific dataset, make a single choice about a specification
-) # end data_targets
-# Results
+  # Based off of the specific dataset, make a single choice about specification
+  tar_target(
+    name = measles_spec,
+    command = list(
+      max_delay = 50,
+      n_history_delay = 75,
+      n_history_dispersion = 50,
+      borrow_delay = FALSE,
+      borrow_dispersion = FALSE
+    ),
+    format = "rds"
+  ),
+  # Results
 
-## Run `baselinenowcast` model
+  ## Run `baselinenowcast` model
 
-### Use tar_map or tar_group_by to run the model on all datasets
+  ### Use tar_map or tar_group_by to run the model on all datasets
+  tar_map(
+    values = list(
+      nowcast_date = c(
+        "2013-07-01", "2013-10-01",
+        "2014-02-25"
+      )
+    ),
+    # Get the reporting triangle as of the nowcast date
+    tar_target(
+      name = rep_tri_df,
+      command = get_rep_tri_from_long_df(
+        long_df = measles_long,
+        nowcast_date = nowcast_date,
+        max_delay = 50
+      )
+    )
+  ) # end tar map
+) # end model run targets
+
+
 
 #### Generate outputs for each model run joined to corresponding metadata
 # - scores (from samples)
@@ -157,4 +210,5 @@ data_targets <- list(
 
 list(
   data_targets
+  # model_run_targets
 )

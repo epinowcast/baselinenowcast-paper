@@ -121,7 +121,19 @@ Make all combinations of varying:
 
 ## Real-world case data: Measles and norovirus
 
-### Load in measles data
+### Load and clean measles data
+```{targets measles_line_list, tar_simple = TRUE}
+read.delim("https://raw.githubusercontent.com/kassteele/Nowcasting/refs/heads/master/data/measles_NL_2013_2014.dat", sep = "") |>
+  mutate(reference_date = ymd(onset.date),
+         report_date = ymd(report.date)) |>
+  select(reference_date, report_date)
+```
+```{targets measles_long, tar_simple = TRUE}
+measles_line_list |>
+  mutate(delay = as.numeric(difftime(report_date, reference_date, units = "days"))) |>
+  group_by(reference_date, delay) |>
+  summarise(obs = n())
+```
 
 ### Create reporting triangles as of daily nowcast dates
 

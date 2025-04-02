@@ -54,8 +54,9 @@ controller <- crew_controller_local(
 ```
 
 Define the shared global options and load the R functions from the `R` folder
-```{r}
+```{targets globals, tar_globals = TRUE}
 library(targets)
+library(tarchetypes)
 library(ggplot2)
 library(purrr, quietly = TRUE)
 library(arrow)
@@ -68,7 +69,7 @@ tar_option_set(
   packages = c(
     "tibble", "dplyr", "lubridate",
     "baselinenowcast",
-    "readr"
+    "readr", "epinowcast", "tidyr"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller
@@ -77,7 +78,7 @@ tar_option_set(
   memory = "transient",
   storage = "worker",
   retrieval = "worker",
-  format = "parquet", # default storage format
+  format = "rds", # default storage format
   error = NULL # tells errored targets to return NULL rather than
   # have whole pipeline fail
 )
@@ -128,14 +129,48 @@ read.delim("https://raw.githubusercontent.com/kassteele/Nowcasting/refs/heads/ma
          report_date = ymd(report.date)) |>
   select(reference_date, report_date)
 ```
+Convert from line list to a long tidy dataframe with counts by reference and
+report date
 ```{targets measles_long, tar_simple = TRUE}
 measles_line_list |>
-  mutate(delay = as.numeric(difftime(report_date, reference_date, units = "days"))) |>
-  group_by(reference_date, delay) |>
-  summarise(obs = n())
+  group_by(reference_date, report_date) |>
+  summarise(confirm = n()) |>
+  ungroup() |>
+  complete(reference_date = seq(from = min(reference_date),
+                                to = max(reference_date),
+                                by = "day"),
+           report_date = seq(from = min(reference_date),
+                                to = max(report_date),
+                                by = "days")) |>
+  mutate(confirm = ifelse(is.na(confirm), 0, confirm))
 ```
-
+```{targets nowcast_dates}
+tar_group_by(
+  nowcast_dates,
+  data.frame(
+    nowcast_date = c("2024-01-21", "2024-01-28")
+  ),
+  nowcast_date
+)
+```
 ### Create reporting triangles as of daily nowcast dates
+```{targets measles_rt}
+tar_target(
+  measles_rt,
+  enw_filter_report_dates(measles_long,
+                          latest_date = nowcast_date) |>
+# Make reporting triangle by hand
+  mutate(delay = as.integer(difftime(report_date,
+                                     reference_date,
+                                     units = "days"))) |>
+  select(reference_date, delay, confirm) |>
+  filter(delay <= 50, delay >=0) |>
+  pivot_wider(names_from = delay,
+              values_from = confirm),
+pattern = map(nowcast_dates)
+)
+
+```
 
 ### Load in norovirus data
 

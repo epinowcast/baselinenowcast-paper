@@ -47,14 +47,12 @@ tar_option_set(
 # and to generate evaluation data (triangle as of nowcast date + eval time)
 data_targets <- list(
 
-
   ### Model specification for German nowcast data------------------------------
   # Specify the maximum delay, number of reference times to use for delay
   # estimation, number of reporting triangles to use for dispersion estimate,
   # and whether or not delay estimates/dispersion parameters are being borrowed
 
   ## Simulated data, modified from German Nowcast Hub----------------------------
-
   ### Create simulated long tidy dataframes from data above--------------------
   # This will be for two age strata only, and with a long and short
   # delay, creating 4 distinct datasets. Will be used to generate reporting
@@ -236,6 +234,7 @@ model_run_targets <- list(
   ) # end model_run targets
   # 2. Save quantiled nowcasts for visualisation
 
+
   ## Run norovirus case study and score----------------------------------------
   ### Loop over each nowcast date ---------------------------------------------
   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
@@ -275,3 +274,4 @@ list(
   model_run_targets,
   plot_targets
 )
+

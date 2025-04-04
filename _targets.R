@@ -177,14 +177,28 @@ model_run_targets <- list(
 #### Generate outputs for each model run joined to corresponding metadata
 
 ### Figures for real-world case study German Nowcast Hub
+plot_targets <- list(
+  ### Figures for simulated data case study with different model specifications
 
-### Figures for simulated data case study with different model specifications
+  ### Figures for norovirus and measles
+  tar_target(
+    name = plot_measles_data,
+    command = get_plot_data_as_of(
+      final_df = measles_long,
+      as_of_dates = c(
+        "2013-07-01", "2013-10-01",
+        "2014-02-25"
+      )
+    ),
+    format = "rds"
+  )
 
-### Figures for and measles
+  ### Make figures comparing performance of baselinenowcats and norovirus models
+) # end plot targets
 
-### Make figures comparing performance of baselinenowcats and norovirus models
 
 list(
   data_targets,
-  model_run_targets
+  model_run_targets,
+  plot_targets
 )

@@ -35,6 +35,10 @@ tar_option_set(
   # have whole pipeline fail
 )
 
+config <- yaml::read_yaml(file.path(
+  "input", "config", "config.yaml"
+))
+
 # Methods---------------------------------------------------------------------
 
 # We'll start by gathering all of the datasets and model specifications that we
@@ -71,7 +75,7 @@ data_targets <- list(
   ### Load and clean measles data----------------------------------------------
   tar_target(
     name = measles_line_list,
-    command = read.delim("https://raw.githubusercontent.com/kassteele/Nowcasting/refs/heads/master/data/measles_NL_2013_2014.dat", sep = "") |> # nolint
+    command = read.delim(config$measles_url, sep = "") |> # nolint
       mutate(
         reference_date = ymd(onset.date),
         report_date = ymd(report.date)
@@ -103,11 +107,17 @@ data_targets <- list(
       mutate(confirm = ifelse(is.na(confirm), 0, confirm))
   ),
 
-  ### Load and clean norovirus data--------------------------------------------
-
-  ### Create long tidy datframe up until final date----------------------------
-  # Will be used to create reporting triangles as of nowcast dates +
-  # evaluation data
+  ### Load and clean norovirus data to create long tidy dataframe--------------
+  tar_target(
+    name = noro_long,
+    command = readr::read_csv(config$norovirus_url) |>
+      mutate(
+        reference_date = specimen_date,
+        report_date = specimen_date + days(days_to_reported)
+      ) |>
+      rename(confirm = target) |>
+      select(reference_date, report_date, confirm)
+  ),
 
   ### Model specification for each data set------------------------------------
   # Based off of the specific dataset, make a single choice about specification
@@ -141,103 +151,115 @@ data_targets <- list(
 ## Run measles case study----------------------------------------------------
 model_run_targets <- list(
   ### Loop over each nowcast date ---------------------------------------------
+  # tar_map(
+  #   values = list(
+  #     nowcast_dates = config$measles_nowcast_dates
+  #     )
+  #   ),
+  #   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+  #   # Get the reporting triangle as of the nowcast date
+  #   tar_target(
+  #     name = rep_tri_df,
+  #     command = get_rep_tri_from_long_df(
+  #       long_df = measles_long,
+  #       nowcast_date = nowcast_dates,
+  #       max_delay = 50
+  #     )
+  #   ),
+  #   # Get the reporting triangle matrix
+  #   tar_target(
+  #     name = triangle,
+  #     command = rep_tri_df |>
+  #       select(-`reference_date`, -`nowcast_date`) |>
+  #       as.matrix(),
+  #     format = "rds"
+  #   ),
+  #   # Estimate delay
+  #   tar_target(
+  #     name = delay_pmf,
+  #     command = get_delay_estimate(
+  #       triangle = triangle,
+  #       max_delay = 50
+  #     ),
+  #     format = "rds"
+  #   ),
+  #   # Get point estimate
+  #   tar_target(
+  #     name = point_reporting_square,
+  #     command = apply_delay(
+  #       triangle_to_nowcast = triangle,
+  #       delay = delay_pmf
+  #     ),
+  #     format = "rds"
+  #   ),
+  #   # Estimate uncertainty
+  #   # Truncate RTs
+  #   tar_target(
+  #     name = truncated_rts,
+  #     command = truncate_triangles(triangle),
+  #     format = "rds"
+  #   ),
+  #   # Get retrospective triangles
+  #   tar_target(
+  #     name = retro_rts,
+  #     command = generate_triangles(list_of_trunc_rts = truncated_rts),
+  #     format = "rds"
+  #   ),
+  #   # Get retro nowcasts
+  #   tar_target(
+  #     name = retro_nowcasts,
+  #     generate_point_nowcasts(list_of_rts = retro_rts),
+  #     format = "rds"
+  #   ),
+  #   tar_target(
+  #     name = disp_params,
+  #     command = estimate_dispersion(
+  #       list_of_nowcasts = retro_nowcasts,
+  #       list_of_trunc_rts = truncated_rts
+  #     ),
+  #     format = "rds"
+  #   ),
+  #   tar_target(
+  #     name = exp_obs_nowcasts,
+  #     command = add_obs_errors_to_nowcast(
+  #       comp_rep_square = point_rep_square,
+  #       disp = disp_params,
+  #       n_draws = 1000
+  #     ),
+  #     format = "rds"
+  #   ),
+  #   tar_target(
+  #     name = nowcast_draws,
+  #     command = nowcast_list_to_df(
+  #       list_of_nowcasts = exp_obs_nowcasts
+  #     ),
+  #     format = "rds"
+  #   ),
+  #   tar_target(
+  #     name = summary_nowcast,
+  #     command = aggregate_df_by_ref_time(nowcast_draws)
+  #   )
+  # ), # end model_run targets
+  # 2. Save quantiled nowcasts for visualisation
+
+
+  ## Run norovirus case study and score----------------------------------------
+  ### Loop over each nowcast date ---------------------------------------------
   tar_map(
     values = list(
-      nowcast_dates = c(
-        "2013-07-01", "2013-10-01",
-        "2014-02-25"
-      )
+      nowcast_dates = config$noro_nowcast_dates
     ),
     # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
     # Get the reporting triangle as of the nowcast date
     tar_target(
       name = rep_tri_df,
       command = get_rep_tri_from_long_df(
-        long_df = measles_long,
+        long_df = noro_long,
         nowcast_date = nowcast_dates,
-        max_delay = 50
+        max_delay = 14
       )
-    ),
-    # Get the reporting triangle matrix
-    tar_target(
-      name = triangle,
-      command = rep_tri_df |>
-        select(-`reference_date`, -`nowcast_date`) |>
-        as.matrix(),
-      format = "rds"
-    ),
-    # Estimate delay
-    tar_target(
-      name = delay_pmf,
-      command = get_delay_estimate(
-        triangle = triangle,
-        max_delay = 50
-      ),
-      format = "rds"
-    ),
-    # Get point estimate
-    tar_target(
-      name = point_reporting_square,
-      command = apply_delay(
-        triangle_to_nowcast = triangle,
-        delay = delay_pmf
-      ),
-      format = "rds"
-    ),
-    # Estimate uncertainty
-    # Truncate RTs
-    tar_target(
-      name = truncated_rts,
-      command = truncate_triangles(triangle),
-      format = "rds"
-    ),
-    # Get retrospective triangles
-    tar_target(
-      name = retro_rts,
-      command = generate_triangles(list_of_trunc_rts = truncated_rts),
-      format = "rds"
-    ),
-    # Get retro nowcasts
-    tar_target(
-      name = retro_nowcasts,
-      generate_point_nowcasts(list_of_rts = retro_rts),
-      format = "rds"
-    ),
-    tar_target(
-      name = disp_params,
-      command = estimate_dispersion(
-        list_of_nowcasts = retro_nowcasts,
-        list_of_trunc_rts = truncated_rts
-      ),
-      format = "rds"
-    ),
-    tar_target(
-      name = exp_obs_nowcasts,
-      command = add_obs_errors_to_nowcast(
-        comp_rep_square = point_rep_square,
-        disp = disp_params,
-        n_draws = 1000
-      ),
-      format = "rds"
-    ),
-    tar_target(
-      name = nowcast_draws,
-      command = nowcast_list_to_df(
-        list_of_nowcasts = exp_obs_nowcasts
-      ),
-      format = "rds"
-    ),
-    tar_target(
-      name = summary_nowcast,
-      command = aggregate_df_by_ref_time(nowcast_draws)
     )
-  ) # end model_run targets
-  # 2. Save quantiled nowcasts for visualisation
-
-
-  ## Run norovirus case study and score----------------------------------------
-  ### Loop over each nowcast date ---------------------------------------------
-  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+  )
   # 2. Generate evaluation data for that nowcast date
   # 3. Score for nowcast data - X time in days and save with metadata
   # here use WIS for consistency with norovirus scores
@@ -260,7 +282,20 @@ plot_targets <- list(
       as_of_dates = c(
         "2013-07-01", "2013-10-01",
         "2014-02-25"
-      )
+      ),
+      pathogen = "Measles"
+    ),
+    format = "rds"
+  ),
+  tar_target(
+    name = plot_noro_data,
+    command = get_plot_data_as_of(
+      final_df = noro_long,
+      as_of_dates = c(
+        "2023-12-10", "2024-01-21",
+        "2024-02-25"
+      ),
+      pathogen = "Norovirus"
     ),
     format = "rds"
   )
@@ -274,4 +309,3 @@ list(
   model_run_targets,
   plot_targets
 )
-

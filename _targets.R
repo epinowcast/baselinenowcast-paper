@@ -135,23 +135,13 @@ model_run_targets <- list(
     values = list(
       nowcast_dates_noro = config$norovirus$nowcast_dates
     ),
+    gen_noro_nowcasts_targets
     # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-    tar_target(
-      name = summary_nowcast_noro,
-      command = run_baselinenowcast_pipeline(
-        long_df = noro_long,
-        nowcast_date = nowcast_dates_noro,
-        max_delay = config$norovirus$max_delay,
-        n_history_delay = config$norovirus$n_history_delay,
-        n_history_uncertainty = config$norovirus$n_history_uncertainty,
-        n_draws = config$n_draws
-      )
-    )
+    # 2. Generate evaluation data for that nowcast date
+    # 3. Score for nowcast data - X time in days and save with metadata
+    # here use WIS for consistency with norovirus scores
+    # 4. Save quantiled nowcasts for visualisation
   )
-  # 2. Generate evaluation data for that nowcast date
-  # 3. Score for nowcast data - X time in days and save with metadata
-  # here use WIS for consistency with norovirus scores
-  # 4. Save quantiled nowcasts for visualisation
 
   ## Gather nowcast scores for other models -------------------------------
   # 1. Combine norovirus model scores by nowcast date and model type
@@ -165,31 +155,8 @@ model_run_targets <- list(
 plot_targets <- list(
   ### Figures for simulated data case study with different model specifications
 
-  ### Figures for norovirus and measles
-  tar_target(
-    name = plot_measles_data,
-    command = get_plot_data_as_of(
-      final_df = measles_long,
-      as_of_dates = c(
-        "2013-07-01", "2013-10-01",
-        "2014-02-25"
-      ),
-      pathogen = "Measles"
-    ),
-    format = "rds"
-  ),
-  tar_target(
-    name = plot_noro_data,
-    command = get_plot_data_as_of(
-      final_df = noro_long,
-      as_of_dates = c(
-        "2023-12-10", "2024-01-21",
-        "2024-02-25"
-      ),
-      pathogen = "Norovirus"
-    ),
-    format = "rds"
-  )
+  ### EDA figures for norovirus and measles
+  EDA_plot_targets
 
   ### Figure comparing performance to German Howcast Hub models
 

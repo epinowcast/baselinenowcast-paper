@@ -44,6 +44,7 @@ Suggests:
     rmarkdown,
     testthat (>= 3.1.9),
     usethis,
+    roxyglobals,
     withr,
     knitr
 Encoding: UTF-8

@@ -25,6 +25,7 @@
 #'    estimate the dispersion parameters if not the same as the one being
 #'    nowcasted from, `long_df`.
 #'
+#' @autoglobal
 #' @returns `summary_nowcast` A dataframe of the expected observed total counts
 #'    for each reference date up until the nowcast date
 run_baselinenowcast_pipeline <- function(long_df,

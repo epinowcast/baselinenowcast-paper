@@ -1,9 +1,10 @@
 get_plot_data_as_of <- function(final_df,
-                                as_of_dates) {
+                                as_of_dates,
+                                pathogen = "") {
   sum_df <- final_df |>
     group_by(reference_date) |>
     summarise(
-      observed = sum(confirm)
+      observed = sum(confirm, na.rm = TRUE)
     ) |>
     ungroup()
 
@@ -29,7 +30,7 @@ get_plot_data_as_of <- function(final_df,
     xlab("") +
     ylab("Cases") +
     theme_bw() +
-    ggtitle("Measles cases as of different nowcasting days")
+    ggtitle(glue::glue("{pathogen} cases as of different nowcasting days"))
 
   return(plot)
 }

@@ -4,7 +4,7 @@ get_eval_data_from_long_df <- function(long_df,
     filter(report_date <= ymd(as_of_date)) |>
     group_by(reference_date) |>
     summarise(
-      observed = sum(confirm)
+      observed = sum(confirm, na.rm = TRUE)
     ) |>
     ungroup() |>
     mutate(

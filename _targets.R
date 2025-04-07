@@ -134,6 +134,7 @@ data_targets <- list(
   )
 ) # end data_targets
 
+
 # Results-------------------------------------------------------------------
 
 ## Run real-world German Nowcast Hub case study-----------------------------
@@ -196,9 +197,12 @@ model_run_targets <- list(
   # here use WIS for consistency with norovirus scores
   # 4. Save quantiled nowcasts for visualisation
 
-  ## Gather nowcast scores for other norovirus models ------------------------
+  ## Gather nowcast scores for other models -------------------------------
   # 1. Combine norovirus model scores by nowcast date and model type
+  # 2. Combine German Nowcast Hub model nowcasts and score them by model
+  # and strata
 )
+
 #### Generate outputs for each model run joined to corresponding metadata
 
 ### Figures for real-world case study German Nowcast Hub
@@ -231,7 +235,11 @@ plot_targets <- list(
     format = "rds"
   )
 
-  ### Make figures comparing performance of baselinenowcats and norovirus models
+### Figure comparing performance to German Howcast Hub models
+
+### Figure comparing baselinenowcast performance to other norovirus nowcasts
+
+### Make figures comparing performance of baselinenowcats and norovirus models
 ) # end plot targets
 
 
@@ -240,3 +248,5 @@ list(
   model_run_targets,
   plot_targets
 )
+
+

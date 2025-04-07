@@ -250,13 +250,15 @@ model_run_targets <- list(
       nowcast_dates = config$noro_nowcast_dates
     ),
     # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-    # Get the reporting triangle as of the nowcast date
     tar_target(
-      name = rep_tri_df,
-      command = get_rep_tri_from_long_df(
+      name = summary_nowcast,
+      command = run_baselinenowcast_pipeline(
         long_df = noro_long,
         nowcast_date = nowcast_dates,
-        max_delay = 14
+        max_delay = 14,
+        n_history_delay = 42,
+        n_history_uncertainty = 10,
+        n_draws = 100
       )
     )
   )

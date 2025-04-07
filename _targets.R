@@ -5,15 +5,31 @@ library(RcppTOML)
 library(readr)
 library(here)
 library(purrr)
+library(dplyr)
+library(tibble)
+library(lubridate)
+library(ggplot2)
+library(readr)
+library(tidyr)
+library(epinowcast)
+library(baselinenowcast)
+
+
 
 controller <- crew_controller_local(
   workers = 8,
   seconds_idle = 600
 )
 
+# load functions
 functions <- list.files(here("R"), full.names = TRUE)
 walk(functions, source)
 rm("functions")
+
+# load target modules
+targets <- list.files(here("targets"), full.names = TRUE)
+targets <- grep("*\\.R", targets, value = TRUE)
+purrr::walk(targets, source)
 
 tar_option_set(
   packages = c(
@@ -31,8 +47,7 @@ tar_option_set(
   storage = "worker",
   retrieval = "worker",
   format = "parquet", # default storage format
-  error = NULL # tells errored targets to return NULL rather than
-  # have whole pipeline fail
+  error = "continue"
 )
 
 config <- yaml::read_yaml(file.path(
@@ -72,52 +87,8 @@ data_targets <- list(
 
   ## Real-world case data: Measles and norovirus-------------------------------
 
-  ### Load and clean measles data----------------------------------------------
-  tar_target(
-    name = measles_line_list,
-    command = read.delim(config$measles$url, sep = "") |> # nolint
-      mutate(
-        reference_date = ymd(onset.date),
-        report_date = ymd(report.date)
-      ) |>
-      select(reference_date, report_date)
-  ),
-
-  ### Create long tidy dataframe up until final date---------------------------
-  # Will be used to create reporting triangles as of nowcast dates +
-  # evaluation data. Contains all info in reporting triangles
-  tar_target(
-    name = measles_long,
-    command = measles_line_list |>
-      group_by(reference_date, report_date) |>
-      summarise(confirm = n()) |>
-      ungroup() |>
-      complete(
-        reference_date = seq(
-          from = min(reference_date),
-          to = max(reference_date),
-          by = "day"
-        ),
-        report_date = seq(
-          from = min(reference_date),
-          to = max(report_date),
-          by = "days"
-        )
-      ) |>
-      mutate(confirm = ifelse(is.na(confirm), 0, confirm))
-  ),
-
-  ### Load and clean norovirus data to create long tidy dataframe--------------
-  tar_target(
-    name = noro_long,
-    command = readr::read_csv(config$norovirus$url) |>
-      mutate(
-        reference_date = specimen_date,
-        report_date = specimen_date + days(days_to_reported)
-      ) |>
-      rename(confirm = target) |>
-      select(reference_date, report_date, confirm)
-  )
+  ### Load and clean data----------------------------------------------
+  load_data_targets
 ) # end data_targets
 
 

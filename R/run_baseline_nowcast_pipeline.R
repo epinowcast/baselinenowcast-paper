@@ -94,6 +94,15 @@ run_baselinenowcast_pipeline <- function(long_df,
   )
   summary_nowcast <- aggregate_df_by_ref_time(nowcast_draws)
   # Join data and observed data to this!
+  date_df <- tibble(reference_date = long_df |> filter(reference_date <= nowcast_date) |>
+    distinct(reference_date) |> arrange(reference_date) |> pull()) |>
+    mutate(
+      time = row_number()
+    )
+  summary_nowcast <- summary_nowcast |>
+    left_join(date_df, by = "time") |>
+    select(reference_date, draw, total_count) |>
+    mutate(nowcast_date = nowcast_date)
 
   return(summary_nowcast)
 }

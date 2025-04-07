@@ -41,77 +41,79 @@ tar_option_set(
 # need for each of the component analyses
 
 ## Real-world data from German Nowcast Hub------------------------------------
-  
-  ### Create long tidy dataframe as of final date from German Nowcast Hub------
-  # This will be used to generate reporting triangles as of nowcast dates 
-  # and to generate evaluation data (triangle as of nowcast date + eval time)
-  
-  ### Model specification for German nowcast data------------------------------
-  # Specify the maximum delay, number of reference times to use for delay
-  # estimation, number of reporting triangles to use for dispersion estimate, 
-  # and whether or not delay estimates/dispersion parameters are being borrowed
-  
+
+### Create long tidy dataframe as of final date from German Nowcast Hub------
+# This will be used to generate reporting triangles as of nowcast dates
+# and to generate evaluation data (triangle as of nowcast date + eval time)
+
+### Model specification for German nowcast data------------------------------
+# Specify the maximum delay, number of reference times to use for delay
+# estimation, number of reporting triangles to use for dispersion estimate,
+# and whether or not delay estimates/dispersion parameters are being borrowed
+
 ## Simulated data, modified from German Nowcast Hub----------------------------
-  
-  ### Create simulated long tidy dataframes from data above--------------------
-  # This will be for two age strata only, and with a long and short
-  # delay, creating 4 distinct datasets. Will be used to generate reporting
-  # triangles and evaluation data
-  
-  ### Model specification(s) for simulated data--------------------------------
-  # Make all combinations of varying:
-  # - max delay
-  # - borrowing for delay estimation
-  # - borrowing for dispersion estimate
-  # - number of observations for delay estimation
-  # - number of reporting triangles for dispersion estimate
-  
-  ## Real-world case data: Measles and norovirus-------------------------------
-  
-  ### Load and clean measles data----------------------------------------------
-  
-  ### Create long tidy dataframe up until final date---------------------------
-  # Will be used to create reporting triangles as of nowcast dates + 
-  # evaluation data 
-  
-  ### Load and clean norovirus data--------------------------------------------
-  
-  ### Create long tidy datframe up until final date----------------------------
-  # Will be used to create reporting triangles as of nowcast dates + 
-  # evaluation data 
-  
-  ### Model specification for each data set------------------------------------
-  # Based off of the specific dataset, make a single choice about specification
- 
-  # Results-------------------------------------------------------------------
-  
-  ## Run real-world German Nowcast Hub case study-----------------------------
-  ### Loop over each nowcast date and strata ----------------------------------
-  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-  # 2. Save quantiled nowcasts for visualisation 
 
-  ## Run simulated long delays and spare data----------------------------------
-  ### Loop over each nowcast date, strata, data scenario, and model spec-------
-  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-  # 2. Generate evaluation data for that nowcast date 
-  # 3. Score nowcasts - X time in days and save with metadata
-  # 4. Save quantiled nowcasts for visualisation 
-  
-  ## Run measles case study----------------------------------------------------
-  ### Loop over each nowcast date ---------------------------------------------
-  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-  # 2. Save quantiled nowcasts for visualisation 
+### Create simulated long tidy dataframes from data above--------------------
+# This will be for two age strata only, and with a long and short
+# delay, creating 4 distinct datasets. Will be used to generate reporting
+# triangles and evaluation data
 
-  ## Run norovirus case study and score----------------------------------------
-  ### Loop over each nowcast date ---------------------------------------------
-  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-  # 2. Generate evaluation data for that nowcast date 
-  # 3. Score for nowcast data - X time in days and save with metadata
-    # here use WIS for consistency with norovirus scores
-  # 4. Save quantiled nowcasts for visualisation 
-  
-  ## Gather nowcast scores for other norovirus models ------------------------
-  # 1. Combine norovirus model scores by nowcast date and model type
+### Model specification(s) for simulated data--------------------------------
+# Make all combinations of varying:
+# - max delay
+# - borrowing for delay estimation
+# - borrowing for dispersion estimate
+# - number of observations for delay estimation
+# - number of reporting triangles for dispersion estimate
+
+## Real-world case data: Measles and norovirus-------------------------------
+
+### Load and clean measles data----------------------------------------------
+
+### Create long tidy dataframe up until final date---------------------------
+# Will be used to create reporting triangles as of nowcast dates +
+# evaluation data
+
+### Load and clean norovirus data--------------------------------------------
+
+### Create long tidy datframe up until final date----------------------------
+# Will be used to create reporting triangles as of nowcast dates +
+# evaluation data
+
+### Model specification for each data set------------------------------------
+# Based off of the specific dataset, make a single choice about specification
+
+# Results-------------------------------------------------------------------
+
+## Run real-world German Nowcast Hub case study-----------------------------
+### Loop over each nowcast date and strata ----------------------------------
+# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+# 2. Save quantiled nowcasts for visualisation
+
+## Run simulated long delays and spare data----------------------------------
+### Loop over each nowcast date, strata, data scenario, and model spec-------
+# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+# 2. Generate evaluation data for that nowcast date
+# 3. Score nowcasts - X time in days and save with metadata
+# 4. Save quantiled nowcasts for visualisation
+
+## Run measles case study----------------------------------------------------
+### Loop over each nowcast date ---------------------------------------------
+# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+# 2. Save quantiled nowcasts for visualisation
+
+## Run norovirus case study and score----------------------------------------
+### Loop over each nowcast date ---------------------------------------------
+# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+# 2. Generate evaluation data for that nowcast date
+# 3. Score for nowcast data - X time in days and save with metadata
+# here use WIS for consistency with norovirus scores
+# 4. Save quantiled nowcasts for visualisation
+
+## Gather nowcast scores for other models -------------------------------
+# 1. Combine norovirus model scores by nowcast date and model type
+# 2. Combine German Nowcast Hub model nowcasts and score them by model
+# and strata
 
 
 #### Generate outputs for each model run joined to corresponding metadata
@@ -120,7 +122,11 @@ tar_option_set(
 
 ### Figures for simulated data case study with different model specifications
 
-### Figures for and measles
+### Figures for norovirus and measles example case study
+
+### Figure comparing performance to German Howcast Hub models
+
+### Figure comparing baselinenowcast performance to other norovirus nowcasts
+
 
 ### Make figures comparing performance of baselinenowcats and norovirus models
-

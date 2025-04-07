@@ -19,10 +19,25 @@ write_config <- function(noro_nowcast_dates = NULL,
   }
 
   config <- list(
-    norovirus_url = norovirus_url,
-    noro_nowcast_dates = noro_nowcast_dates,
-    measles_url = measles_url,
-    measles_nowcast_dates = measles_nowcast_dates
+    norovirus = list(
+      url = norovirus_url,
+      nowcast_dates = noro_nowcast_dates,
+      max_delay = 14,
+      n_history_delay = 42,
+      n_history_uncertainty = 10,
+      borrow_delay = FALSE,
+      borrow_uncertainty = FALSE
+    ),
+    measles = list(
+      url = measles_url,
+      nowcast_dates = measles_nowcast_dates,
+      max_delay = 50,
+      n_history_delay = 52,
+      n_history_dispersion = 50,
+      borrow_delay = FALSE,
+      borrow_uncertainty = FALSE
+    ),
+    n_draws = 100
   )
 
   yaml::write_yaml(config,

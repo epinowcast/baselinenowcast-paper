@@ -75,7 +75,7 @@ data_targets <- list(
   ### Load and clean measles data----------------------------------------------
   tar_target(
     name = measles_line_list,
-    command = read.delim(config$measles_url, sep = "") |> # nolint
+    command = read.delim(config$measles$url, sep = "") |> # nolint
       mutate(
         reference_date = ymd(onset.date),
         report_date = ymd(report.date)
@@ -110,27 +110,13 @@ data_targets <- list(
   ### Load and clean norovirus data to create long tidy dataframe--------------
   tar_target(
     name = noro_long,
-    command = readr::read_csv(config$norovirus_url) |>
+    command = readr::read_csv(config$norovirus$url) |>
       mutate(
         reference_date = specimen_date,
         report_date = specimen_date + days(days_to_reported)
       ) |>
       rename(confirm = target) |>
       select(reference_date, report_date, confirm)
-  ),
-
-  ### Model specification for each data set------------------------------------
-  # Based off of the specific dataset, make a single choice about specification
-  tar_target(
-    name = measles_spec,
-    command = list(
-      max_delay = 50,
-      n_history_delay = 52,
-      n_history_dispersion = 50,
-      borrow_delay = FALSE,
-      borrow_dispersion = FALSE
-    ),
-    format = "rds"
   )
 ) # end data_targets
 
@@ -154,22 +140,21 @@ model_run_targets <- list(
   ### Loop over each nowcast date ---------------------------------------------
   # tar_map(
   #   values = list(
-  #     nowcast_dates_measles = config$measles_nowcast_dates
-  #     )
-  #   ),
+  #     nowcast_dates_measles = config$measles$nowcast_dates
+  #     ),
   #   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
   #   tar_target(
   #     name = summary_nowcast_measles,
   #     command = run_baselinenowcast_pipeline(
   #       long_df = measles_long_long,
   #       nowcast_date = nowcast_dates_measles,
-  #       max_delay = 30,
-  #       n_history_delay = 50,
-  #       n_history_uncertainty = 10,
-  #       n_draws = 100
+  #       max_delay = config$measles$max_delay,
+  #       n_history_delay = config$measles$n_history_delay,
+  #       n_history_uncertainty = config$measles$n_history_uncertainty,
+  #       n_draws = config$n_draws
   #     )
   #   )
-  # )
+  # ),
   # 2. Save quantiled nowcasts for visualisation
 
 
@@ -177,7 +162,7 @@ model_run_targets <- list(
   ### Loop over each nowcast date ---------------------------------------------
   tar_map(
     values = list(
-      nowcast_dates_noro = config$noro_nowcast_dates
+      nowcast_dates_noro = config$norovirus$nowcast_dates
     ),
     # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
     tar_target(
@@ -185,10 +170,10 @@ model_run_targets <- list(
       command = run_baselinenowcast_pipeline(
         long_df = noro_long,
         nowcast_date = nowcast_dates_noro,
-        max_delay = 14,
-        n_history_delay = 42,
-        n_history_uncertainty = 10,
-        n_draws = 100
+        max_delay = config$norovirus$max_delay,
+        n_history_delay = config$norovirus$n_history_delay,
+        n_history_uncertainty = config$norovirus$n_history_uncertainty,
+        n_draws = config$n_draws
       )
     )
   )
@@ -235,11 +220,11 @@ plot_targets <- list(
     format = "rds"
   )
 
-### Figure comparing performance to German Howcast Hub models
+  ### Figure comparing performance to German Howcast Hub models
 
-### Figure comparing baselinenowcast performance to other norovirus nowcasts
+  ### Figure comparing baselinenowcast performance to other norovirus nowcasts
 
-### Make figures comparing performance of baselinenowcats and norovirus models
+  ### Make figures comparing performance of baselinenowcats and norovirus models
 ) # end plot targets
 
 
@@ -248,5 +233,3 @@ list(
   model_run_targets,
   plot_targets
 )
-
-

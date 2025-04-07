@@ -26,6 +26,12 @@
 #'    nowcasted from, `long_df`.
 #'
 #' @autoglobal
+#' @importFrom baselinenowcast add_obs_errors_to_nowcast
+#'    aggregate_df_by_ref_time generate_point_nowcasts
+#'    generate_triangles get_delay_estimate
+#'    truncate_triangles apply_delay
+#' @importFrom dplyr select distinct filter mutate arrange left_join row_number
+#' @importFrom tibble tibble
 #' @returns `summary_nowcast` A dataframe of the expected observed total counts
 #'    for each reference date up until the nowcast date
 run_baselinenowcast_pipeline <- function(long_df,
@@ -95,7 +101,8 @@ run_baselinenowcast_pipeline <- function(long_df,
   )
   summary_nowcast <- aggregate_df_by_ref_time(nowcast_draws)
   # Join data and observed data to this!
-  date_df <- tibble(reference_date = long_df |> filter(reference_date <= nowcast_date) |>
+  date_df <- tibble(reference_date = long_df |>
+    filter(reference_date <= nowcast_date) |>
     distinct(reference_date) |> arrange(reference_date) |> pull()) |>
     mutate(
       time = row_number()

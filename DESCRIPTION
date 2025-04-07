@@ -34,9 +34,11 @@ Imports:
   dplyr,
   ggplot2,
   epinowcast,
+  glue,
   baselinenowcast,
   readr,
-  yaml
+  yaml,
+  tibble
 Suggests:
     bookdown,
     targets,

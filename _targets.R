@@ -153,93 +153,22 @@ model_run_targets <- list(
   ### Loop over each nowcast date ---------------------------------------------
   # tar_map(
   #   values = list(
-  #     nowcast_dates = config$measles_nowcast_dates
+  #     nowcast_dates_measles = config$measles_nowcast_dates
   #     )
   #   ),
   #   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-  #   # Get the reporting triangle as of the nowcast date
   #   tar_target(
-  #     name = rep_tri_df,
-  #     command = get_rep_tri_from_long_df(
-  #       long_df = measles_long,
-  #       nowcast_date = nowcast_dates,
-  #       max_delay = 50
+  #     name = summary_nowcast_measles,
+  #     command = run_baselinenowcast_pipeline(
+  #       long_df = measles_long_long,
+  #       nowcast_date = nowcast_dates_measles,
+  #       max_delay = 30,
+  #       n_history_delay = 50,
+  #       n_history_uncertainty = 10,
+  #       n_draws = 100
   #     )
-  #   ),
-  #   # Get the reporting triangle matrix
-  #   tar_target(
-  #     name = triangle,
-  #     command = rep_tri_df |>
-  #       select(-`reference_date`, -`nowcast_date`) |>
-  #       as.matrix(),
-  #     format = "rds"
-  #   ),
-  #   # Estimate delay
-  #   tar_target(
-  #     name = delay_pmf,
-  #     command = get_delay_estimate(
-  #       triangle = triangle,
-  #       max_delay = 50
-  #     ),
-  #     format = "rds"
-  #   ),
-  #   # Get point estimate
-  #   tar_target(
-  #     name = point_reporting_square,
-  #     command = apply_delay(
-  #       triangle_to_nowcast = triangle,
-  #       delay = delay_pmf
-  #     ),
-  #     format = "rds"
-  #   ),
-  #   # Estimate uncertainty
-  #   # Truncate RTs
-  #   tar_target(
-  #     name = truncated_rts,
-  #     command = truncate_triangles(triangle),
-  #     format = "rds"
-  #   ),
-  #   # Get retrospective triangles
-  #   tar_target(
-  #     name = retro_rts,
-  #     command = generate_triangles(list_of_trunc_rts = truncated_rts),
-  #     format = "rds"
-  #   ),
-  #   # Get retro nowcasts
-  #   tar_target(
-  #     name = retro_nowcasts,
-  #     generate_point_nowcasts(list_of_rts = retro_rts),
-  #     format = "rds"
-  #   ),
-  #   tar_target(
-  #     name = disp_params,
-  #     command = estimate_dispersion(
-  #       list_of_nowcasts = retro_nowcasts,
-  #       list_of_trunc_rts = truncated_rts
-  #     ),
-  #     format = "rds"
-  #   ),
-  #   tar_target(
-  #     name = exp_obs_nowcasts,
-  #     command = add_obs_errors_to_nowcast(
-  #       comp_rep_square = point_rep_square,
-  #       disp = disp_params,
-  #       n_draws = 1000
-  #     ),
-  #     format = "rds"
-  #   ),
-  #   tar_target(
-  #     name = nowcast_draws,
-  #     command = nowcast_list_to_df(
-  #       list_of_nowcasts = exp_obs_nowcasts
-  #     ),
-  #     format = "rds"
-  #   ),
-  #   tar_target(
-  #     name = summary_nowcast,
-  #     command = aggregate_df_by_ref_time(nowcast_draws)
   #   )
-  # ), # end model_run targets
+  # )
   # 2. Save quantiled nowcasts for visualisation
 
 
@@ -247,14 +176,14 @@ model_run_targets <- list(
   ### Loop over each nowcast date ---------------------------------------------
   tar_map(
     values = list(
-      nowcast_dates = config$noro_nowcast_dates
+      nowcast_dates_noro = config$noro_nowcast_dates
     ),
     # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
     tar_target(
-      name = summary_nowcast,
+      name = summary_nowcast_noro,
       command = run_baselinenowcast_pipeline(
         long_df = noro_long,
-        nowcast_date = nowcast_dates,
+        nowcast_date = nowcast_dates_noro,
         max_delay = 14,
         n_history_delay = 42,
         n_history_uncertainty = 10,

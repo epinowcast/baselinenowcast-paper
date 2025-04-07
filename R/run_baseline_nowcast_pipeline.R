@@ -85,7 +85,7 @@ run_baselinenowcast_pipeline <- function(long_df,
   )
 
   exp_obs_nowcasts <- add_obs_errors_to_nowcast(
-    comp_rep_square = point_rep_square,
+    comp_rep_square = point_reporting_square,
     disp = disp_params,
     n_draws = n_draws
   )
@@ -93,6 +93,7 @@ run_baselinenowcast_pipeline <- function(long_df,
     exp_obs_nowcasts
   )
   summary_nowcast <- aggregate_df_by_ref_time(nowcast_draws)
+  # Join data and observed data to this!
 
   return(summary_nowcast)
 }

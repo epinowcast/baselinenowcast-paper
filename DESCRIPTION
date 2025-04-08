@@ -38,6 +38,7 @@ Imports:
   baselinenowcast,
   readr,
   yaml,
+  tidyr,
   tibble
 Suggests:
     bookdown,

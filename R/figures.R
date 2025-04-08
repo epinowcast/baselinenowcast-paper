@@ -28,7 +28,7 @@ get_plot_data_as_of <- function(final_df,
     as_of_dfs <- bind_rows(as_of_dfs, as_of_df)
   }
 
-  plot <- ggplot(as_of_dfs) +
+  plot_df <- ggplot(as_of_dfs) +
     geom_line(aes(
       x = reference_date, y = observed, color =
         as.factor(as_of_date)
@@ -43,5 +43,5 @@ get_plot_data_as_of <- function(final_df,
     theme_bw() +
     ggtitle(glue("{pathogen} cases as of different nowcasting days"))
 
-  return(plot)
+  return(plot_df)
 }

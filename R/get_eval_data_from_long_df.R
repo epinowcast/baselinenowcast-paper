@@ -5,6 +5,7 @@
 #'
 #' @autoglobals
 #' @importFrom dplyr ungroup mutate filter group_by summarise
+#' @imprtFrom lubridate ymd
 #' @returns Data.frame summarised by reference time as of the as of date
 get_eval_data_from_long_df <- function(long_df,
                                        as_of_date) {

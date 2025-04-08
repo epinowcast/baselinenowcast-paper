@@ -1,6 +1,13 @@
 # All available hooks: https://pre-commit.com/hooks.html
 # R specific hooks: https://github.com/lorenzwalthert/precommit
 repos:
+- repo: local
+    hooks:
+      - id: air-format
+        name: Format R code with Air
+        entry: Rscript -e "air::format_dir('.')"
+        language: system
+        files: \.(R|Rmd)$
 -   repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.3
     hooks:

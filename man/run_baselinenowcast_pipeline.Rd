@@ -17,7 +17,7 @@ run_baselinenowcast_pipeline(
 }
 \arguments{
 \item{long_df}{Data.frame containing the following columns: \code{reference_date},
-\code{report_date}, and \code{confirm} indicating the cases on each reference
+\code{report_date}, and \code{count} indicating the cases on each reference
 and report date.}
 
 \item{nowcast_date}{String indicating the date we want to generate a nowcast.}

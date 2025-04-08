@@ -1,7 +1,6 @@
 library(targets)
 library(tarchetypes)
 library(crew)
-library(RcppTOML)
 library(readr)
 library(here)
 library(purrr)
@@ -39,6 +38,7 @@ tar_option_set(
     "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
+    "baselinenowcastpaper",
     "epinowcast"
   ),
   workspace_on_error = TRUE,

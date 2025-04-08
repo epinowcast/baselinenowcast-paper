@@ -37,7 +37,11 @@ Imports:
   lubridate,
   baselinenowcast,
   tidyr,
-  tibble
+  tibble,
+  lubridate,
+  readr,
+  purrr,
+  here
 Suggests:
     bookdown,
     targets,

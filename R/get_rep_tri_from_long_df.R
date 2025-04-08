@@ -4,7 +4,7 @@
 #' @param nowcast_date String indicating data to nowcst as of
 #' @param max_delay Integer indicating the maximum delays
 #'
-#' @autoglobals
+#' @autoglobal
 #' @importFrom tidyr pivot_wider
 #' @importFrom dplyr select filter mutate
 #' @importFrom epinowcast enw_filter_report_dates
@@ -24,11 +24,11 @@ get_rep_tri_from_long_df <- function(long_df,
       )),
       nowcast_date = nowcast_date
     ) |>
-    select(reference_date, nowcast_date, delay, confirm) |>
+    select(reference_date, nowcast_date, delay, count) |>
     filter(delay <= max_delay, delay >= 0) |>
     pivot_wider(
       names_from = delay,
-      values_from = confirm
+      values_from = count
     )
 
   return(rep_tri_df)

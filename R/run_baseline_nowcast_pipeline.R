@@ -7,7 +7,7 @@
 #'    specified nowcast date.
 #'
 #' @param long_df Data.frame containing the following columns: `reference_date`,
-#'    `report_date`, and `confirm` indicating the cases on each reference
+#'    `report_date`, and `count` indicating the cases on each reference
 #'    and report date.
 #' @param nowcast_date String indicating the date we want to generate a nowcast.
 #' @param max_delay Integer indicating the maximum delay we want to consider in

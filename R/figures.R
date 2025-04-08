@@ -15,7 +15,7 @@ get_plot_data_as_of <- function(final_df,
   sum_df <- final_df |>
     group_by(reference_date) |>
     summarise(
-      observed = sum(confirm, na.rm = TRUE)
+      observed = sum(count, na.rm = TRUE)
     ) |>
     ungroup()
 

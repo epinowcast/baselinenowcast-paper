@@ -1,3 +1,14 @@
+#' Get reporting triangle from long tidy dataframe
+#'
+#' @param long_df Dataframe of the latest data by reference and report date
+#' @param nowcast_date String indicating data to nowcst as of
+#' @param max_delay Integer indicating the maximum delays
+#'
+#' @autoglobals
+#' @importFrom tidyr pivot_wider
+#' @importFrom dplyr select filter mutate
+#' @importFrom epinowcast enw_filter_report_dates
+#' @returns Matrix in the form of a reporting triangle
 get_rep_tri_from_long_df <- function(long_df,
                                      nowcast_date,
                                      max_delay) {

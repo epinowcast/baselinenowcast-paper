@@ -1,3 +1,11 @@
+#' Get aggregated data as of a certain date from long tidy dataframe
+#'
+#' @param long_df Dataframe of the latest data by reference and report date
+#' @param as_of_date String indicating the as of date
+#'
+#' @autoglobals
+#' @importFrom dplyr ungroup mutate filter group_by summarise
+#' @returns Data.frame summarised by reference time as of the as of date
 get_eval_data_from_long_df <- function(long_df,
                                        as_of_date) {
   eval_df <- long_df |>

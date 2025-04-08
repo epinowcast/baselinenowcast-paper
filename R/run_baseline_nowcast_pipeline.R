@@ -29,9 +29,11 @@
 #' @importFrom baselinenowcast add_obs_errors_to_nowcast
 #'    aggregate_df_by_ref_time generate_point_nowcasts
 #'    generate_triangles get_delay_estimate
-#'    truncate_triangles apply_delay
+#'    truncate_triangles apply_delay nowcast_list_to_df
 #' @importFrom dplyr select distinct filter mutate arrange left_join row_number
+#'    bind_rows pull
 #' @importFrom tibble tibble
+#' @importFrom tidyr pivot_wider
 #' @returns `summary_nowcast` A dataframe of the expected observed total counts
 #'    for each reference date up until the nowcast date
 run_baselinenowcast_pipeline <- function(long_df,

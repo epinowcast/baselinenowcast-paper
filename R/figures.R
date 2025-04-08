@@ -1,3 +1,14 @@
+#' Get a plot of the data as of different dates
+#'
+#' @param final_df Dataframe of the latest data by reference and report date
+#' @param as_of_dates Vector of character strings of the dates you wish to plot
+#' @param pathogen Character sting of the pathogen being plotted
+#'
+#' @autoglobal
+#' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
+#' @importFrom glue glue
+#' @importFrom dplyr group_by summarise ungroup bind_rows
+#' @returns ggplot obejct
 get_plot_data_as_of <- function(final_df,
                                 as_of_dates,
                                 pathogen = "") {
@@ -30,7 +41,7 @@ get_plot_data_as_of <- function(final_df,
     xlab("") +
     ylab("Cases") +
     theme_bw() +
-    ggtitle(glue::glue("{pathogen} cases as of different nowcasting days"))
+    ggtitle(glue("{pathogen} cases as of different nowcasting days"))
 
   return(plot)
 }

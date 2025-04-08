@@ -51,9 +51,12 @@ Suggests:
     knitr
 Encoding: UTF-8
 Language: en-GB
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c("collate", "namespace", "rd",
+    "roxyglobals::global_roclet"))
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Remotes:
   epinowcast=epinowcast/epinowcast@v0.3.0,
   baselinenowcast=epinowcast/baselinenowcast
+Config/roxyglobals/filename: globals.R
+Config/roxyglobals/unique: FALSE

@@ -8,6 +8,7 @@ gen_noro_nowcasts_targets <- list(
       n_history_delay = config$norovirus$n_history_delay,
       n_history_uncertainty = config$norovirus$n_history_uncertainty,
       n_draws = config$n_draws
-    )
+    ),
+    format = "rds"
   )
 )

@@ -11,8 +11,10 @@ library(lubridate)
 library(ggplot2)
 library(readr)
 library(tidyr)
+library(glue)
 library(epinowcast)
 library(baselinenowcast)
+
 
 
 
@@ -107,47 +109,56 @@ data_targets <- list(
 # 4. Save quantiled nowcasts for visualisation
 
 ## Run measles case study----------------------------------------------------
-model_run_targets <- list(
-  ### Loop over each nowcast date ---------------------------------------------
-  # tar_map(
-  #   values = list(
-  #     nowcast_dates_measles = config$measles$nowcast_dates
-  #     ),
-  #   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-  #   tar_target(
-  #     name = summary_nowcast_measles,
-  #     command = run_baselinenowcast_pipeline(
-  #       long_df = measles_long_long,
-  #       nowcast_date = nowcast_dates_measles,
-  #       max_delay = config$measles$max_delay,
-  #       n_history_delay = config$measles$n_history_delay,
-  #       n_history_uncertainty = config$measles$n_history_uncertainty,
-  #       n_draws = config$n_draws
-  #     )
-  #   )
-  # ),
-  # 2. Save quantiled nowcasts for visualisation
+### Loop over each nowcast date ---------------------------------------------
+# mapped_measles <- tar_map(
+#   values = list(
+#     nowcast_dates_measles = config$measles$nowcast_dates
+#     ),
+#   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+#   tar_target(
+#     name = summary_nowcast_measles,
+#     command = run_baselinenowcast_pipeline(
+#       long_df = measles_long_long,
+#       nowcast_date = nowcast_dates_measles,
+#       max_delay = config$measles$max_delay,
+#       n_history_delay = config$measles$n_history_delay,
+#       n_history_uncertainty = config$measles$n_history_uncertainty,
+#       n_draws = config$n_draws
+#     )
+#   )
+# ),
+# 2. Save quantiled nowcasts for visualisation
 
 
-  ## Run norovirus case study and score----------------------------------------
-  ### Loop over each nowcast date ---------------------------------------------
-  tar_map(
-    values = list(
-      nowcast_dates_noro = config$norovirus$nowcast_dates
-    ),
-    gen_noro_nowcasts_targets
-    # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-    # 2. Generate evaluation data for that nowcast date
-    # 3. Score for nowcast data - X time in days and save with metadata
-    # here use WIS for consistency with norovirus scores
-    # 4. Save quantiled nowcasts for visualisation
-  )
-
-  ## Gather nowcast scores for other models -------------------------------
-  # 1. Combine norovirus model scores by nowcast date and model type
-  # 2. Combine German Nowcast Hub model nowcasts and score them by model
-  # and strata
+## Run norovirus case study and score----------------------------------------
+### Loop over each nowcast date ---------------------------------------------
+mapped_noro <- tar_map(
+  unlist = FALSE,
+  values = list(
+    nowcast_dates_noro = config$norovirus$nowcast_dates
+  ),
+  # 1. Generate nowcasts  (baselinenowcast pipeline)
+  # 2. Generate evaluation data for that nowcast date
+  # 3. Score for nowcast data - X time in days and save with metadata
+  # here use WIS for consistency with norovirus scores
+  # 4. Save quantiled nowcasts for visualisation
+  gen_noro_nowcasts_targets
 )
+# Aggregate the summaries for visualizing
+combined_noro_nowcasts <- tar_combine(
+  name = all_nowcasts,
+  mapped_noro$summary_nowcast_noro,
+  command = dplyr::bind_rows(!!!.x)
+)
+
+
+
+
+## Gather nowcast scores for other models -------------------------------
+# 1. Combine norovirus model scores by nowcast date and model type
+# 2. Combine German Nowcast Hub model nowcasts and score them by model
+# and strata
+
 
 #### Generate outputs for each model run joined to corresponding metadata
 
@@ -168,6 +179,7 @@ plot_targets <- list(
 
 list(
   data_targets,
-  model_run_targets,
+  mapped_noro,
+  combined_noro_nowcasts,
   plot_targets
 )

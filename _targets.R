@@ -14,6 +14,7 @@ library(tidyr)
 library(glue)
 library(epinowcast)
 library(baselinenowcast)
+library(forecasttools)
 
 
 

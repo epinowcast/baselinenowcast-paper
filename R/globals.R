@@ -2,7 +2,7 @@
 
 utils::globalVariables(c(
   "reference_date", # <get_plot_data_as_of>
-  "confirm", # <get_plot_data_as_of>
+  "count", # <get_plot_data_as_of>
   "observed", # <get_plot_data_as_of>
   "as_of_date", # <get_plot_data_as_of>
   "report_date", # <get_eval_data_from_long_df>
@@ -11,7 +11,6 @@ utils::globalVariables(c(
   "report_date", # <get_rep_tri_from_long_df>
   "reference_date", # <get_rep_tri_from_long_df>
   "delay", # <get_rep_tri_from_long_df>
-  "confirm", # <get_rep_tri_from_long_df>
   "count", # <get_rep_tri_from_long_df>
   "reference_date", # <run_baselinenowcast_pipeline>
   "draw", # <run_baselinenowcast_pipeline>

@@ -14,7 +14,7 @@ get_plot_data_as_of(final_df, as_of_dates, pathogen = "")
 \item{pathogen}{Character sting of the pathogen being plotted}
 }
 \value{
-ggplot obejct
+ggplot object
 }
 \description{
 Get a plot of the data as of different dates

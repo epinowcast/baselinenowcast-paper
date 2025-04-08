@@ -1,7 +1,7 @@
 #' Get reporting triangle from long tidy dataframe
 #'
 #' @param long_df Dataframe of the latest data by reference and report date
-#' @param nowcast_date String indicating data to nowcst as of
+#' @param nowcast_date String indicating data to nowcast as of
 #' @param max_delay Integer indicating the maximum delays
 #'
 #' @autoglobal

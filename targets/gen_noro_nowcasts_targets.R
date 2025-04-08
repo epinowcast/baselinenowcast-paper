@@ -11,6 +11,24 @@ gen_noro_nowcasts_targets <- list(
     ),
     format = "rds"
   ),
+  # Get evaluation data to join
+  tar_target(
+    name = eval_data,
+    command = get_eval_data_from_long_df(
+      long_df = noro_long,
+      as_of_date = ymd(nowcast_dates_noro) + days(80)
+    )
+  ),
+  # Get only the
+  # Convert to a forecast sample object for scoringutils
+  # tar_target(
+  #   name = su_forecast_sample,
+  #   command = scoringutils::as_forecast_sample(
+  #     data = samples_nowcast_noro,
+  #     observed = observed,
+  #     predicted = "total_count"
+  #   )
+  # )
   tar_target(
     name = quantiled_nowcast_noro,
     command = trajectories_to_quantiles(

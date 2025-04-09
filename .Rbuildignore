@@ -6,6 +6,11 @@
 ^\.pre-commit-config\.yaml$
 ^\.lintr$
 ^\.Rprofile
+^input
+^output
+^src
+^targets
+^_targets\.R$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$

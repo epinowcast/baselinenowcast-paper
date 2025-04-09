@@ -8,7 +8,7 @@
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
 #' @importFrom glue glue
 #' @importFrom dplyr group_by summarise ungroup bind_rows
-#' @returns ggplot obejct
+#' @returns ggplot object
 get_plot_data_as_of <- function(final_df,
                                 as_of_dates,
                                 pathogen = "") {

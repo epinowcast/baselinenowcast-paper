@@ -9,7 +9,7 @@ get_rep_tri_from_long_df(long_df, nowcast_date, max_delay)
 \arguments{
 \item{long_df}{Dataframe of the latest data by reference and report date}
 
-\item{nowcast_date}{String indicating data to nowcst as of}
+\item{nowcast_date}{String indicating data to nowcast as of}
 
 \item{max_delay}{Integer indicating the maximum delays}
 }

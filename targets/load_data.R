@@ -31,7 +31,7 @@ load_data_targets <- list(
           by = "days"
         )
       ) |>
-      mutate(confirm = ifelse(is.na(count), 0, count))
+      mutate(count = ifelse(is.na(count), 0, count))
   ),
 
   ### Load and clean norovirus data to create long tidy dataframe--------------

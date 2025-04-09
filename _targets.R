@@ -41,7 +41,8 @@ tar_option_set(
     "baselinenowcast",
     "readr", "tidyr",
     "baselinenowcastpaper",
-    "epinowcast"
+    "epinowcast",
+    "scoringutils"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller

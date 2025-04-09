@@ -57,7 +57,7 @@ get_plot_data_as_of <- function(final_df,
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
-#'    theme geom_ribbon
+#'    theme geom_ribbon geom_point scale_x_date element_text
 #' @importFrom glue glue
 #' @importFrom dplyr filter
 #' @returns ggplot object
@@ -121,7 +121,8 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     theme(
       axis.text.x = element_text(
         vjust = 1,
-        hjust = 1, angle = 45
+        hjust = 1,
+        angle = 45
       )
     ) +
     xlab("Reference date") +

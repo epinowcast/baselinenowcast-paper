@@ -1,4 +1,5 @@
 gen_noro_nowcasts_targets <- list(
+  # Nowcasts------------------------------------------------------------------
   tar_target(
     name = samples_nowcast_noro,
     command = run_baselinenowcast_pipeline(
@@ -37,9 +38,9 @@ gen_noro_nowcasts_targets <- list(
         ymd(nowcast_date) - days(config$norovirus$days_to_eval - 1)) |>
       left_join(eval_data, by = "reference_date")
   ),
-  # Convert to a forecast sample object for scoringutils
+  # Forecast objects ----------------------------------------------------------
   tar_target(
-    name = su_forecast_sample,
+    name = su_sample_noro,
     command = scoringutils::as_forecast_sample(
       data = comb_nc_noro,
       forecast_unit = c("nowcast_date", "reference_date"),
@@ -50,21 +51,50 @@ gen_noro_nowcasts_targets <- list(
   ),
   # Forecast quantiles as a scoringutils forecast object
   tar_target(
-    name = quantiled_nowcast_noro,
+    name = su_quantile_noro,
     command = scoringutils::as_forecast_quantile(
-      data = su_forecast_sample,
+      data = su_sample_noro,
       probs = config$Hub_quantiles
     )
   ),
   # Get a wide dataframe with only 50th and 95th for plotting
   tar_target(
     name = summary_nowcast_noro,
-    command = quantiled_nowcast_noro |>
+    command = su_quantile_noro |>
       filter(quantile_level %in% c(0.025, 0.25, 0.5, 0.75, 0.975)) |>
       pivot_wider(
         names_from = "quantile_level",
         values_from = "predicted",
         names_prefix = "q_"
       ) |> left_join(data_as_of, by = "reference_date")
+  ),
+  # Scores--------------------------------------------------------------------
+  tar_target(
+    name = scores_sample_noro,
+    command = scoringutils::score(su_sample_noro)
+  ),
+  # start nolint
+  # tar_target(
+  #   name = overpred_noro,
+  #   command = scoringutils::overprediction_sample(observed = su_sample_noro$observed[su_sample_noro$sample_id ==1],
+  #                                                 predicted = as.matrix(su_sample_noro |>
+  #                                                                         select(sample_id, predicted, reference_date) |>
+  #                                                                         pivot_wider(names_from = sample_id,
+  #                                                                                     values_from = predicted) |>
+  #                                                                         select(-reference_date))
+  #   )
+  # ),
+  # end nolint
+  tar_target(
+    name = scores_quantile_noro,
+    command = scoringutils::score(su_quantile_noro)
+  ),
+  tar_target(
+    name = coverage_noro,
+    command = scoringutils::get_coverage(
+      su_quantile_noro |>
+        mutate(model = "baselinenowcast"),
+      by = c("model", "nowcast_date")
+    )
   )
 )

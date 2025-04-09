@@ -19,12 +19,22 @@ gen_noro_nowcasts_targets <- list(
       as_of_date = ymd(nowcast_dates_noro) + days(config$eval_timeframe)
     )
   ),
+  # Get as of data we want to join
+  tar_target(
+    name = data_as_of,
+    command = noro_long |>
+      filter(report_date <= nowcast_dates_noro) |>
+      group_by(reference_date) |>
+      summarise(
+        data_as_of = sum(count, na.rm = TRUE)
+      )
+  ),
   # Join eval data to the subset of the nowcast that we are evaluating
   tar_target(
     name = comb_nc_noro,
     command = samples_nowcast_noro |>
       filter(reference_date >=
-        ymd(nowcast_date) - days(config$norovirus$days_to_eval)) |>
+        ymd(nowcast_date) - days(config$norovirus$days_to_eval - 1)) |>
       left_join(eval_data, by = "reference_date")
   ),
   # Convert to a forecast sample object for scoringutils
@@ -55,6 +65,6 @@ gen_noro_nowcasts_targets <- list(
         names_from = "quantile_level",
         values_from = "predicted",
         names_prefix = "q_"
-      )
+      ) |> left_join(data_as_of, by = "reference_date")
   )
 )

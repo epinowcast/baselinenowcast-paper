@@ -36,7 +36,8 @@ EDA_plot_targets <- list(
     name = plot_noro_nowcasts,
     command = get_plot_mult_nowcasts(
       all_nowcasts = all_nowcasts_noro,
-      final_summed_data = final_eval_data_noro
+      final_summed_data = final_eval_data_noro,
+      pathogen = "Norovirus"
     )
   )
 )

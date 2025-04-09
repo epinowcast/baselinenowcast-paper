@@ -4,7 +4,7 @@
 #' @param nowcast_date String indicating data to nowcst as of
 #' @param max_delay Integer indicating the maximum delays
 #'
-#' @autoglobals
+#' @autoglobal
 #' @importFrom tidyr pivot_wider
 #' @importFrom dplyr select filter mutate
 #' @importFrom epinowcast enw_filter_report_dates

@@ -116,7 +116,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     theme_bw() +
     scale_x_date(
       date_breaks = "1 week",
-      date_labels = "%Y-%m-%d",
+      date_labels = "%Y-%m-%d"
     ) +
     theme(
       axis.text.x = element_text(

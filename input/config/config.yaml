@@ -1,0 +1,23 @@
+norovirus:
+  url: https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv
+  nowcast_dates:
+  - '2023-12-10'
+  - '2024-01-21'
+  - '2024-02-25'
+  max_delay: 14.0
+  n_history_delay: 42.0
+  n_history_uncertainty: 10.0
+  borrow_delay: no
+  borrow_uncertainty: no
+measles:
+  url: https://raw.githubusercontent.com/kassteele/Nowcasting/refs/heads/master/data/measles_NL_2013_2014.dat
+  nowcast_dates:
+  - '2013-07-01'
+  - '2013-10-01'
+  - '2014-02-25'
+  max_delay: 50.0
+  n_history_delay: 52.0
+  n_history_dispersion: 50.0
+  borrow_delay: no
+  borrow_uncertainty: no
+n_draws: 100.0

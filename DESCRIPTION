@@ -30,11 +30,15 @@ BugReports: https://github.com/epinowcast/baselinenowcast-paper/issues
 Depends:
     R (>= 4.0.0)
 Imports:
-  cli,
   dplyr,
   ggplot2,
   epinowcast,
-  baselinenowcast
+  glue,
+  lubridate,
+  baselinenowcast,
+  tidyr,
+  tibble,
+  lubridate
 Suggests:
     bookdown,
     targets,
@@ -42,13 +46,17 @@ Suggests:
     rmarkdown,
     testthat (>= 3.1.9),
     usethis,
+    roxyglobals,
     withr,
     knitr
 Encoding: UTF-8
 Language: en-GB
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c("collate", "namespace", "rd",
+    "roxyglobals::global_roclet"))
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Remotes:
   epinowcast=epinowcast/epinowcast@v0.3.0,
   baselinenowcast=epinowcast/baselinenowcast
+Config/roxyglobals/filename: globals.R
+Config/roxyglobals/unique: FALSE

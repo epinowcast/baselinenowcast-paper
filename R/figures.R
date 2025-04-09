@@ -66,7 +66,10 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
                                    nowcast_dates_to_plot = NULL,
                                    pathogen = "") {
   final_df <- final_summed_data |>
-    filter(reference_date >= min(all_nowcasts$reference_date))
+    filter(
+      reference_date >= min(all_nowcasts$reference_date),
+      reference_date <= max(all_nowcasts$reference_date)
+    )
 
   if (!is.null(nowcast_dates_to_plot)) {
     all_nowcasts <- all_nowcasts |>

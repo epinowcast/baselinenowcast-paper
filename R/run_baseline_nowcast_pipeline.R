@@ -51,6 +51,13 @@ run_baselinenowcast_pipeline <- function(long_df,
     max_delay = max_delay
   )
 
+  data_as_of_df <- long_df |>
+    filter(report_date <= nowcast_date) |>
+    group_by(reference_date) |>
+    summarise(
+      data_as_of = sum(count, na.rm = TRUE)
+    )
+
   # Get the reporting triangle matrix
   triangle <- rep_tri_df |>
     select(-`reference_date`, -`nowcast_date`) |>
@@ -115,7 +122,8 @@ run_baselinenowcast_pipeline <- function(long_df,
   summary_nowcast <- summary_nowcast |>
     left_join(date_df, by = "time") |>
     select(reference_date, draw, total_count) |>
-    mutate(nowcast_date = nowcast_date)
+    mutate(nowcast_date = nowcast_date) |>
+    left_join(data_as_of_df, by = "reference_date")
 
   return(summary_nowcast)
 }

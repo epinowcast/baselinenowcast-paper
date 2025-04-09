@@ -17,7 +17,7 @@ load_data_targets <- list(
     name = measles_long,
     command = measles_line_list |>
       group_by(reference_date, report_date) |>
-      summarise(confirm = n()) |>
+      summarise(count = n()) |>
       ungroup() |>
       complete(
         reference_date = seq(
@@ -31,7 +31,7 @@ load_data_targets <- list(
           by = "days"
         )
       ) |>
-      mutate(confirm = ifelse(is.na(confirm), 0, confirm))
+      mutate(confirm = ifelse(is.na(count), 0, count))
   ),
 
   ### Load and clean norovirus data to create long tidy dataframe--------------
@@ -42,7 +42,7 @@ load_data_targets <- list(
         reference_date = specimen_date,
         report_date = specimen_date + days(days_to_reported)
       ) |>
-      rename(confirm = target) |>
-      select(reference_date, report_date, confirm)
+      rename(count = target) |>
+      select(reference_date, report_date, count)
   )
 )

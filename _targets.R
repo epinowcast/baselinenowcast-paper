@@ -15,6 +15,7 @@ library(glue)
 library(epinowcast)
 library(baselinenowcast)
 library(forecasttools)
+library(scoringutils)
 
 
 
@@ -145,24 +146,24 @@ mapped_noro <- tar_map(
   # 4. Save quantiled nowcasts for visualisation
   gen_noro_nowcasts_targets
 )
-# Aggregate the summaries for visualizing
+# Aggregate the summaried quantiles for visualising
 combined_noro_nowcasts <- tar_combine(
-  name = all_nowcasts,
+  name = all_nowcasts_noro,
   mapped_noro$summary_nowcast_noro,
   command = dplyr::bind_rows(!!!.x)
 )
-
-
-
-
-## Gather nowcast scores for other models -------------------------------
-# 1. Combine norovirus model scores by nowcast date and model type
-# 2. Combine German Nowcast Hub model nowcasts and score them by model
-# and strata
-
-
-#### Generate outputs for each model run joined to corresponding metadata
-
+#
+#
+#
+#
+# ## Gather nowcast scores for other models -------------------------------
+# # 1. Combine norovirus model scores by nowcast date and model type
+# # 2. Combine German Nowcast Hub model nowcasts and score them by model
+# # and strata
+#
+#
+# #### Generate outputs for each model run joined to corresponding metadata
+#
 ### Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
   ### Figures for simulated data case study with different model specifications

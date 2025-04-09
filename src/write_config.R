@@ -26,7 +26,8 @@ write_config <- function(noro_nowcast_dates = NULL,
       n_history_delay = 42,
       n_history_uncertainty = 10,
       borrow_delay = FALSE,
-      borrow_uncertainty = FALSE
+      borrow_uncertainty = FALSE,
+      days_to_eval = 7
     ),
     measles = list(
       url = measles_url,

@@ -17,7 +17,7 @@ gen_noro_nowcasts_targets <- list(
     name = eval_data,
     command = get_eval_data_from_long_df(
       long_df = noro_long,
-      as_of_date = ymd(nowcast_dates_noro) + days(config$eval_timeframe)
+      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_time_frame)
     )
   ),
   # Get as of data we want to join
@@ -54,7 +54,7 @@ gen_noro_nowcasts_targets <- list(
     name = su_quantile_noro,
     command = scoringutils::as_forecast_quantile(
       data = su_sample_noro,
-      probs = config$Hub_quantiles
+      probs = config$norovirus$quantiles
     )
   ),
   # Get a wide dataframe with only 50th and 95th for plotting
@@ -73,28 +73,40 @@ gen_noro_nowcasts_targets <- list(
     name = scores_sample_noro,
     command = scoringutils::score(su_sample_noro)
   ),
-  # start nolint
-  # tar_target(
-  #   name = overpred_noro,
-  #   command = scoringutils::overprediction_sample(observed = su_sample_noro$observed[su_sample_noro$sample_id ==1],
-  #                                                 predicted = as.matrix(su_sample_noro |>
-  #                                                                         select(sample_id, predicted, reference_date) |>
-  #                                                                         pivot_wider(names_from = sample_id,
-  #                                                                                     values_from = predicted) |>
-  #                                                                         select(-reference_date))
-  #   )
-  # ),
-  # end nolint
   tar_target(
     name = scores_quantile_noro,
     command = scoringutils::score(su_quantile_noro)
+  ),
+  # Breakdown by overprediction, underprediction, dispersion
+  tar_target(
+    name = observed_data,
+    command = eval_data |>
+      filter(
+        reference_date >=
+          ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1),
+        reference_date <= ymd(nowcast_dates_noro)
+      ) |>
+      pull(observed),
+    format = "rds"
+  ),
+  tar_target(
+    name = predicted_matrix,
+    command = su_quantile_noro |>
+      select(quantile_level, predicted, reference_date) |>
+      pivot_wider(
+        names_from = quantile_level,
+        values_from = predicted
+      ) |>
+      select(-reference_date) |>
+      as.matrix(),
+    format = "rds"
   ),
   tar_target(
     name = coverage_noro,
     command = scoringutils::get_coverage(
       su_quantile_noro |>
         mutate(model = "baselinenowcast"),
-      by = c("model", "nowcast_date")
+      by = c("model", "nowcast_date", "reference_date")
     )
   )
 )

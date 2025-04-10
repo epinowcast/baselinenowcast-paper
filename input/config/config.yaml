@@ -10,24 +10,34 @@ norovirus:
   borrow_delay: no
   borrow_uncertainty: no
   days_to_eval: 7.0
-measles:
-  url: https://raw.githubusercontent.com/kassteele/Nowcasting/refs/heads/master/data/measles_NL_2013_2014.dat
+  quantiles:
+  - 0.05
+  - 0.25
+  - 0.5
+  - 0.75
+  - 0.95
+  eval_time_frame: 50.0
+covid:
+  url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
   nowcast_dates:
-  - '2013-07-01'
-  - '2013-10-01'
-  - '2014-02-25'
-  max_delay: 50.0
-  n_history_delay: 52.0
-  n_history_dispersion: 50.0
-  borrow_delay: no
-  borrow_uncertainty: no
+  - '2021-12-01'
+  - '2022-02-01'
+  - '2022-04-01'
+  max_delay: 40.0
+  days_to_eval: 29.0
+  quantiles:
+  - 0.025
+  - 0.1
+  - 0.25
+  - 0.5
+  - 0.75
+  - 0.9
+  - 0.975
+  eval_timeframe: 80.0
+  base_scenario:
+    max_delay: 40.0
+    n_history_delay: 60.0
+    n_history_dispersion: 20.0
+    borrow_delay: no
+    borrow_uncertainty: no
 n_draws: 100.0
-Hub_quantiles:
-- 0.025
-- 0.1
-- 0.25
-- 0.5
-- 0.75
-- 0.9
-- 0.975
-eval_timeframe: 80.0

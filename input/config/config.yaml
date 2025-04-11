@@ -31,6 +31,44 @@ covid:
   - '2021-12-01'
   - '2022-02-01'
   - '2022-04-01'
+  - '2021-12-01'
+  - '2022-02-01'
+  - '2022-04-01'
+  age_groups:
+  - 00+
+  - 00+
+  - 00+
+  - 35-59
+  - 35-59
+  - 35-59
+  n_history_delay:
+  - 40.0
+  - 40.0
+  - 40.0
+  - 40.0
+  - 40.0
+  - 40.0
+  n_history_dispersion:
+  - 20.0
+  - 20.0
+  - 20.0
+  - 20.0
+  - 20.0
+  - 20.0
+  borrow_delay:
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  borrow_uncertainty:
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
   max_delay: 40.0
   days_to_eval: 29.0
   quantiles:
@@ -42,10 +80,5 @@ covid:
   - 0.9
   - 0.975
   eval_timeframe: 80.0
-  base_scenario:
-    max_delay: 40.0
-    n_history_delay: 60.0
-    n_history_dispersion: 20.0
-    borrow_delay: no
-    borrow_uncertainty: no
+  max_delay: 40.0
 n_draws: 100.0

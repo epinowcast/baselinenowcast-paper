@@ -70,8 +70,23 @@ data_targets <- list(
 
 ## Run real-world German Nowcast Hub case study validation --------------------
 ### Loop over each nowcast date and strata ----------------------------------
-# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-# 2. Save quantiled nowcasts for visualisation
+mapped_covid <- tar_map(
+  unlist = FALSE,
+  # Loop over each nowcast date, strata, data scenario, and model spec\
+  tar_map(
+    # These define the units of model running
+    nowcast_dates_covid = config$covid$nowcast_dates,
+    age_group_to_nowcast = config$covid$age_groups,
+    n_history_delay = config$covid$n_history_delay,
+    n_history_uncertainty = config$covid$n_history_uncertainty,
+    borrow_delay = config$covid$borrow_delay,
+    borrow_uncertainty = config$covid$borrow_uncertainty
+  ),
+  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+  # 2. Save quantiled nowcasts for visualisation
+  gen_covid_nowcast_targets
+)
+
 
 ## Run multiple model spec on real data
 ### Loop over each nowcast date, strata, data scenario, and model spec-------

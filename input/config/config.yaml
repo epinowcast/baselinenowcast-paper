@@ -1,11 +1,7 @@
 norovirus:
   url: https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv
-  nowcast_dates:
-  - '2023-12-10'
-  - '2024-01-21'
-  - '2024-02-25'
   max_delay: 14.0
-  n_history_delay: 42.0
+  n_history_delay_orig: 42.0
   n_history_uncertainty: 10.0
   borrow_delay: no
   borrow_uncertainty: no
@@ -17,6 +13,18 @@ norovirus:
   - 0.75
   - 0.95
   eval_time_frame: 50.0
+  nowcast_dates:
+  - '2023-12-10'
+  - '2024-01-21'
+  - '2024-02-25'
+  n_history_delays:
+  - 60.0
+  - 60.0
+  - 60.0
+  filter_ref_dates:
+  - no
+  - no
+  - no
 covid:
   url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
   nowcast_dates:

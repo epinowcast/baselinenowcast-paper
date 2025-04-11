@@ -1,6 +1,5 @@
 library(targets)
 library(tarchetypes)
-library(crew)
 library(readr)
 library(here)
 library(purrr)
@@ -13,16 +12,10 @@ library(tidyr)
 library(glue)
 library(epinowcast)
 library(baselinenowcast)
-library(forecasttools)
 library(scoringutils)
 
 
 
-
-controller <- crew_controller_local(
-  workers = 8,
-  seconds_idle = 600
-)
 
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
@@ -40,18 +33,16 @@ tar_option_set(
     "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
-    "baselinenowcastpaper",
     "epinowcast"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller
-  controller = controller,
   # Setup storage on workers vs on the main node.
   memory = "transient",
   storage = "worker",
   retrieval = "worker",
   format = "parquet", # default storage format
-  error = "continue"
+  error = "null"
 )
 
 config <- yaml::read_yaml(file.path(
@@ -89,12 +80,19 @@ data_targets <- list(
 # 3. Score nowcasts - X time in days and save with metadata
 # 4. Save quantiled nowcasts for visualisation
 
-## Run norovirus case study and score------------------------------------------
-### Loop over each nowcast date and model spec --------------------------------
+# Run norovirus case study and score------------------------------------------
+## Loop over each nowcast date and model spec --------------------------------
 mapped_noro <- tar_map(
   unlist = FALSE,
+  # Loop over all combinations of nowcast dates for each model spec,
+  # where model spec is defined by `filter_ref_dates` (FALSE if base, TRUE if
+  # filtering by day of week), and by the number of historical observations
+  # to use for the delay estimation. (this is either orig_n_history/7 or orig
+  # n_history)
   values = list(
-    nowcast_dates_noro = config$norovirus$nowcast_dates
+    nowcast_dates_noro = config$norovirus$nowcast_dates,
+    filter_ref_dates = config$norovirus$filter_ref_dates,
+    n_history_delay = config$norovirus$n_history_delays
   ),
   # 1. Generate nowcasts  (baselinenowcast pipeline)
   # 2. Generate evaluation data for that nowcast date
@@ -146,5 +144,7 @@ list(
   data_targets,
   mapped_noro,
   combined_noro_nowcasts,
-  plot_targets
+  combined_noro_scores,
+  combined_noro_coverage
+  # plot_targets
 )

@@ -6,8 +6,9 @@ gen_noro_nowcasts_targets <- list(
       long_df = noro_long,
       nowcast_date = nowcast_dates_noro,
       max_delay = config$norovirus$max_delay,
-      n_history_delay = config$norovirus$n_history_delay,
+      n_history_delay = n_history_delay,
       n_history_uncertainty = config$norovirus$n_history_uncertainty,
+      filter_ref_date_by_wday = filter_ref_dates,
       n_draws = config$n_draws
     ),
     format = "rds"

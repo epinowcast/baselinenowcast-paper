@@ -10,5 +10,11 @@ load_data_targets <- list(
       ) |>
       rename(count = target) |>
       select(reference_date, report_date, count)
-  )
+  ),
+
+  ## Load and clean German Nowcast Hub data ----------------------------------
+  tar_target(
+    name = covid_long_all_strata,
+    command = get_covid_data(url = config$covid$url)
+  ),
 )

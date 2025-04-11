@@ -5,6 +5,15 @@ utils::globalVariables(c(
   "count", # <get_plot_data_as_of>
   "observed", # <get_plot_data_as_of>
   "as_of_date", # <get_plot_data_as_of>
+  "reference_date", # <get_plot_mult_nowcasts>
+  "nowcast_date", # <get_plot_mult_nowcasts>
+  "q_0.025", # <get_plot_mult_nowcasts>
+  "q_0.975", # <get_plot_mult_nowcasts>
+  "q_0.25", # <get_plot_mult_nowcasts>
+  "q_0.75", # <get_plot_mult_nowcasts>
+  "q_0.5", # <get_plot_mult_nowcasts>
+  "data_as_of", # <get_plot_mult_nowcasts>
+  "observed", # <get_plot_mult_nowcasts>
   "report_date", # <get_eval_data_from_long_df>
   "reference_date", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
@@ -12,7 +21,9 @@ utils::globalVariables(c(
   "reference_date", # <get_rep_tri_from_long_df>
   "delay", # <get_rep_tri_from_long_df>
   "count", # <get_rep_tri_from_long_df>
+  "report_date", # <run_baselinenowcast_pipeline>
   "reference_date", # <run_baselinenowcast_pipeline>
+  "count", # <run_baselinenowcast_pipeline>
   "draw", # <run_baselinenowcast_pipeline>
   "total_count", # <run_baselinenowcast_pipeline>
   NULL

@@ -1,6 +1,6 @@
 gen_noro_nowcasts_targets <- list(
   tar_target(
-    name = summary_nowcast_noro,
+    name = samples_nowcast_noro,
     command = run_baselinenowcast_pipeline(
       long_df = noro_long,
       nowcast_date = nowcast_dates_noro,
@@ -10,5 +10,61 @@ gen_noro_nowcasts_targets <- list(
       n_draws = config$n_draws
     ),
     format = "rds"
+  ),
+  # Get evaluation data to join
+  tar_target(
+    name = eval_data,
+    command = get_eval_data_from_long_df(
+      long_df = noro_long,
+      as_of_date = ymd(nowcast_dates_noro) + days(config$eval_timeframe)
+    )
+  ),
+  # Get as of data we want to join
+  tar_target(
+    name = data_as_of,
+    command = noro_long |>
+      filter(report_date <= nowcast_dates_noro) |>
+      group_by(reference_date) |>
+      summarise(
+        data_as_of = sum(count, na.rm = TRUE)
+      )
+  ),
+  # Join eval data to the subset of the nowcast that we are evaluating
+  tar_target(
+    name = comb_nc_noro,
+    command = samples_nowcast_noro |>
+      filter(reference_date >=
+        ymd(nowcast_date) - days(config$norovirus$days_to_eval - 1)) |>
+      left_join(eval_data, by = "reference_date")
+  ),
+  # Convert to a forecast sample object for scoringutils
+  tar_target(
+    name = su_forecast_sample,
+    command = scoringutils::as_forecast_sample(
+      data = comb_nc_noro,
+      forecast_unit = c("nowcast_date", "reference_date"),
+      observed = "observed",
+      predicted = "total_count",
+      sample_id = "draw"
+    )
+  ),
+  # Forecast quantiles as a scoringutils forecast object
+  tar_target(
+    name = quantiled_nowcast_noro,
+    command = scoringutils::as_forecast_quantile(
+      data = su_forecast_sample,
+      probs = config$Hub_quantiles
+    )
+  ),
+  # Get a wide dataframe with only 50th and 95th for plotting
+  tar_target(
+    name = summary_nowcast_noro,
+    command = quantiled_nowcast_noro |>
+      filter(quantile_level %in% c(0.025, 0.25, 0.5, 0.75, 0.975)) |>
+      pivot_wider(
+        names_from = "quantile_level",
+        values_from = "predicted",
+        names_prefix = "q_"
+      ) |> left_join(data_as_of, by = "reference_date")
   )
 )

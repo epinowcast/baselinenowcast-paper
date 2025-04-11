@@ -9,6 +9,7 @@ norovirus:
   n_history_uncertainty: 10.0
   borrow_delay: no
   borrow_uncertainty: no
+  days_to_eval: 7.0
 measles:
   url: https://raw.githubusercontent.com/kassteele/Nowcasting/refs/heads/master/data/measles_NL_2013_2014.dat
   nowcast_dates:
@@ -21,3 +22,12 @@ measles:
   borrow_delay: no
   borrow_uncertainty: no
 n_draws: 100.0
+Hub_quantiles:
+- 0.025
+- 0.1
+- 0.25
+- 0.5
+- 0.75
+- 0.9
+- 0.975
+eval_timeframe: 80.0

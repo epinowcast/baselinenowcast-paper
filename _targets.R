@@ -16,14 +16,6 @@ library(baselinenowcast)
 library(forecasttools)
 library(scoringutils)
 
-
-
-
-controller <- crew_controller_local(
-  workers = 8,
-  seconds_idle = 600
-)
-
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
 walk(functions, source)
@@ -40,18 +32,14 @@ tar_option_set(
     "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
-    "baselinenowcastpaper",
     "epinowcast"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller
-  controller = controller,
   # Setup storage on workers vs on the main node.
   memory = "transient",
-  storage = "worker",
-  retrieval = "worker",
   format = "parquet", # default storage format
-  error = "continue"
+  error = "null"
 )
 
 config <- yaml::read_yaml(file.path(

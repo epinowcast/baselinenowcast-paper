@@ -13,7 +13,6 @@ library(tidyr)
 library(glue)
 library(epinowcast)
 library(baselinenowcast)
-library(forecasttools)
 library(scoringutils)
 
 # load functions
@@ -33,6 +32,7 @@ tar_option_set(
     "baselinenowcast",
     "readr", "tidyr",
     "epinowcast"
+    "scoringutils"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller

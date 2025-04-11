@@ -44,7 +44,12 @@ gen_noro_nowcasts_targets <- list(
     name = su_sample_noro,
     command = scoringutils::as_forecast_sample(
       data = comb_nc_noro,
-      forecast_unit = c("nowcast_date", "reference_date"),
+      forecast_unit = c(
+        "nowcast_date",
+        "reference_date",
+        "model",
+        "n_history_delay"
+      ),
       observed = "observed",
       predicted = "total_count",
       sample_id = "draw"

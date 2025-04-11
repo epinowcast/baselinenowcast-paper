@@ -28,23 +28,8 @@ jobs:
             any::lintr
             any::purrr
             any::cyclocomp
+            any::air
           needs: check
 
-      - name: Add lintr options
-        run: |
-          cat('\noptions(lintr.linter_file = ".lintr")\n', file = "~/.Rprofile", append = TRUE)
-        shell: Rscript {0}
-
-      - name: Install package
-        run: R CMD INSTALL .
-
-      - name: Extract and lint files changed by this PR
-        run: |
-          files <- gh::gh("GET https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files")
-          changed_files <- purrr::map_chr(files, "filename")
-          all_files <- list.files(recursive = TRUE)
-          exclusions_list <- as.list(setdiff(all_files, changed_files))
-          lintr::lint_package(exclusions = exclusions_list)
-        shell: Rscript {0}
-        env:
-          LINTR_ERROR_ON_LINT: true
+      - name: Add air formatting check
+        run: air format . --check

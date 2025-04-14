@@ -15,9 +15,6 @@ library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
 
-
-
-
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
 walk(functions, source)
@@ -36,6 +33,7 @@ tar_option_set(
     "readr", "tidyr",
     "zoo",
     "epinowcast"
+    "scoringutils"
   ),
   workspace_on_error = TRUE,
   memory = "transient",

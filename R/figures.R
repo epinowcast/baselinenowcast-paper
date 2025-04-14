@@ -57,7 +57,7 @@ get_plot_data_as_of <- function(final_df,
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
-#'    theme geom_ribbon
+#'    theme geom_ribbon geom_point scale_x_date element_text
 #' @importFrom glue glue
 #' @importFrom dplyr filter
 #' @returns ggplot object
@@ -66,7 +66,10 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
                                    nowcast_dates_to_plot = NULL,
                                    pathogen = "") {
   final_df <- final_summed_data |>
-    filter(reference_date >= min(all_nowcasts$reference_date))
+    filter(
+      reference_date >= min(all_nowcasts$reference_date),
+      reference_date <= max(all_nowcasts$reference_date)
+    )
 
   if (!is.null(nowcast_dates_to_plot)) {
     all_nowcasts <- all_nowcasts |>
@@ -118,12 +121,13 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     theme_bw() +
     scale_x_date(
       date_breaks = "1 week",
-      date_labels = "%Y-%m-%d",
+      date_labels = "%Y-%m-%d"
     ) +
     theme(
       axis.text.x = element_text(
         vjust = 1,
-        hjust = 1, angle = 45
+        hjust = 1,
+        angle = 45
       )
     ) +
     xlab("Reference date") +

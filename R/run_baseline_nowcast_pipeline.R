@@ -39,6 +39,7 @@
 #'    bind_rows pull
 #' @importFrom tibble tibble
 #' @importFrom tidyr pivot_wider
+#' @importFrom lubridate wday
 #' @returns `summary_nowcast` A dataframe of the expected observed total counts
 #'    for each reference date up until the nowcast date
 run_baselinenowcast_pipeline <- function(long_df,

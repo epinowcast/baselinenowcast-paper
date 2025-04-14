@@ -15,14 +15,6 @@ library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
 
-
-
-
-controller <- crew_controller_local(
-  workers = 8,
-  seconds_idle = 600
-)
-
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
 walk(functions, source)
@@ -39,19 +31,15 @@ tar_option_set(
     "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
-    "baselinenowcastpaper",
-    "epinowcast",
+    "epinowcast"
     "scoringutils"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller
-  controller = controller,
   # Setup storage on workers vs on the main node.
   memory = "transient",
-  storage = "worker",
-  retrieval = "worker",
   format = "parquet", # default storage format
-  error = "continue"
+  error = "null"
 )
 
 config <- yaml::read_yaml(file.path(
@@ -70,70 +58,27 @@ config <- yaml::read_yaml(file.path(
 # and to generate evaluation data (triangle as of nowcast date + eval time)
 data_targets <- list(
 
-  ### Model specification for German nowcast data------------------------------
-  # Specify the maximum delay, number of reference times to use for delay
-  # estimation, number of reporting triangles to use for dispersion estimate,
-  # and whether or not delay estimates/dispersion parameters are being borrowed
-
-  ## Simulated data, modified from German Nowcast Hub----------------------------
-  ### Create simulated long tidy dataframes from data above--------------------
-  # This will be for two age strata only, and with a long and short
-  # delay, creating 4 distinct datasets. Will be used to generate reporting
-  # triangles and evaluation data
-
-  ### Model specification(s) for simulated data--------------------------------
-  # Make all combinations of varying:
-  # - max delay
-  # - borrowing for delay estimation
-  # - borrowing for dispersion estimate
-  # - number of observations for delay estimation
-  # - number of reporting triangles for dispersion estimate
-
-  ## Real-world case data: Measles and norovirus-------------------------------
-
-  ### Load and clean data----------------------------------------------
+  ### Load and clean data German nowcast data and measles data
   load_data_targets
 ) # end data_targets
 
 
 # Results-------------------------------------------------------------------
 
-## Run real-world German Nowcast Hub case study-----------------------------
+## Run real-world German Nowcast Hub case study validation --------------------
 ### Loop over each nowcast date and strata ----------------------------------
 # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
 # 2. Save quantiled nowcasts for visualisation
 
-## Run simulated long delays and spare data----------------------------------
+## Run multiple model spec on real data
 ### Loop over each nowcast date, strata, data scenario, and model spec-------
 # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
 # 2. Generate evaluation data for that nowcast date
 # 3. Score nowcasts - X time in days and save with metadata
 # 4. Save quantiled nowcasts for visualisation
 
-## Run measles case study----------------------------------------------------
-### Loop over each nowcast date ---------------------------------------------
-# mapped_measles <- tar_map(
-#   values = list(
-#     nowcast_dates_measles = config$measles$nowcast_dates
-#     ),
-#   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-#   tar_target(
-#     name = summary_nowcast_measles,
-#     command = run_baselinenowcast_pipeline(
-#       long_df = measles_long_long,
-#       nowcast_date = nowcast_dates_measles,
-#       max_delay = config$measles$max_delay,
-#       n_history_delay = config$measles$n_history_delay,
-#       n_history_uncertainty = config$measles$n_history_uncertainty,
-#       n_draws = config$n_draws
-#     )
-#   )
-# ),
-# 2. Save quantiled nowcasts for visualisation
-
-
-## Run norovirus case study and score----------------------------------------
-### Loop over each nowcast date ---------------------------------------------
+## Run norovirus case study and score------------------------------------------
+### Loop over each nowcast date and model spec --------------------------------
 mapped_noro <- tar_map(
   unlist = FALSE,
   values = list(
@@ -152,19 +97,25 @@ combined_noro_nowcasts <- tar_combine(
   mapped_noro$summary_nowcast_noro,
   command = dplyr::bind_rows(!!!.x)
 )
-#
-#
-#
-#
-# ## Gather nowcast scores for other models -------------------------------
-# # 1. Combine norovirus model scores by nowcast date and model type
-# # 2. Combine German Nowcast Hub model nowcasts and score them by model
-# # and strata
-#
-#
-# #### Generate outputs for each model run joined to corresponding metadata
-#
-### Figures for real-world case study German Nowcast Hub
+combined_noro_scores <- tar_combine(
+  name = all_scores_noro,
+  mapped_noro$scores_quantile_noro,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_noro_coverage <- tar_combine(
+  name = all_coverage_noro,
+  mapped_noro$coverage_noro,
+  command = dplyr::bind_rows(!!!.x)
+)
+## Gather nowcast scores for other models -------------------------------
+# 1. Combine norovirus model scores by nowcast date and model type
+# 2. Combine German Nowcast Hub model nowcasts and score them by model
+# and strata
+
+
+#### Generate outputs for each model run joined to corresponding metadata
+
+## Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
   ### Figures for simulated data case study with different model specifications
 

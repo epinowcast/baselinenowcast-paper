@@ -99,7 +99,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
       ),
       color = "magenta4"
     ) +
-    geom_point(
+    geom_line(
       aes(
         x = reference_date,
         y = data_as_of, group = nowcast_date
@@ -107,9 +107,14 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
       color = "magenta4"
     ) +
     geom_point(
+      aes(x = reference_date, y = observed),
+      color = "darkblue"
+    ) +
+    geom_line(
       data = final_df,
       aes(x = reference_date, y = observed), color = "black"
     ) +
+    geom_vline(aes(xintercept = ymd(nowcast_date)), linetype = "dashed") +
     theme_bw() +
     scale_x_date(
       date_breaks = "1 week",
@@ -122,7 +127,8 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
       )
     ) +
     xlab("Reference date") +
-    ylab(glue("{pathogen} cases"))
+    ylab(glue("{pathogen} cases")) +
+    coord_cartesian(ylim = c(0, 1.1 * max(final_df$observed)))
 
   return(p)
 }

@@ -10,6 +10,7 @@ library(ggplot2)
 library(readr)
 library(tidyr)
 library(glue)
+library(zoo)
 library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
@@ -33,6 +34,7 @@ tar_option_set(
     "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
+    "zoo",
     "epinowcast"
   ),
   workspace_on_error = TRUE,

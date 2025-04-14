@@ -7,7 +7,8 @@
 #'    only Germany and
 get_covid_data <- function(url,
                            loc_to_subset = "DE") {
-  raw_data <- readr::read_csv(config$covid$url)
+  raw_data <- readr::read_csv(config$covid$url) |>
+    rename(value_81d = `value_>80d`) # Not sure if this is really correct but otherwise get NAs
 
   raw_data_long <- tidyr::pivot_longer(
     raw_data,

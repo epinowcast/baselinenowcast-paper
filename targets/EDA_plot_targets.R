@@ -3,21 +3,32 @@ EDA_plot_targets <- list(
   tar_target(
     name = plot_covid_data,
     command = get_plot_data_as_of(
-      final_df = covid_long_all_strata |> filter(
-        age_group == "00+",
-        report_date <= "2022-07-01"
-      ),
+      final_df = covid_long_all_strata |>
+        filter(
+          age_group == "00+",
+          report_date <= "2022-07-01"
+        ),
       as_of_dates = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid"
     ),
     format = "rds"
   ),
   tar_target(
-    name = final_eval_data_covid,
+    name = final_eval_data_covid_daily,
     command = get_eval_data_from_long_df(
       long_df = covid_long_all_strata |> filter(age_group == "00+"),
       as_of_date = ymd(max(config$covid$nowcast_dates)) + days(config$covid$eval_timeframe)
     )
+  ),
+  tar_target(
+    name = final_eval_data_covid_7d,
+    command = final_eval_data_covid_daily |>
+      arrange(reference_date) |>
+      mutate(observed = rollapply(observed,
+        width = 7,
+        FUN = sum,
+        fill = NA, align = "right"
+      ))
   ),
   # Make sure quantiled nowcasts are performing reasonably.
   tar_target(
@@ -25,14 +36,16 @@ EDA_plot_targets <- list(
     command = get_plot_mult_nowcasts(
       all_nowcasts = all_nowcasts_covid |>
         filter(
+          age_group == "00+",
           model == "base",
           n_history_delay == 41,
           n_history_uncertainty == 20,
           borrow_delay == FALSE,
           borrow_uncertainty == FALSE
         ),
-      final_summed_data = final_eval_data_covid,
-      pathogen = "Covid"
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid 7 day"
     )
   ),
   # Norovirus--------------------------------------------------------------------
@@ -63,6 +76,7 @@ EDA_plot_targets <- list(
       all_nowcasts = all_nowcasts_noro |>
         filter(model == "base", n_history_delay == 60),
       final_summed_data = final_eval_data_noro,
+      nowcast_dates_to_plot = c("2023-12-10", "2024-01-21", "2024-02-25"),
       pathogen = "Norovirus"
     )
   )

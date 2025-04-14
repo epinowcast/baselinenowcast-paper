@@ -15,7 +15,7 @@ gen_covid_nowcast_targets <- list(
     }
   ),
   tar_target(
-    name = samples_nowcast_covid,
+    name = samples_nowcast_covid_daily,
     command = run_baselinenowcast_pipeline(
       long_df = covid_long,
       nowcast_date = nowcast_dates_covid,
@@ -29,17 +29,49 @@ gen_covid_nowcast_targets <- list(
     ),
     format = "rds"
   ),
+  # Make nowcasts into 7 day incidence
+  tar_target(
+    name = samples_nowcast_covid_7d,
+    command = samples_nowcast_covid_daily |>
+      group_by(draw) |>
+      arrange(reference_date) |>
+      mutate(
+        total_count = rollapply(total_count,
+          width = 7,
+          FUN = sum,
+          fill = NA, align = "right"
+        ),
+        data_as_of = rollapply(data_as_of,
+          width = 7,
+          FUN = sum,
+          fill = NA, align = "right"
+        ),
+      ) |>
+      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
+  ),
+
   # Get evaluation data to join
   tar_target(
-    name = eval_data,
+    name = eval_data_daily,
     command = get_eval_data_from_long_df(
       long_df = covid_long,
       as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
     )
   ),
+  tar_target(
+    name = eval_data_7d,
+    command = eval_data_daily |>
+      arrange(reference_date) |>
+      mutate(observed = rollapply(observed,
+        width = 7,
+        FUN = sum,
+        fill = NA, align = "right"
+      )) |>
+      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
+  ),
   # Get as of data we want to join
   tar_target(
-    name = data_as_of,
+    name = data_as_of_daily,
     command = covid_long |>
       filter(report_date <= nowcast_dates_covid) |>
       group_by(reference_date) |>
@@ -47,13 +79,25 @@ gen_covid_nowcast_targets <- list(
         data_as_of = sum(count, na.rm = TRUE)
       )
   ),
+  # Get as of data we want to join
+  tar_target(
+    name = data_as_of_7d,
+    command = data_as_of_daily |>
+      arrange(reference_date) |>
+      mutate(data_as_of = rollapply(data_as_of,
+        width = 7,
+        FUN = sum,
+        fill = NA, align = "right"
+      )) |>
+      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
+  ),
   # Join eval data to the subset of the nowcast that we are evaluating
   tar_target(
     name = comb_nc_covid,
-    command = samples_nowcast_covid |>
+    command = samples_nowcast_covid_7d |>
       filter(reference_date >=
         ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
-      left_join(eval_data, by = "reference_date") |>
+      left_join(eval_data_7d, by = "reference_date") |>
       mutate(age_group = age_group_to_nowcast)
   ),
   # Forecast objects ----------------------------------------------------------
@@ -94,7 +138,7 @@ gen_covid_nowcast_targets <- list(
         names_from = "quantile_level",
         values_from = "predicted",
         names_prefix = "q_"
-      ) |> left_join(data_as_of, by = "reference_date")
+      ) |> left_join(data_as_of_7d, by = "reference_date")
   ),
   # Scores--------------------------------------------------------------------
   tar_target(
@@ -104,30 +148,6 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = scores_quantile_covid,
     command = scoringutils::score(su_quantile_covid)
-  ),
-  # Breakdown by overprediction, underprediction, dispersion
-  tar_target(
-    name = observed_data,
-    command = eval_data |>
-      filter(
-        reference_date >=
-          ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1),
-        reference_date <= ymd(nowcast_dates_covid)
-      ) |>
-      pull(observed),
-    format = "rds"
-  ),
-  tar_target(
-    name = predicted_matrix,
-    command = su_quantile_covid |>
-      select(quantile_level, predicted, reference_date) |>
-      pivot_wider(
-        names_from = quantile_level,
-        values_from = predicted
-      ) |>
-      select(-reference_date) |>
-      as.matrix(),
-    format = "rds"
   ),
   tar_target(
     name = coverage_covid,

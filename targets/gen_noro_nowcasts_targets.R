@@ -90,30 +90,6 @@ gen_noro_nowcasts_targets <- list(
     name = scores_quantile_noro,
     command = scoringutils::score(su_quantile_noro)
   ),
-  # Breakdown by overprediction, underprediction, dispersion
-  tar_target(
-    name = observed_data,
-    command = eval_data |>
-      filter(
-        reference_date >=
-          ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1),
-        reference_date <= ymd(nowcast_dates_noro)
-      ) |>
-      pull(observed),
-    format = "rds"
-  ),
-  tar_target(
-    name = predicted_matrix,
-    command = su_quantile_noro |>
-      select(quantile_level, predicted, reference_date) |>
-      pivot_wider(
-        names_from = quantile_level,
-        values_from = predicted
-      ) |>
-      select(-reference_date) |>
-      as.matrix(),
-    format = "rds"
-  ),
   tar_target(
     name = coverage_noro,
     command = scoringutils::get_coverage(

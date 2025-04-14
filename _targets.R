@@ -128,27 +128,27 @@ combined_noro_coverage <- tar_combine(
   mapped_noro$coverage_noro,
   command = dplyr::bind_rows(!!!.x)
 )
-# ## Gather nowcast scores for other models -------------------------------
-# # 1. Combine norovirus model scores by nowcast date and model type
-# # 2. Combine German Nowcast Hub model nowcasts and score them by model
-# # and strata
-#
-#
-# #### Generate outputs for each model run joined to corresponding metadata
-#
-# ## Figures for real-world case study German Nowcast Hub
-# plot_targets <- list(
-#   ### Figures for simulated data case study with different model specifications
-#
-#   ### EDA figures for norovirus and measles
-#   EDA_plot_targets
-#
-#   ### Figure comparing performance to German Howcast Hub models
-#
-#   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-#
-#   ### Make figures comparing performance of baselinenowcats and norovirus models
-# ) # end plot targets
+## Gather nowcast scores for other models -------------------------------
+# 1. Combine norovirus model scores by nowcast date and model type
+# 2. Combine German Nowcast Hub model nowcasts and score them by model
+# and strata
+
+
+#### Generate outputs for each model run joined to corresponding metadata
+
+## Figures for real-world case study German Nowcast Hub
+plot_targets <- list(
+  ### Figures for simulated data case study with different model specifications
+
+  ### EDA figures for norovirus and measles
+  EDA_plot_targets
+
+  ### Figure comparing performance to German Howcast Hub models
+
+  ### Figure comparing baselinenowcast performance to other norovirus nowcasts
+
+  ### Make figures comparing performance of baselinenowcats and norovirus models
+) # end plot targets
 
 
 list(
@@ -159,6 +159,7 @@ list(
   combined_noro_scores,
   combined_noro_coverage,
   # Covid targets
-  mapped_covid
-  # plot_targets
+  mapped_covid,
+  # Plotting
+  plot_targets
 )

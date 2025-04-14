@@ -88,3 +88,9 @@ covid:
   - 0.975
   eval_timeframe: 80.0
 n_draws: 100.0
+plot_quantiles:
+- 0.025
+- 0.25
+- 0.5
+- 0.75
+- 0.975

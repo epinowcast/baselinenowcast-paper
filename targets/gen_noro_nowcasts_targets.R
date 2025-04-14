@@ -63,11 +63,18 @@ gen_noro_nowcasts_targets <- list(
       probs = config$norovirus$quantiles
     )
   ),
-  # Get a wide dataframe with only 50th and 95th for plotting
+  tar_target(
+    name = su_quantile_noro_plot,
+    command = scoringutils::as_forecast_quantile(
+      data = su_sample_noro,
+      probs = config$plot_quantiles
+    )
+  ),
+  # Get a wide dataframe with only 50th and 90th for plotting
   tar_target(
     name = summary_nowcast_noro,
-    command = su_quantile_noro |>
-      filter(quantile_level %in% c(0.025, 0.25, 0.5, 0.75, 0.975)) |>
+    command = su_quantile_noro_plot |>
+      filter(quantile_level %in% config$plot_quantiles) |>
       pivot_wider(
         names_from = "quantile_level",
         values_from = "predicted",

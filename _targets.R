@@ -14,9 +14,6 @@ library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
 
-
-
-
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
 walk(functions, source)
@@ -34,13 +31,12 @@ tar_option_set(
     "baselinenowcast",
     "readr", "tidyr",
     "epinowcast"
+    "scoringutils"
   ),
   workspace_on_error = TRUE,
   # Run with a pre-specified crew controller
   # Setup storage on workers vs on the main node.
   memory = "transient",
-  storage = "worker",
-  retrieval = "worker",
   format = "parquet", # default storage format
   error = "null"
 )

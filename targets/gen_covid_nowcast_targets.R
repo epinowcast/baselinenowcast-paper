@@ -53,6 +53,97 @@ gen_covid_nowcast_targets <- list(
     command = samples_nowcast_covid |>
       filter(reference_date >=
         ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
-      left_join(eval_data, by = "reference_date")
+      left_join(eval_data, by = "reference_date") |>
+      mutate(age_group = age_group_to_nowcast)
+  ),
+  # Forecast objects ----------------------------------------------------------
+  tar_target(
+    name = su_sample_covid,
+    command = scoringutils::as_forecast_sample(
+      data = comb_nc_covid,
+      # All the metadata we will want to keep track of
+      forecast_unit = c(
+        "nowcast_date",
+        "reference_date",
+        "age_group",
+        "model",
+        "n_history_delay",
+        "n_history_uncertainty",
+        "borrow_delay",
+        "borrow_uncertainty"
+      ),
+      observed = "observed",
+      predicted = "total_count",
+      sample_id = "draw"
+    )
+  ),
+  # Forecast quantiles as a scoringutils forecast object
+  tar_target(
+    name = su_quantile_covid,
+    command = scoringutils::as_forecast_quantile(
+      data = su_sample_covid,
+      probs = config$covid$quantiles
+    )
+  ),
+  # Get a wide dataframe with only 50th and 90th for plotting
+  tar_target(
+    name = summary_nowcast_covid,
+    command = su_quantile_covid |>
+      filter(quantile_level %in% config$plot_quantiles) |>
+      pivot_wider(
+        names_from = "quantile_level",
+        values_from = "predicted",
+        names_prefix = "q_"
+      ) |> left_join(data_as_of, by = "reference_date")
+  ),
+  # Scores--------------------------------------------------------------------
+  tar_target(
+    name = scores_sample_covid,
+    command = scoringutils::score(su_sample_covid)
+  ),
+  tar_target(
+    name = scores_quantile_covid,
+    command = scoringutils::score(su_quantile_covid)
+  ),
+  # Breakdown by overprediction, underprediction, dispersion
+  tar_target(
+    name = observed_data,
+    command = eval_data |>
+      filter(
+        reference_date >=
+          ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1),
+        reference_date <= ymd(nowcast_dates_covid)
+      ) |>
+      pull(observed),
+    format = "rds"
+  ),
+  tar_target(
+    name = predicted_matrix,
+    command = su_quantile_covid |>
+      select(quantile_level, predicted, reference_date) |>
+      pivot_wider(
+        names_from = quantile_level,
+        values_from = predicted
+      ) |>
+      select(-reference_date) |>
+      as.matrix(),
+    format = "rds"
+  ),
+  tar_target(
+    name = coverage_covid,
+    command = scoringutils::get_coverage(
+      su_quantile_covid |>
+        mutate(model = "baselinenowcast"),
+      by = c(
+        "nowcast_date",
+        "reference_date",
+        "age_group",
+        "model",
+        "n_history_delay",
+        "n_history_uncertainty",
+        "borrow_delay",
+        "borrow_uncertainty"
+      )
+    )
   )
 )

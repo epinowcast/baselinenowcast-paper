@@ -117,9 +117,12 @@ gen_noro_nowcasts_targets <- list(
   tar_target(
     name = coverage_noro,
     command = scoringutils::get_coverage(
-      su_quantile_noro |>
-        mutate(model = "baselinenowcast"),
-      by = c("model", "nowcast_date", "reference_date")
+      su_quantile_noro,
+      by = c(
+        "model",
+        "nowcast_date",
+        "reference_date"
+      )
     )
   )
 )

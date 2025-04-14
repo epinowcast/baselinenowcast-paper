@@ -70,7 +70,10 @@ run_baselinenowcast_pipeline <- function(long_df,
         arrange(nowcast_date) |>
         mutate(
           model = "wday_filtered",
-          n_history_delay = n_history_delay
+          n_history_delay = n_history_delay,
+          n_history_uncertainty = n_history_uncertainty,
+          borrow_delay = borrow_delay,
+          borrow_uncertainty = borrow_uncertainty
         )
     }
   } else {
@@ -88,7 +91,10 @@ run_baselinenowcast_pipeline <- function(long_df,
       arrange(nowcast_date) |>
       mutate(
         model = "base",
-        n_history_delay = n_history_delay
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow_delay = borrow_delay,
+        borrow_uncertainty = borrow_uncertainty
       )
   }
 

@@ -1,4 +1,41 @@
 EDA_plot_targets <- list(
+  # Covid---------------------------------------------------------------------
+  tar_target(
+    name = plot_covid_data,
+    command = get_plot_data_as_of(
+      final_df = covid_long_all_strata |> filter(
+        age_group == "00+",
+        report_date <= "2022-07-01"
+      ),
+      as_of_dates = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid"
+    ),
+    format = "rds"
+  ),
+  tar_target(
+    name = final_eval_data_covid,
+    command = get_eval_data_from_long_df(
+      long_df = covid_long_all_strata |> filter(age_group == "00+"),
+      as_of_date = ymd(max(config$covid$nowcast_dates)) + days(config$covid$eval_timeframe)
+    )
+  ),
+  # Make sure quantiled nowcasts are performing reasonably.
+  tar_target(
+    name = plot_covid_nowcasts,
+    command = get_plot_mult_nowcasts(
+      all_nowcasts = all_nowcasts_covid |>
+        filter(
+          model == "base",
+          n_history_delay == 41,
+          n_history_uncertainty == 20,
+          borrow_delay == FALSE,
+          borrow_uncertainty == FALSE
+        ),
+      final_summed_data = final_eval_data_covid,
+      pathogen = "Covid"
+    )
+  ),
+  # Norovirus--------------------------------------------------------------------
   # Data plots
   tar_target(
     name = plot_noro_data,

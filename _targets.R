@@ -82,6 +82,22 @@ mapped_covid <- tar_map(
   # 2. Save quantiled nowcasts for visualisation
   gen_covid_nowcast_targets
 )
+# Aggregate the summaried quantiles for visualising
+combined_covid_nowcasts <- tar_combine(
+  name = all_nowcasts_covid,
+  mapped_covid$summary_nowcast_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_covid_scores <- tar_combine(
+  name = all_scores_covid,
+  mapped_covid$scores_quantile_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_covid_coverage <- tar_combine(
+  name = all_coverage_covid,
+  mapped_covid$coverage_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
 
 
 ## Run multiple model spec on real data
@@ -160,6 +176,9 @@ list(
   combined_noro_coverage,
   # Covid targets
   mapped_covid,
+  combined_covid_nowcasts,
+  combined_covid_scores,
+  combined_covid_coverage,
   # Plotting
   plot_targets
 )

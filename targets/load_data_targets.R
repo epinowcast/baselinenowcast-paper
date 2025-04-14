@@ -16,5 +16,5 @@ load_data_targets <- list(
   tar_target(
     name = covid_long_all_strata,
     command = get_covid_data(url = config$covid$url)
-  ),
+  )
 )

@@ -36,11 +36,7 @@ tar_option_set(
     "epinowcast"
   ),
   workspace_on_error = TRUE,
-  # Run with a pre-specified crew controller
-  # Setup storage on workers vs on the main node.
   memory = "transient",
-  storage = "worker",
-  retrieval = "worker",
   format = "parquet", # default storage format
   error = "null"
 )
@@ -73,7 +69,7 @@ data_targets <- list(
 mapped_covid <- tar_map(
   unlist = FALSE,
   # Loop over each nowcast date, strata, data scenario, and model spec\
-  tar_map(
+  values = list(
     # These define the units of model running
     nowcast_dates_covid = config$covid$nowcast_dates,
     age_group_to_nowcast = config$covid$age_groups,
@@ -132,34 +128,37 @@ combined_noro_coverage <- tar_combine(
   mapped_noro$coverage_noro,
   command = dplyr::bind_rows(!!!.x)
 )
-## Gather nowcast scores for other models -------------------------------
-# 1. Combine norovirus model scores by nowcast date and model type
-# 2. Combine German Nowcast Hub model nowcasts and score them by model
-# and strata
-
-
-#### Generate outputs for each model run joined to corresponding metadata
-
-## Figures for real-world case study German Nowcast Hub
-plot_targets <- list(
-  ### Figures for simulated data case study with different model specifications
-
-  ### EDA figures for norovirus and measles
-  EDA_plot_targets
-
-  ### Figure comparing performance to German Howcast Hub models
-
-  ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-
-  ### Make figures comparing performance of baselinenowcats and norovirus models
-) # end plot targets
+# ## Gather nowcast scores for other models -------------------------------
+# # 1. Combine norovirus model scores by nowcast date and model type
+# # 2. Combine German Nowcast Hub model nowcasts and score them by model
+# # and strata
+#
+#
+# #### Generate outputs for each model run joined to corresponding metadata
+#
+# ## Figures for real-world case study German Nowcast Hub
+# plot_targets <- list(
+#   ### Figures for simulated data case study with different model specifications
+#
+#   ### EDA figures for norovirus and measles
+#   EDA_plot_targets
+#
+#   ### Figure comparing performance to German Howcast Hub models
+#
+#   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
+#
+#   ### Make figures comparing performance of baselinenowcats and norovirus models
+# ) # end plot targets
 
 
 list(
   data_targets,
+  # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,
   combined_noro_scores,
-  combined_noro_coverage
+  combined_noro_coverage,
+  # Covid targets
+  mapped_covid
   # plot_targets
 )

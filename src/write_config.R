@@ -47,7 +47,8 @@ write_config <- function(noro_nowcast_dates = NULL,
   )
 
   # Covid vectors of permutations-------------------------------------------
-  base_delay <- 40
+  # Set up the pairwise alterations from the base case (but start with base)
+  base_delay <- 41
   base_uncertainty <- 20
   base_borrow_delay <- FALSE
   base_borrow_uncertainty <- FALSE
@@ -92,14 +93,14 @@ write_config <- function(noro_nowcast_dates = NULL,
       nowcast_dates = df_base_covid |> pull(nowcast_dates) |> as.vector(),
       age_groups = df_base_covid |> pull(age_groups) |> as.vector(),
       n_history_delay = df_base_covid |> pull(n_history_delay) |> as.vector(),
+      n_history_uncertainty = df_base_covid |> pull(n_history_uncertainty) |> as.vector(),
       n_history_dispersion = df_base_covid |> pull(n_history_uncertainty) |> as.vector(),
       borrow_delay = df_base_covid |> pull(borrow_delay) |> as.vector(),
       borrow_uncertainty = df_base_covid |> pull(borrow_uncertainty) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
-      eval_timeframe = 80,
-      max_delay = 40
+      eval_timeframe = 80
     ),
     n_draws = 100
   )

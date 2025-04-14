@@ -1,6 +1,5 @@
 library(targets)
 library(tarchetypes)
-library(crew)
 library(readr)
 library(here)
 library(purrr)
@@ -77,12 +76,19 @@ data_targets <- list(
 # 3. Score nowcasts - X time in days and save with metadata
 # 4. Save quantiled nowcasts for visualisation
 
-## Run norovirus case study and score------------------------------------------
-### Loop over each nowcast date and model spec --------------------------------
+# Run norovirus case study and score------------------------------------------
+## Loop over each nowcast date and model spec --------------------------------
 mapped_noro <- tar_map(
   unlist = FALSE,
+  # Loop over all combinations of nowcast dates for each model spec,
+  # where model spec is defined by `filter_ref_dates` (FALSE if base, TRUE if
+  # filtering by day of week), and by the number of historical observations
+  # to use for the delay estimation. (this is either orig_n_history/7 or orig
+  # n_history)
   values = list(
-    nowcast_dates_noro = config$norovirus$nowcast_dates
+    nowcast_dates_noro = config$norovirus$nowcast_dates,
+    filter_ref_dates = config$norovirus$filter_ref_dates,
+    n_history_delay = config$norovirus$n_history_delays
   ),
   # 1. Generate nowcasts  (baselinenowcast pipeline)
   # 2. Generate evaluation data for that nowcast date
@@ -134,5 +140,7 @@ list(
   data_targets,
   mapped_noro,
   combined_noro_nowcasts,
-  plot_targets
+  combined_noro_scores,
+  combined_noro_coverage
+  # plot_targets
 )

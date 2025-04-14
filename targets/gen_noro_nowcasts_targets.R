@@ -6,8 +6,9 @@ gen_noro_nowcasts_targets <- list(
       long_df = noro_long,
       nowcast_date = nowcast_dates_noro,
       max_delay = config$norovirus$max_delay,
-      n_history_delay = config$norovirus$n_history_delay,
+      n_history_delay = n_history_delay,
       n_history_uncertainty = config$norovirus$n_history_uncertainty,
+      filter_ref_date_by_wday = filter_ref_dates,
       n_draws = config$n_draws
     ),
     format = "rds"
@@ -43,7 +44,12 @@ gen_noro_nowcasts_targets <- list(
     name = su_sample_noro,
     command = scoringutils::as_forecast_sample(
       data = comb_nc_noro,
-      forecast_unit = c("nowcast_date", "reference_date"),
+      forecast_unit = c(
+        "nowcast_date",
+        "reference_date",
+        "model",
+        "n_history_delay"
+      ),
       observed = "observed",
       predicted = "total_count",
       sample_id = "draw"

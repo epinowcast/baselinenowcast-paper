@@ -82,7 +82,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       borrow_uncertainty = FALSE,
       days_to_eval = 7,
       quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95), # Used in Mellor et al
-      eval_time_frame = 50,
+      eval_timeframe = 50,
       # Variables to map over
       nowcast_dates = df_noro |> pull(nowcast_dates) |> as.vector(),
       n_history_delays = df_noro |> pull(n_history_delays) |> as.vector(),

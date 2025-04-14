@@ -16,7 +16,7 @@ EDA_plot_targets <- list(
     name = final_eval_data_noro,
     command = get_eval_data_from_long_df(
       long_df = noro_long,
-      as_of_date = ymd(max(config$norovirus$nowcast_dates)) + days(config$norovirus$eval_time_frame)
+      as_of_date = ymd(max(config$norovirus$nowcast_dates)) + days(config$norovirus$eval_timeframe)
     )
   ),
   # Make sure quantiled nowcasts are performing reasonably.

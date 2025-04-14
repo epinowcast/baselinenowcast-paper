@@ -12,7 +12,7 @@ norovirus:
   - 0.5
   - 0.75
   - 0.95
-  eval_time_frame: 50.0
+  eval_timeframe: 50.0
   nowcast_dates:
   - '2023-12-10'
   - '2024-01-21'

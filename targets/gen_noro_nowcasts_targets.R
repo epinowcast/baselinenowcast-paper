@@ -18,7 +18,7 @@ gen_noro_nowcasts_targets <- list(
     name = eval_data,
     command = get_eval_data_from_long_df(
       long_df = noro_long,
-      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_time_frame)
+      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
     )
   ),
   # Get as of data we want to join
@@ -36,7 +36,7 @@ gen_noro_nowcasts_targets <- list(
     name = comb_nc_noro,
     command = samples_nowcast_noro |>
       filter(reference_date >=
-        ymd(nowcast_date) - days(config$norovirus$days_to_eval - 1)) |>
+        ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1)) |>
       left_join(eval_data, by = "reference_date")
   ),
   # Forecast objects ----------------------------------------------------------

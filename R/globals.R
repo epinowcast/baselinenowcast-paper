@@ -21,10 +21,10 @@ utils::globalVariables(c(
   "reference_date", # <get_rep_tri_from_long_df>
   "delay", # <get_rep_tri_from_long_df>
   "count", # <get_rep_tri_from_long_df>
-  "report_date", # <run_baselinenowcast_pipeline>
-  "reference_date", # <run_baselinenowcast_pipeline>
-  "count", # <run_baselinenowcast_pipeline>
-  "draw", # <run_baselinenowcast_pipeline>
-  "total_count", # <run_baselinenowcast_pipeline>
+  "report_date", # <baselinenowcast_pipeline>
+  "reference_date", # <baselinenowcast_pipeline>
+  "count", # <baselinenowcast_pipeline>
+  "draw", # <baselinenowcast_pipeline>
+  "total_count", # <baselinenowcast_pipeline>
   NULL
 ))

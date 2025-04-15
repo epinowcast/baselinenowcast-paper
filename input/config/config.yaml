@@ -26,29 +26,37 @@ norovirus:
   - no
   - no
 covid:
-  url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
+  url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
   nowcast_dates:
   - '2021-12-01'
   - '2022-02-01'
   - '2022-04-01'
+  - '2022-04-20'
   - '2021-12-01'
   - '2022-02-01'
   - '2022-04-01'
+  - '2022-04-20'
   age_groups:
   - 00+
   - 00+
   - 00+
+  - 00+
+  - 35-59
   - 35-59
   - 35-59
   - 35-59
   n_history_delay:
-  - 41.0
-  - 41.0
-  - 41.0
-  - 41.0
-  - 41.0
-  - 41.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
   n_history_uncertainty:
+  - 20.0
+  - 20.0
   - 20.0
   - 20.0
   - 20.0
@@ -62,6 +70,8 @@ covid:
   - 20.0
   - 20.0
   - 20.0
+  - 20.0
+  - 20.0
   borrow_delay:
   - no
   - no
@@ -69,7 +79,11 @@ covid:
   - no
   - no
   - no
+  - no
+  - no
   borrow_uncertainty:
+  - no
+  - no
   - no
   - no
   - no

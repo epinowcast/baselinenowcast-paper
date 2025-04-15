@@ -7,6 +7,7 @@ library(dplyr)
 library(tibble)
 library(lubridate)
 library(ggplot2)
+library(ggpattern)
 library(readr)
 library(tidyr)
 library(glue)
@@ -31,7 +32,7 @@ purrr::walk(targets, source)
 tar_option_set(
   packages = c(
     "tibble", "dplyr", "lubridate",
-    "targets", "ggplot2",
+    "targets", "ggplot2", "ggpattern",
     "baselinenowcast",
     "readr", "tidyr",
     "zoo",
@@ -156,16 +157,16 @@ combined_noro_coverage <- tar_combine(
 
 ## Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
-  ### Figures for simulated data case study with different model specifications
 
-  ### EDA figures for norovirus and measles
-  EDA_plot_targets
+  ### EDA figures for norovirus and covid
+  EDA_plot_targets,
 
-  ### Figure comparing performance to German Howcast Hub models
+  ### Figures for German Nowcast Hub validation
+  figures_hub_validation_targets
+
+  ### Figures for comparing baselinenowcast model specificaitons
 
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-
-  ### Make figures comparing performance of baselinenowcats and norovirus models
 ) # end plot targets
 
 

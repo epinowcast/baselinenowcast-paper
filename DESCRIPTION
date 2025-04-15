@@ -32,6 +32,7 @@ Depends:
 Imports:
   dplyr,
   ggplot2,
+  ggpattern,
   epinowcast,
   glue,
   lubridate,

@@ -38,7 +38,7 @@ EDA_plot_targets <- list(
         filter(
           age_group == "00+",
           model == "base",
-          n_history_delay == 41,
+          n_history_delay == 60,
           n_history_uncertainty == 20,
           borrow_delay == FALSE,
           borrow_uncertainty == FALSE

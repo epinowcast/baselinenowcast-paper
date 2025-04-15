@@ -8,8 +8,9 @@ write_config <- function(noro_nowcast_dates = NULL,
                          borrow_delay = NULL,
                          borrow_uncertainty = NULL) {
   norovirus_url <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv" # nolint
-  covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
-
+  # covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
+  # Use the august 8th data, as is in the paper
+  covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
   if (is.null(noro_nowcast_dates)) {
     noro_nowcast_dates <- as.character(
       seq(
@@ -48,7 +49,7 @@ write_config <- function(noro_nowcast_dates = NULL,
 
   # Covid vectors of permutations-------------------------------------------
   # Set up the pairwise alterations from the base case (but start with base)
-  base_delay <- 41
+  base_delay <- 60
   base_uncertainty <- 20
   base_borrow_delay <- FALSE
   base_borrow_uncertainty <- FALSE

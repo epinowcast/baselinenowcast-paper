@@ -183,7 +183,7 @@ baselinenowcast_pipeline <- function(long_df,
     triangle_for_delay <- triangle
   }
 
-  delay <- get_delay_estimate(
+  delay_pmf <- get_delay_estimate(
     reporting_triangle = triangle_for_delay,
     max_delay = max_delay,
     n = n_history_delay
@@ -192,7 +192,7 @@ baselinenowcast_pipeline <- function(long_df,
   # Get point estimate
   point_nowcast_mat <- apply_delay(
     rep_tri_to_nowcast = triangle,
-    delay = delay
+    delay_pmf = delay_pmf
   )
 
   # Estimate uncertainty

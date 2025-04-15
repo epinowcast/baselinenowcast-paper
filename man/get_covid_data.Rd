@@ -9,7 +9,7 @@ get_covid_data(url, loc_to_subset = "DE")
 \arguments{
 \item{url}{String of url for raw data}
 
-\item{loc_to_subs}{String indicating the location to subset the data to,
+\item{loc_to_subset}{String indicating the location to subset the data to,
 default is "DE" which will get the national data for all age groups.}
 }
 \value{

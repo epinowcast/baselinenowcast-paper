@@ -6,7 +6,7 @@
 #' @param strata Character string indicating whether to summarise across the
 #'    different age strata (`"age groups"`) or across the nation as a whole
 #'    (`"national"`). Default is `"age groups"`.
-#'
+#' @autoglobal
 #' @returns ggplot object
 #' @importFrom dplyr filter
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip

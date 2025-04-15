@@ -14,6 +14,17 @@ utils::globalVariables(c(
   "q_0.5", # <get_plot_mult_nowcasts>
   "data_as_of", # <get_plot_mult_nowcasts>
   "observed", # <get_plot_mult_nowcasts>
+  "age_group", # <get_plot_bar_chart_sum_scores>
+  "model", # <get_plot_bar_chart_sum_scores>
+  "overprediction", # <get_plot_bar_chart_sum_scores>
+  "underprediction", # <get_plot_bar_chart_sum_scores>
+  "dispersion", # <get_plot_bar_chart_sum_scores>
+  "value", # <get_plot_bar_chart_sum_scores>
+  "pattern", # <get_plot_bar_chart_sum_scores>
+  "config", # <get_covid_data>
+  "value_>80d", # <get_covid_data>
+  "delay", # <get_covid_data>
+  "location", # <get_covid_data>
   "report_date", # <get_eval_data_from_long_df>
   "reference_date", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>

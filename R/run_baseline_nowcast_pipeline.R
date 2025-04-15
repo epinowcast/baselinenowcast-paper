@@ -28,10 +28,6 @@
 #'    nowcasted from, `long_df`.
 #'
 #' @autoglobal
-#' @importFrom baselinenowcast add_obs_errors_to_nowcast
-#'    aggregate_df_by_ref_time generate_point_nowcasts
-#'    generate_triangles get_delay_estimate estimate_dispersion
-#'    truncate_triangles apply_delay nowcast_list_to_df
 #' @importFrom dplyr select distinct filter mutate arrange left_join row_number
 #'    bind_rows pull
 #' @importFrom tibble tibble
@@ -115,10 +111,10 @@ run_baselinenowcast_pipeline <- function(long_df,
 #'    nowcasted from, `long_df`.
 #'
 #' @autoglobal
-#' @importFrom baselinenowcast add_obs_errors_to_nowcast
-#'    aggregate_df_by_ref_time generate_point_nowcasts
+#' @importFrom baselinenowcast add_uncertainty
+#'    aggregate_df_by_ref_time generate_pt_nowcast_mat_list
 #'    generate_triangles get_delay_estimate estimate_dispersion
-#'    truncate_triangles apply_delay nowcast_list_to_df
+#'    truncate_triangles apply_delay nowcast_matrix_list_to_df
 #' @importFrom dplyr select distinct filter mutate arrange left_join row_number
 #'    bind_rows pull
 #' @importFrom tibble tibble

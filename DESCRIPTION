@@ -37,6 +37,7 @@ Imports:
   epinowcast,
   glue,
   lubridate,
+  scoringutils,
   baselinenowcast,
   tidyr,
   tibble,

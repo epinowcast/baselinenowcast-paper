@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Update `baselinenowcast` function names to reflect updated functions.
 -   Adjust running of `baselinenowcast` pipeline to be able to bind together nowcasts from independent runs for each weekday.
 -   Set up scoring of quantiles for each nowcast.
 -   Generate quantiles for each nowcast and create plots to overlay nowcasts and final data.

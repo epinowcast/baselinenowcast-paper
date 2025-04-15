@@ -33,7 +33,7 @@ tar_option_set(
     "baselinenowcast",
     "readr", "tidyr",
     "zoo",
-    "epinowcast"
+    "epinowcast",
     "scoringutils"
   ),
   workspace_on_error = TRUE,

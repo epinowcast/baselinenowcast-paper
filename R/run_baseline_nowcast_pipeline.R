@@ -159,14 +159,14 @@ baselinenowcast_pipeline <- function(long_df,
   }
 
   delay <- get_delay_estimate(
-    triangle = triangle_for_delay,
+    reporting_triangle = triangle_for_delay,
     max_delay = max_delay,
     n = n_history_delay
   )
 
   # Get point estimate
-  point_reporting_square <- apply_delay(
-    triangle_to_nowcast = triangle,
+  point_nowcast_mat <- apply_delay(
+    rep_tri_to_nowcast = triangle,
     delay = delay
   )
 
@@ -176,25 +176,28 @@ baselinenowcast_pipeline <- function(long_df,
   } else {
     triangle_for_uncertainty <- reporting_triangle_to_borrow_uncertainty
   }
-  truncated_rts <- truncate_triangles(triangle_for_uncertainty,
+  truncated_rts <- truncate_triangles(
+    reporting_triangle = triangle_for_uncertainty,
     n = n_history_uncertainty
   )
   # Get retrospective triangles
-  retro_rts <- generate_triangles(list_of_trunc_rts = truncated_rts)
+  retro_rts <- generate_triangles(trunc_rep_mat_list = truncated_rts)
   # Get retro nowcasts
-  retro_nowcasts <- generate_point_nowcasts(list_of_rts = retro_rts)
+  retro_nowcasts <- generate_pt_nowcast_mat_list(
+    reporting_triangle_list = retro_rts
+  )
   disp_params <- estimate_dispersion(
-    list_of_nowcasts = retro_nowcasts,
-    list_of_trunc_rts = truncated_rts
+    pt_nowcast_mat_list = retro_nowcasts,
+    trunc_rep_mat_list = truncated_rts
   )
 
-  exp_obs_nowcasts <- add_obs_errors_to_nowcast(
-    comp_rep_square = point_reporting_square,
+  exp_obs_nowcasts <- add_uncertainty(
+    point_nowcast_matrix = point_nowcast_mat,
     disp = disp_params,
     n_draws = n_draws
   )
-  nowcast_draws <- nowcast_list_to_df(
-    exp_obs_nowcasts
+  nowcast_draws <- nowcast_matrix_list_to_df(
+    nowcast_matrix_list = exp_obs_nowcasts
   )
   ind_nowcast <- aggregate_df_by_ref_time(nowcast_draws)
   # Join data and observed data to this!

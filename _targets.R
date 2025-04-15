@@ -30,7 +30,7 @@ tar_option_set(
     "targets", "ggplot2",
     "baselinenowcast",
     "readr", "tidyr",
-    "epinowcast"
+    "epinowcast",
     "scoringutils"
   ),
   workspace_on_error = TRUE,

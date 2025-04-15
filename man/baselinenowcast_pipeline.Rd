@@ -49,6 +49,7 @@ is \code{NULL} corresponding to no borrowing base case.}
 \item{borrow_uncertainty}{Boolean indicating whether to use the
 \code{long_df_for_borrow} to estimate the dispersion parameters, default is
 \code{FALSE}.}
+
 }
 \value{
 \code{ind_nowcast} A dataframe of the expected observed total counts

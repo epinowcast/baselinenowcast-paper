@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Add functionality to fit the "base" scenario for to the German Nowcast Hub data for a few nowcast dates and age-groups.
 -   Update `baselinenowcast` function names to reflect updated functions.
 -   Adjust running of `baselinenowcast` pipeline to be able to bind together nowcasts from independent runs for each weekday.
 -   Set up scoring of quantiles for each nowcast.

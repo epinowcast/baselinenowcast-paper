@@ -57,7 +57,8 @@ get_plot_data_as_of <- function(final_df,
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
-#'    theme geom_ribbon geom_point scale_x_date element_text
+#'    theme geom_ribbon geom_point scale_x_date element_text coord_cartesian
+#'    geom_vline
 #' @importFrom glue glue
 #' @importFrom dplyr filter
 #' @returns ggplot object

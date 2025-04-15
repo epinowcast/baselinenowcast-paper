@@ -9,16 +9,15 @@
 #' @autoglobal
 #' @returns ggplot object
 #' @importFrom dplyr filter
+#' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip
 #' @importFrom ggpattern geom_col_pattern
 get_plot_bar_chart_sum_scores <- function(joined_scores,
                                           strata = "age groups") {
   if (strata == "age groups") {
-    joined_scores <- joined_scores |>
-      filter(age_group != "00+")
+    joined_scores <- filter(joined_scores, age_group != "00+")
   } else if (strata == "national") {
-    joined_scores <- joined_scores |>
-      filter(age_group == "00+")
+    joined_scores <- filter(joined_scores, age_group == "00+")
   }
 
   scores_summary <- joined_scores |>
@@ -43,7 +42,11 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       pattern_spacing = 0.05
     ) +
     coord_flip() +
-    labs(x = "Model", y = "WIS", pattern = "Score Breakdown", color = "Model") +
+    labs(
+      x = "Model", y = "WIS",
+      pattern = "Score Breakdown",
+      color = "Model"
+    ) +
     theme_bw()
   return(p)
 }

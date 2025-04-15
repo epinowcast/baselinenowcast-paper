@@ -7,7 +7,7 @@
 #' @autoglobal
 #' @importFrom lubridate days
 #' @importFrom readr read_csv
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer starts_with
 #' @importFrom dplyr rename mutate filter
 #' @return Data.frame of counts of cases by reference date and report date for
 #'    only Germany and
@@ -23,8 +23,10 @@ get_covid_data <- function(url,
     values_to = "count",
     names_prefix = "value_"
   ) |>
-    mutate(delay = as.integer(gsub("d.*$", "", delay))) |>
-    mutate(report_date = date + days(delay)) |>
+    mutate(
+      delay = as.integer(gsub("d.*$", "", delay)),
+      report_date = date + days(delay)
+    ) |>
     rename(reference_date = date) |>
     filter(location == {{ loc_to_subset }})
   return(raw_data_long)

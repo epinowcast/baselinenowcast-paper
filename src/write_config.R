@@ -50,7 +50,7 @@ write_config <- function(noro_nowcast_dates = NULL,
   # Covid vectors of permutations-------------------------------------------
   # Set up the pairwise alterations from the base case (but start with base)
   base_delay <- 60
-  base_uncertainty <- 20
+  base_uncertainty <- 60
   base_borrow_delay <- FALSE
   base_borrow_uncertainty <- FALSE
 

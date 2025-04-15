@@ -1,10 +1,16 @@
 write_config <- function(noro_nowcast_dates = NULL,
                          covid_nowcast_dates = NULL,
                          n_history_delays_noro = NULL,
-                         filter_ref_dates_noro = NULL) {
+                         filter_ref_dates_noro = NULL,
+                         age_groups_covid = NULL,
+                         n_history_uncertainty_covid = NULL,
+                         n_history_delay_covid = NULL,
+                         borrow_delay = NULL,
+                         borrow_uncertainty = NULL) {
   norovirus_url <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv" # nolint
-  covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
-
+  # covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
+  # Use the august 8th data, as is in the paper
+  covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
   if (is.null(noro_nowcast_dates)) {
     noro_nowcast_dates <- as.character(
       seq(
@@ -15,8 +21,8 @@ write_config <- function(noro_nowcast_dates = NULL,
     )
   }
 
-  if (is.null(noro_nowcast_dates)) {
-    noro_nowcast_dates <- as.character(
+  if (is.null(covid_nowcast_dates)) {
+    covid_nowcast_dates <- as.character(
       seq(
         from = ymd("2021-11-22"),
         to = ymd("2022-04-29"),
@@ -25,6 +31,7 @@ write_config <- function(noro_nowcast_dates = NULL,
     )
   }
 
+  # Norovirus vectors of permutations------------------------------------------
   # Set up the variations for filtering by wday
   if (is.null(filter_ref_dates_noro) & is.null(n_history_delays_noro)) {
     n_history_delay_noro_orig <- 60 # used by Mellor for their GAM *dbl check*
@@ -40,6 +47,30 @@ write_config <- function(noro_nowcast_dates = NULL,
     n_history_delays = n_history_delays_noro
   )
 
+  # Covid vectors of permutations-------------------------------------------
+  # Set up the pairwise alterations from the base case (but start with base)
+  base_delay <- 60
+  base_uncertainty <- 60
+  base_borrow_delay <- FALSE
+  base_borrow_uncertainty <- FALSE
+
+  if (is.null(age_groups_covid)) {
+    age_groups_covid <- c("00+", "00-04", "05-14", "15-34", "35-59", "60-79", "80+")
+  }
+  df_base_covid <- expand.grid(
+    nowcast_dates = covid_nowcast_dates,
+    age_groups = age_groups_covid
+  ) |>
+    mutate(
+      n_history_delay = base_delay,
+      n_history_uncertainty = base_uncertainty,
+      borrow_delay = base_borrow_delay,
+      borrow_uncertainty = base_borrow_uncertainty
+    )
+
+
+  # Permutations  of COVID hub (3 + 3 + 2 + 2)
+
 
 
   config <- list(
@@ -52,7 +83,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       borrow_uncertainty = FALSE,
       days_to_eval = 7,
       quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95), # Used in Mellor et al
-      eval_time_frame = 50,
+      eval_timeframe = 50,
       # Variables to map over
       nowcast_dates = df_noro |> pull(nowcast_dates) |> as.vector(),
       n_history_delays = df_noro |> pull(n_history_delays) |> as.vector(),
@@ -60,20 +91,20 @@ write_config <- function(noro_nowcast_dates = NULL,
     ),
     covid = list(
       url = covid_url,
-      nowcast_dates = covid_nowcast_dates,
+      nowcast_dates = df_base_covid |> pull(nowcast_dates) |> as.vector(),
+      age_groups = df_base_covid |> pull(age_groups) |> as.vector(),
+      n_history_delay = df_base_covid |> pull(n_history_delay) |> as.vector(),
+      n_history_uncertainty = df_base_covid |> pull(n_history_uncertainty) |> as.vector(),
+      n_history_dispersion = df_base_covid |> pull(n_history_uncertainty) |> as.vector(),
+      borrow_delay = df_base_covid |> pull(borrow_delay) |> as.vector(),
+      borrow_uncertainty = df_base_covid |> pull(borrow_uncertainty) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
-      eval_timeframe = 80,
-      base_scenario = list(
-        max_delay = 40,
-        n_history_delay = 60,
-        n_history_dispersion = 20,
-        borrow_delay = FALSE,
-        borrow_uncertainty = FALSE
-      )
+      eval_timeframe = 40
     ),
-    n_draws = 100
+    n_draws = 100,
+    plot_quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975)
   )
 
   yaml::write_yaml(config,

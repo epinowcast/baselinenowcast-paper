@@ -7,9 +7,11 @@ library(dplyr)
 library(tibble)
 library(lubridate)
 library(ggplot2)
+library(ggpattern)
 library(readr)
 library(tidyr)
 library(glue)
+library(zoo)
 library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
@@ -27,15 +29,14 @@ purrr::walk(targets, source)
 tar_option_set(
   packages = c(
     "tibble", "dplyr", "lubridate",
-    "targets", "ggplot2",
+    "targets", "ggplot2", "ggpattern",
     "baselinenowcast",
     "readr", "tidyr",
+    "zoo",
     "epinowcast",
     "scoringutils"
   ),
   workspace_on_error = TRUE,
-  # Run with a pre-specified crew controller
-  # Setup storage on workers vs on the main node.
   memory = "transient",
   format = "parquet", # default storage format
   error = "null"
@@ -66,8 +67,39 @@ data_targets <- list(
 
 ## Run real-world German Nowcast Hub case study validation --------------------
 ### Loop over each nowcast date and strata ----------------------------------
-# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-# 2. Save quantiled nowcasts for visualisation
+mapped_covid <- tar_map(
+  unlist = FALSE,
+  # Loop over each nowcast date, strata, data scenario, and model spec\
+  values = list(
+    # These define the units of model running
+    nowcast_dates_covid = config$covid$nowcast_dates,
+    age_group_to_nowcast = config$covid$age_groups,
+    n_history_delay = config$covid$n_history_delay,
+    n_history_uncertainty = config$covid$n_history_uncertainty,
+    borrow_delay = config$covid$borrow_delay,
+    borrow_uncertainty = config$covid$borrow_uncertainty
+  ),
+  # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+  # 2. Save quantiled nowcasts for visualisation
+  gen_covid_nowcast_targets
+)
+# Aggregate the summaried quantiles for visualising
+combined_covid_nowcasts <- tar_combine(
+  name = all_nowcasts_covid,
+  mapped_covid$summary_nowcast_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_covid_scores <- tar_combine(
+  name = all_scores_covid,
+  mapped_covid$scores_quantile_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_covid_coverage <- tar_combine(
+  name = all_coverage_covid,
+  mapped_covid$coverage_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+
 
 ## Run multiple model spec on real data
 ### Loop over each nowcast date, strata, data scenario, and model spec-------
@@ -123,24 +155,31 @@ combined_noro_coverage <- tar_combine(
 
 ## Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
-  ### Figures for simulated data case study with different model specifications
 
-  ### EDA figures for norovirus and measles
-  EDA_plot_targets
+  ### EDA figures for norovirus and covid
+  EDA_plot_targets,
 
-  ### Figure comparing performance to German Howcast Hub models
+  ### Figures for German Nowcast Hub validation
+  figures_hub_validation_targets
+
+  ### Figures for comparing baselinenowcast model specificaitons
 
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-
-  ### Make figures comparing performance of baselinenowcats and norovirus models
 ) # end plot targets
 
 
 list(
   data_targets,
+  # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,
   combined_noro_scores,
-  combined_noro_coverage
-  # plot_targets
+  combined_noro_coverage,
+  # Covid targets
+  mapped_covid,
+  combined_covid_nowcasts,
+  combined_covid_scores,
+  combined_covid_coverage,
+  # Plotting
+  plot_targets
 )

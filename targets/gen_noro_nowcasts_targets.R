@@ -18,7 +18,7 @@ gen_noro_nowcasts_targets <- list(
     name = eval_data,
     command = get_eval_data_from_long_df(
       long_df = noro_long,
-      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_time_frame)
+      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
     )
   ),
   # Get as of data we want to join
@@ -36,7 +36,7 @@ gen_noro_nowcasts_targets <- list(
     name = comb_nc_noro,
     command = samples_nowcast_noro |>
       filter(reference_date >=
-        ymd(nowcast_date) - days(config$norovirus$days_to_eval - 1)) |>
+        ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1)) |>
       left_join(eval_data, by = "reference_date")
   ),
   # Forecast objects ----------------------------------------------------------
@@ -63,11 +63,18 @@ gen_noro_nowcasts_targets <- list(
       probs = config$norovirus$quantiles
     )
   ),
-  # Get a wide dataframe with only 50th and 95th for plotting
+  tar_target(
+    name = su_quantile_noro_plot,
+    command = scoringutils::as_forecast_quantile(
+      data = su_sample_noro,
+      probs = config$plot_quantiles
+    )
+  ),
+  # Get a wide dataframe with only 50th and 90th for plotting
   tar_target(
     name = summary_nowcast_noro,
-    command = su_quantile_noro |>
-      filter(quantile_level %in% c(0.025, 0.25, 0.5, 0.75, 0.975)) |>
+    command = su_quantile_noro_plot |>
+      filter(quantile_level %in% config$plot_quantiles) |>
       pivot_wider(
         names_from = "quantile_level",
         values_from = "predicted",
@@ -86,9 +93,12 @@ gen_noro_nowcasts_targets <- list(
   tar_target(
     name = coverage_noro,
     command = scoringutils::get_coverage(
-      su_quantile_noro |>
-        mutate(model = "baselinenowcast"),
-      by = c("model", "nowcast_date", "reference_date")
+      su_quantile_noro,
+      by = c(
+        "model",
+        "nowcast_date",
+        "reference_date"
+      )
     )
   )
 )

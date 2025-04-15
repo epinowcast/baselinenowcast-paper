@@ -32,9 +32,12 @@ Depends:
 Imports:
   dplyr,
   ggplot2,
+  readr,
+  ggpattern,
   epinowcast,
   glue,
   lubridate,
+  scoringutils,
   baselinenowcast,
   tidyr,
   tibble,

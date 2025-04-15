@@ -12,7 +12,7 @@ norovirus:
   - 0.5
   - 0.75
   - 0.95
-  eval_time_frame: 50.0
+  eval_timeframe: 50.0
   nowcast_dates:
   - '2023-12-10'
   - '2024-01-21'
@@ -26,11 +26,70 @@ norovirus:
   - no
   - no
 covid:
-  url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
+  url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
   nowcast_dates:
   - '2021-12-01'
   - '2022-02-01'
   - '2022-04-01'
+  - '2022-04-20'
+  - '2021-12-01'
+  - '2022-02-01'
+  - '2022-04-01'
+  - '2022-04-20'
+  age_groups:
+  - 00+
+  - 00+
+  - 00+
+  - 00+
+  - 35-59
+  - 35-59
+  - 35-59
+  - 35-59
+  n_history_delay:
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  n_history_uncertainty:
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  n_history_dispersion:
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  borrow_delay:
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  borrow_uncertainty:
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
   max_delay: 40.0
   days_to_eval: 29.0
   quantiles:
@@ -41,11 +100,11 @@ covid:
   - 0.75
   - 0.9
   - 0.975
-  eval_timeframe: 80.0
-  base_scenario:
-    max_delay: 40.0
-    n_history_delay: 60.0
-    n_history_dispersion: 20.0
-    borrow_delay: no
-    borrow_uncertainty: no
+  eval_timeframe: 40.0
 n_draws: 100.0
+plot_quantiles:
+- 0.025
+- 0.25
+- 0.5
+- 0.75
+- 0.975

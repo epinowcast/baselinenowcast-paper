@@ -12,8 +12,9 @@ baselinenowcast_pipeline(
   n_history_delay,
   n_history_uncertainty,
   n_draws = 1000,
-  reporting_triangle_to_borrow_delay = NULL,
-  reporting_triangle_to_borrow_uncertainty = NULL
+  long_df_for_borrow = NULL,
+  borrow_delay = FALSE,
+  borrow_uncertainty = FALSE
 )
 }
 \arguments{
@@ -37,12 +38,17 @@ triangles to use to generate the estimate of the dispersion parameters}
 model to use to generate the expected observed nowcasts. Default is
 \code{1000}.}
 
-\item{reporting_triangle_to_borrow_delay}{Matrix to be used to estimate the
-delay if not the same as the one being nowcasted from, \code{long_df}.}
+\item{long_df_for_borrow}{Data.frame containing the same columns as
+\code{long_df} but from the strata to borrow delay or uncertainty from. Default
+is \code{NULL} corresponding to no borrowing base case.}
 
-\item{reporting_triangle_to_borrow_uncertainty}{Matrix to be used to
-estimate the dispersion parameters if not the same as the one being
-nowcasted from, \code{long_df}.}
+\item{borrow_delay}{Boolean indicating whether to use the
+\code{long_df_for_borrow} to estimate the delay distribution, default is
+\code{FALSE}.}
+
+\item{borrow_uncertainty}{Boolean indicating whether to use the
+\code{long_df_for_borrow} to estimate the dispersion parameters, default is
+\code{FALSE}.}
 }
 \value{
 \code{ind_nowcast} A dataframe of the expected observed total counts

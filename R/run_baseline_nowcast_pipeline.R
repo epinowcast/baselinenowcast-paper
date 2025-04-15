@@ -21,12 +21,15 @@
 #' @param n_draws Integer indicating the number of draws from the observation
 #'    model to use to generate the expected observed nowcasts. Default is
 #'    `1000`.
-#' @param reporting_triangle_to_borrow_delay Matrix to be used to estimate the
-#'    delay if not the same as the one being nowcasted from, `long_df`.
-#' @param reporting_triangle_to_borrow_uncertainty Matrix to be used to
-#'    estimate the dispersion parameters if not the same as the one being
-#'    nowcasted from, `long_df`.
-#'
+#' @param long_df_for_borrow Data.frame containing the same columns as
+#'    `long_df` but from the strata to borrow delay or uncertainty from. Default
+#'    is `NULL` corresponding to no borrowing base case.
+#' @param borrow_delay Boolean indicating whether to use the
+#'    `long_df_for_borrow` to estimate the delay distribution, default is
+#'    `FALSE`.
+#' @param borrow_uncertainty Boolean indicating whether to use the
+#'    `long_df_for_borrow` to estimate the dispersion parameters, default is
+#'    `FALSE`.
 #' @autoglobal
 #' @importFrom dplyr select distinct filter mutate arrange left_join row_number
 #'    bind_rows pull
@@ -42,8 +45,9 @@ run_baselinenowcast_pipeline <- function(long_df,
                                          n_history_uncertainty,
                                          filter_ref_date_by_wday = FALSE,
                                          n_draws = 1000,
-                                         reporting_triangle_to_borrow_delay = NULL, # nolint
-                                         reporting_triangle_to_borrow_uncertainty = NULL) { # nolint
+                                         long_df_for_borrow = NULL,
+                                         borrow_delay = FALSE,
+                                         borrow_uncertainty = FALSE) { # nolint
   summary_nowcast <- tibble()
   if (isTRUE(filter_ref_date_by_wday)) {
     for (i in 1:7) {
@@ -53,13 +57,20 @@ run_baselinenowcast_pipeline <- function(long_df,
         nowcast_date = nowcast_date,
         max_delay = max_delay,
         n_history_delay = n_history_delay,
-        n_history_uncertainty = n_history_uncertainty
+        n_history_uncertainty = n_history_uncertainty,
+        n_draws = n_draws,
+        long_df_for_borrow = long_df_for_borrow,
+        borrow_delay = borrow_delay,
+        borrow_uncertainty = borrow_uncertainty
       )
       summary_nowcast <- bind_rows(summary_nowcast, nowcast_df_wday) |>
         arrange(nowcast_date) |>
         mutate(
           model = "wday_filtered",
-          n_history_delay = n_history_delay
+          n_history_delay = n_history_delay,
+          n_history_uncertainty = n_history_uncertainty,
+          borrow_delay = borrow_delay,
+          borrow_uncertainty = borrow_uncertainty
         )
     }
   } else {
@@ -68,12 +79,19 @@ run_baselinenowcast_pipeline <- function(long_df,
       nowcast_date = nowcast_date,
       max_delay = max_delay,
       n_history_delay = n_history_delay,
-      n_history_uncertainty = n_history_uncertainty
+      n_history_uncertainty = n_history_uncertainty,
+      n_draws = n_draws,
+      long_df_for_borrow = long_df_for_borrow,
+      borrow_delay = borrow_delay,
+      borrow_uncertainty = borrow_uncertainty
     ) |>
       arrange(nowcast_date) |>
       mutate(
         model = "base",
-        n_history_delay = n_history_delay
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow_delay = borrow_delay,
+        borrow_uncertainty = borrow_uncertainty
       )
   }
 
@@ -104,11 +122,15 @@ run_baselinenowcast_pipeline <- function(long_df,
 #' @param n_draws Integer indicating the number of draws from the observation
 #'    model to use to generate the expected observed nowcasts. Default is
 #'    `1000`.
-#' @param reporting_triangle_to_borrow_delay Matrix to be used to estimate the
-#'    delay if not the same as the one being nowcasted from, `long_df`.
-#' @param reporting_triangle_to_borrow_uncertainty Matrix to be used to
-#'    estimate the dispersion parameters if not the same as the one being
-#'    nowcasted from, `long_df`.
+#' @param long_df_for_borrow Data.frame containing the same columns as
+#'    `long_df` but from the strata to borrow delay or uncertainty from. Default
+#'    is `NULL` corresponding to no borrowing base case.
+#' @param borrow_delay Boolean indicating whether to use the
+#'    `long_df_for_borrow` to estimate the delay distribution, default is
+#'    `FALSE`.
+#' @param borrow_uncertainty Boolean indicating whether to use the
+#'    `long_df_for_borrow` to estimate the dispersion parameters, default is
+#'    `FALSE`.
 #'
 #' @autoglobal
 #' @importFrom baselinenowcast add_uncertainty
@@ -127,8 +149,9 @@ baselinenowcast_pipeline <- function(long_df,
                                      n_history_delay,
                                      n_history_uncertainty,
                                      n_draws = 1000,
-                                     reporting_triangle_to_borrow_delay = NULL, # nolint
-                                     reporting_triangle_to_borrow_uncertainty = NULL) { # nolint
+                                     long_df_for_borrow = NULL,
+                                     borrow_delay = FALSE,
+                                     borrow_uncertainty = FALSE) { # nolint
   rep_tri_df <- get_rep_tri_from_long_df(
     long_df = long_df,
     nowcast_date = nowcast_date,
@@ -148,13 +171,19 @@ baselinenowcast_pipeline <- function(long_df,
     as.matrix()
 
   # Estimate delay
-  if (is.null(reporting_triangle_to_borrow_delay)) {
-    triangle_for_delay <- triangle
+  if (isTRUE(borrow_delay)) {
+    triangle_for_delay <- get_rep_tri_from_long_df(
+      long_df = long_df_for_borrow,
+      nowcast_date = nowcast_date,
+      max_delay = max_delay
+    ) |>
+      select(-`reference_date`, -`nowcast_date`) |>
+      as.matrix()
   } else {
-    triangle_for_delay <- reporting_triangle_to_borrow_delay
+    triangle_for_delay <- triangle
   }
 
-  delay <- get_delay_estimate(
+  delay_pmf <- get_delay_estimate(
     reporting_triangle = triangle_for_delay,
     max_delay = max_delay,
     n = n_history_delay
@@ -163,14 +192,20 @@ baselinenowcast_pipeline <- function(long_df,
   # Get point estimate
   point_nowcast_mat <- apply_delay(
     rep_tri_to_nowcast = triangle,
-    delay = delay
+    delay_pmf = delay_pmf
   )
 
   # Estimate uncertainty
-  if (is.null(reporting_triangle_to_borrow_uncertainty)) {
-    triangle_for_uncertainty <- triangle
+  if (isTRUE(borrow_uncertainty)) {
+    triangle_for_uncertainty <- get_rep_tri_from_long_df(
+      long_df = long_df_for_borrow,
+      nowcast_date = nowcast_date,
+      max_delay = max_delay
+    ) |>
+      select(-`reference_date`, -`nowcast_date`) |>
+      as.matrix()
   } else {
-    triangle_for_uncertainty <- reporting_triangle_to_borrow_uncertainty
+    triangle_for_uncertainty <- triangle
   }
   truncated_rts <- truncate_triangles(
     reporting_triangle = triangle_for_uncertainty,

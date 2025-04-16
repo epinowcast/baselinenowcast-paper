@@ -62,7 +62,8 @@ Then we can compute the delay distribution as described above for the reporting 
 
 The multiplicative model works by iteratively "filling in" the reporting triangle starting from the bottom left, and moving column by column from left to right until the bottom right of the triangle is filled in.
 
-![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1} *Note could replace with a schematic updating the matrix each step*
+![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1}
+
 The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above.
 This means that in practice, the reporting triangle must have at least the same number of rows as it does columns.
 The method assumes that the values at each delay $d$ for the recent times, $t$, will consist of the same proportion of the values previously reported for earlier times $t$.
@@ -142,21 +143,24 @@ We can then used the probabilistic draws to compute any desired quantiles to sum
 
 ### German nowcast Hub validation
 
-1: Relative WIS by age group
-2: Mean WIS by nowcast horizon for each model—same panel relative WIS by nowcast horizon.
-3: Empirical coverage at 50% and 90% prediction intervals for each model.
-4: Empirical coverage at 50% and 90% prediction intervals by nowcast horizon for each model.
-5: Empirical coverage at 50% and 90% prediction intervals by age group for each model configuration.
+1. Relative WIS by age group
+2. Mean WIS by nowcast horizon for each model—same panel relative WIS by nowcast horizon.
+3. Empirical coverage at 50% and 90% prediction intervals for each model.
+4. Empirical coverage at 50% and 90% prediction intervals by nowcast horizon for each model.
+5. Empirical coverage at 50% and 90% prediction intervals by age group for each model configuration.
 
 ### Model permutation study
 
-1: Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
-2: Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
-3: Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
+1. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
+2. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
+3. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
 
 ### Case study: UKHSA norovirus surveillance
 
-1: Absolute WIS over time (by week) for each model.
-2: Absolute WIS by day of week for each model.
-3: Empirical coverage at 50% and 90% prediction intervals for each model
-4: Empirical coverage at 50% and 90% prediction intervals by day of week for each model.
+1. Absolute WIS over time (by week) for each model.
+2. Absolute WIS by day of week for each model.
+3. Empirical coverage at 50% and 90% prediction intervals for each model
+4. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.
+
+
+## References

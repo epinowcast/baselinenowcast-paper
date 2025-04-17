@@ -5,7 +5,7 @@ gen_covid_nowcast_targets <- list(
       filter(age_group == age_group_to_nowcast)
   ),
   tar_target(
-    name = long_df_for_borrow_delay,
+    name = long_df_for_borrow,
     command = {
       if (isTRUE(borrow_delay)) {
         covid_long |> filter(age_group == "00+")
@@ -13,6 +13,71 @@ gen_covid_nowcast_targets <- list(
         NULL
       }
     }
+  ),
+  # Run each step of the baselinenowcast pipeline individually
+  # 1. Generate reporting triangle
+  tar_target(
+    name = triangle,
+    command = get_rep_tri_from_long_df(
+      long_df = covid_long,
+      nowcast_date = nowcast_dates_covid,
+      max_delay = config$covid$max_delay
+    ) |> select(
+      -reference_date, -nowcast_date
+    ) |>
+      as.matrix()
+  ),
+  # Get triangle for delay
+  tar_target(
+    name = triangle_for_delay,
+    command = ifelse(borrow_delay,
+      get_rep_tri_from_long_df(
+        long_df = long_df_for_borrow,
+        nowcast_date = nowcast_dates_covid,
+        max_delay = config$covid$max_delay
+      ) |>
+        select(-reference_date, -nowcast_date) |>
+        as.matrix(),
+      triangle
+    )
+  ),
+  # Estimate delay
+  tar_target(
+    name = delay_pmf,
+    command = get_delay_estimate(
+      reporting_triangle = triangle_for_delay,
+      max_delay = config$covid$max_delay,
+      n = n_history_delay
+    )
+  ),
+  # Get point nowcast matrix
+  tar_target(
+    name = point_nowcast_mat,
+    command = apply_delay(
+      rep_tri_to_nowcast = triangle,
+      delay_pmf = delay_pmd
+    )
+  ),
+  # Estimate uncertainty
+  tar_target(
+    name = triangle_for_uncertainty,
+    command = ifelse(borrow_uncertainty,
+      get_rep_tri_from_long_df(
+        long_df = long_df_for_borrow,
+        nowcast_date = nowcast_dates_covid,
+        max_delay = config$covid$max_delay
+      ) |>
+        select(-reference_date, -nowcast_date) |>
+        as.matrix(),
+      triangle
+    )
+  ),
+  tar_target(
+    name = truncated_rts,
+    command = truncate_triangles(
+      reporting_triangle = triangle_for_uncertainty,
+      n = n_history_uncertainty
+    )
   ),
   tar_target(
     name = samples_nowcast_covid_daily,

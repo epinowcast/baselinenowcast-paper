@@ -159,7 +159,14 @@ gen_covid_nowcast_targets <- list(
       left_join(date_df, by = "time") |>
       select(reference_date, draw, total_count) |>
       mutate(nowcast_date = nowcast_dates_covid) |>
-      left_join(data_as_of_df, by = "reference_date")
+      left_join(data_as_of_df, by = "reference_date") |>
+      mutate(
+        model = "base",
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow_delay = borrow_delay,
+        borrow_uncertainty = borrow_uncertainty
+      )
   ),
 
   # Make nowcasts into 7 day incidence

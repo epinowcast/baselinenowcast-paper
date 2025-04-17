@@ -14,7 +14,7 @@ get_rep_tri_from_long_df(long_df, nowcast_date, max_delay)
 \item{max_delay}{Integer indicating the maximum delays}
 }
 \value{
-Matrix in the form of a reporting triangle
+Dataframe in the form of a reporting triangle
 }
 \description{
 Get reporting triangle from long tidy dataframe

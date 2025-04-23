@@ -11,6 +11,7 @@ write_config <- function(noro_nowcast_dates = NULL,
   # covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
   # Use the august 8th data, as is in the paper
   covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
+  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/refs/heads/main/data-processed/KIT-simple_nowcast"
   if (is.null(noro_nowcast_dates)) {
     noro_nowcast_dates <- as.character(
       seq(
@@ -112,6 +113,7 @@ write_config <- function(noro_nowcast_dates = NULL,
     ),
     covid = list(
       url = covid_url,
+      KIT_nowcast_url_prefix = KIT_nowcast_url_prefix,
       nowcast_dates = df_base_covid |> pull(nowcast_dates) |> as.vector(),
       age_groups = df_base_covid |> pull(age_groups) |> as.vector(),
       n_history_delay = df_base_covid |> pull(n_history_delay) |> as.vector(),

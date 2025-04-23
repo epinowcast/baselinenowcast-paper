@@ -66,6 +66,13 @@ data_targets <- list(
 # Results-------------------------------------------------------------------
 
 ## Run real-world German Nowcast Hub case study validation --------------------
+mapped_kit_nowcasts <- tar_map(
+  unlist = FALSE,
+  values = list(
+    nowcast_dates_covid = unique(config$covid$nowcast_dates)
+  ),
+  kit_nowcast_targets
+)
 ### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
   unlist = FALSE,
@@ -171,16 +178,17 @@ plot_targets <- list(
 
 list(
   data_targets,
+  # Covid targets
+  mapped_kit_nowcasts,
+  mapped_covid,
+  combined_covid_nowcasts,
+  combined_covid_scores,
+  combined_covid_coverage,
   # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,
   combined_noro_scores,
   combined_noro_coverage,
-  # Covid targets
-  mapped_covid,
-  combined_covid_nowcasts,
-  combined_covid_scores,
-  combined_covid_coverage,
   # Plotting
   plot_targets
 )

@@ -29,6 +29,7 @@ norovirus:
   - .na
 covid:
   url: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv
+  KIT_nowcast_url_prefix: https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/refs/heads/main/data-processed/KIT-simple_nowcast
   nowcast_dates:
   - '2021-12-01'
   - '2022-02-01'

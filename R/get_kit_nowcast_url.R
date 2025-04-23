@@ -4,9 +4,9 @@
 #'    appears.
 #' @param nowcast_date Character string indicating the nowcast date.
 #'
-#' @return Character string indicating the url for the nowcast on that nowcast
+#' @return `kit_url` Character string indicating the url for the nowcast on that nowcast
 #'    date.
 get_kit_nowcast_url <- function(prefix, nowcast_date) {
-  url <- glue::glue("{prefix}/{nowcast_date}-KIT-simple_nowcast.csv")
-  return(url)
+  kit_url <- glue::glue("{prefix}/{nowcast_date}-KIT-simple_nowcast.csv")
+  return(kit_url)
 }

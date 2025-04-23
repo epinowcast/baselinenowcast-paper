@@ -13,7 +13,7 @@ appears.}
 \item{nowcast_date}{Character string indicating the nowcast date.}
 }
 \value{
-Character string indicating the url for the nowcast on that nowcast
+\code{kit_url} Character string indicating the url for the nowcast on that nowcast
 date.
 }
 \description{

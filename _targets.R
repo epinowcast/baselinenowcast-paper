@@ -80,6 +80,16 @@ combined_kit_nowcasts <- tar_combine(
   mapped_kit_nowcasts$summary_nowcast_kit,
   command = dplyr::bind_rows(!!!.x)
 )
+combined_kit_scores <- tar_combine(
+  name = all_scores_kit,
+  mapped_kit_nowcasts$scores_quantile_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_kit_coverage <- tar_combine(
+  name = all_coverage_kit,
+  mapped_kit_nowcasts$coverage_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
 
 ### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
@@ -115,6 +125,8 @@ combined_covid_coverage <- tar_combine(
   command = dplyr::bind_rows(!!!.x)
 )
 
+# Make the combinations needed for the validation study---------------------
+nowcast_hub_validation_targets
 
 ## Run multiple model spec on real data
 ### Loop over each nowcast date, strata, data scenario, and model spec-------
@@ -189,6 +201,9 @@ list(
   # Covid targets: validation
   mapped_kit_nowcasts,
   combined_kit_nowcasts,
+  combined_kit_scores,
+  combined_kit_coverage,
+  nowcast_hub_validation_targets,
   # Covid targets: model permutations
   mapped_covid,
   combined_covid_nowcasts,

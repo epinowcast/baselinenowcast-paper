@@ -118,5 +118,22 @@ kit_nowcast_targets <- list(
         values_from = "predicted",
         names_prefix = "q_"
       ) |> left_join(data_as_of_7d, by = c("reference_date", "age_group"))
+  ),
+  ## Scores -----------------------------------------------------------------
+  tar_target(
+    name = scores_quantile_kit,
+    command = scoringutils::score(su_quantile_kit)
+  ),
+  tar_target(
+    name = coverage_kit,
+    command = scoringutils::get_coverage(
+      su_quantile_kit,
+      by = c(
+        "nowcast_date",
+        "reference_date",
+        "age_group",
+        "model"
+      )
+    )
   )
 )

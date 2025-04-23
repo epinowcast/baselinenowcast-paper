@@ -8,7 +8,8 @@ get_plot_mult_nowcasts(
   all_nowcasts,
   final_summed_data,
   nowcast_dates_to_plot = NULL,
-  pathogen = ""
+  pathogen = "",
+  title = ""
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ date as of the final reference data + the eval time frame.}
 wish to plot, default is \code{NULL} which will plot all of them}
 
 \item{pathogen}{Character sting of the pathogen being plotted}
+
+\item{title}{Character string indicating the title}
 }
 \value{
 ggplot object

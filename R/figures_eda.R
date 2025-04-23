@@ -54,6 +54,7 @@ get_plot_data_as_of <- function(final_df,
 #' @param nowcast_dates_to_plot Vector of character strings of the dates you
 #'   wish to plot, default is `NULL` which will plot all of them
 #' @param pathogen Character sting of the pathogen being plotted
+#' @param title Character string indicating the title
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
@@ -66,7 +67,8 @@ get_plot_data_as_of <- function(final_df,
 get_plot_mult_nowcasts <- function(all_nowcasts,
                                    final_summed_data,
                                    nowcast_dates_to_plot = NULL,
-                                   pathogen = "") {
+                                   pathogen = "",
+                                   title = "") {
   final_df <- final_summed_data |>
     filter(
       reference_date >= min(all_nowcasts$reference_date),
@@ -134,7 +136,8 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     ) +
     xlab("Reference date") +
     ylab(glue("{pathogen} cases")) +
-    coord_cartesian(ylim = c(0, 1.1 * max(final_df$observed)))
+    coord_cartesian(ylim = c(0, 1.1 * max(final_df$observed))) +
+    ggtitle(glue("{title}"))
 
   return(p)
 }

@@ -73,6 +73,14 @@ mapped_kit_nowcasts <- tar_map(
   ),
   kit_nowcast_targets
 )
+
+# Aggregate the summaried quantiles for visualising
+combined_kit_nowcasts <- tar_combine(
+  name = all_nowcasts_kit,
+  mapped_kit_nowcasts$summary_nowcast_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
+
 ### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
   unlist = FALSE,
@@ -178,8 +186,10 @@ plot_targets <- list(
 
 list(
   data_targets,
-  # Covid targets
+  # Covid targets: validation
   mapped_kit_nowcasts,
+  combined_kit_nowcasts,
+  # Covid targets: model permutations
   mapped_covid,
   combined_covid_nowcasts,
   combined_covid_scores,

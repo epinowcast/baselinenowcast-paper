@@ -61,5 +61,5 @@ This function ingests a long form dataframe containing cases by reference
 date and report date, the data we want to nowcast from, and the
 \code{baselinenowcast} model specifications and returns a probabilistic
 nowcast of the expected total cases by reference date up until the
-specified nowcast date.
+specified nowcast date. Note this is not being used.
 }

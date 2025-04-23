@@ -61,6 +61,7 @@ get_plot_data_as_of <- function(final_df,
 #'    geom_vline
 #' @importFrom glue glue
 #' @importFrom dplyr filter
+#' @importFrom lubridate ymd
 #' @returns ggplot object
 get_plot_mult_nowcasts <- function(all_nowcasts,
                                    final_summed_data,

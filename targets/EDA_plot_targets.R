@@ -74,7 +74,7 @@ EDA_plot_targets <- list(
     name = plot_noro_nowcasts,
     command = get_plot_mult_nowcasts(
       all_nowcasts = all_nowcasts_noro |>
-        filter(model == "base", n_history_delay == 60),
+        filter(model == "base", n_history_delay == 28),
       final_summed_data = final_eval_data_noro,
       nowcast_dates_to_plot = c("2023-12-10", "2024-01-21", "2024-02-25"),
       pathogen = "Norovirus"

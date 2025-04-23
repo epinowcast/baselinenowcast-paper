@@ -1,6 +1,6 @@
 write_config <- function(noro_nowcast_dates = NULL,
                          covid_nowcast_dates = NULL,
-                         n_history_delays_noro = NULL,
+                         n_training_volume_noro = NULL,
                          filter_ref_dates_noro = NULL,
                          age_groups_covid = NULL,
                          n_history_uncertainty_covid = NULL,
@@ -32,20 +32,42 @@ write_config <- function(noro_nowcast_dates = NULL,
   }
 
   # Norovirus vectors of permutations------------------------------------------
-  # Set up the variations for filtering by wday
-  if (is.null(filter_ref_dates_noro) & is.null(n_history_delays_noro)) {
-    n_history_delay_noro_orig <- 60 # used by Mellor for their GAM *dbl check*
-    n_history_delays_noro <- c(
-      n_history_delay_noro_orig, n_history_delay_noro_orig,
-      floor(n_history_delay_noro_orig / 7)
+
+  df_base <- data.frame(
+    nowcast_dates = noro_nowcast_dates
+  ) |>
+    mutate(
+      n_history_training_volume = n_training_volume_noro,
+      filter_ref_dates = FALSE,
+      weekdays_noro = NA
     )
-    filter_ref_dates_noro <- c(FALSE, TRUE, TRUE)
+
+  # Set up the variations for filtering by wday
+  if (is.null(filter_ref_dates_noro) & is.null(n_training_volume_noro)) {
+    n_history_training_volume_orig <- 56 # used by Mellor for their GAM *dbl check*
+    n_training_volume_noro <- c(
+      n_history_training_volume_orig,
+      floor(n_history_training_volume_orig / 7)
+    )
+    filter_ref_dates_noro <- TRUE
+    weekdays_noro <- c(1:7)
+
+    df_filter <- expand.grid(
+      nowcast_dates = noro_nowcast_dates,
+      n_history_training_volume = n_training_volume_noro,
+      filter_ref_dates = TRUE,
+      weekdays_noro = weekdays_noro
+    )
+
+    df_noro <- bind_rows(
+      df_base,
+      df_filter
+    )
+  } else {
+    df_noro <- df_base
   }
-  df_noro <- expand.grid(
-    nowcast_dates = noro_nowcast_dates,
-    filter_ref_dates = filter_ref_dates_noro,
-    n_history_delays = n_history_delays_noro
-  )
+
+
 
   # Covid vectors of permutations-------------------------------------------
   # Set up the pairwise alterations from the base case (but start with base)
@@ -77,8 +99,6 @@ write_config <- function(noro_nowcast_dates = NULL,
     norovirus = list(
       url = norovirus_url,
       max_delay = 14,
-      n_history_delay_orig = 42,
-      n_history_uncertainty = 10,
       borrow_delay = FALSE,
       borrow_uncertainty = FALSE,
       days_to_eval = 7,
@@ -86,8 +106,9 @@ write_config <- function(noro_nowcast_dates = NULL,
       eval_timeframe = 50,
       # Variables to map over
       nowcast_dates = df_noro |> pull(nowcast_dates) |> as.vector(),
-      n_history_delays = df_noro |> pull(n_history_delays) |> as.vector(),
-      filter_ref_dates = df_noro |> pull(filter_ref_dates) |> as.vector()
+      n_history_training_volume = df_noro |> pull(n_history_training_volume) |> as.vector(),
+      filter_ref_dates = df_noro |> pull(filter_ref_dates) |> as.vector(),
+      weekdays_noro = df_noro |> pull(weekdays_noro) |> as.vector()
     ),
     covid = list(
       url = covid_url,

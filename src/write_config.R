@@ -76,7 +76,7 @@ write_config <- function(noro_nowcast_dates = NULL,
   base_uncertainty <- 60
   base_borrow_delay <- FALSE
   base_borrow_uncertainty <- FALSE
-
+  covid_nowcast_dates <- c("2021-12-01", "2022-02-01", "2022-04-01", "2022-04-20")
   if (is.null(age_groups_covid)) {
     age_groups_covid <- c("00+", "00-04", "05-14", "15-34", "35-59", "60-79", "80+")
   }
@@ -90,7 +90,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       borrow_delay = base_borrow_delay,
       borrow_uncertainty = base_borrow_uncertainty
     )
-
+  result_df <- create_pairwise_variations(df_base_covid)
 
   # Permutations  of COVID hub (3 + 3 + 2 + 2)
 
@@ -134,4 +134,44 @@ write_config <- function(noro_nowcast_dates = NULL,
     file = file.path("input", "config", "config.yaml")
   )
   return(NULL)
+}
+
+
+create_pairwise_variations <- function(df_base_covid) {
+  # Original parameters
+  params <- c("n_history_delay", "n_history_uncertainty", "borrow_delay", "borrow_uncertainty")
+
+  # Initialize list to store all variations
+  all_variations <- list(df_base_covid)
+
+  # Define multipliers
+  multipliers <- c(2.0, 0.5) # 200% and 50%
+
+  # Loop through each parameter
+  for (i in seq_along(params)) {
+    param_i <- params[i]
+
+    # Check if the parameter is numeric or logical
+    is_numeric <- is.numeric(df_base_covid[[param_i]])
+
+    # Create pairwise variations
+    for (j in seq_along(multipliers)) {
+      mult <- multipliers[j]
+      # Create a copy of the base dataframe
+      df_variation <- df_base_covid
+
+      # Apply multiplier to parameter i if numeric
+      if (is_numeric) {
+        df_variation[[param_i]] <- df_base_covid[[param_i]] * mult
+      } else {
+        # For logical, we toggle it (this is a simplification as multiplying by 200% or 50% doesn't make sense for logical)
+        df_variation[[param_i]] <- !df_base_covid[[param_i]]
+      }
+      if (i == 1) {
+        df_long <- df_variation
+      } else {
+        df_long <- bind_rows(df_long, df_variation)
+      }
+    }
+  }
 }

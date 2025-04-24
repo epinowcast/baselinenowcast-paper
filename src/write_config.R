@@ -76,7 +76,6 @@ write_config <- function(noro_nowcast_dates = NULL,
   base_uncertainty <- 60
   base_borrow_delay <- FALSE
   base_borrow_uncertainty <- FALSE
-  covid_nowcast_dates <- c("2021-12-01", "2022-02-01", "2022-04-01", "2022-04-20")
   if (is.null(age_groups_covid)) {
     age_groups_covid <- c("00+", "00-04", "05-14", "15-34", "35-59", "60-79", "80+")
   }
@@ -90,11 +89,8 @@ write_config <- function(noro_nowcast_dates = NULL,
       borrow_delay = base_borrow_delay,
       borrow_uncertainty = base_borrow_uncertainty
     )
+  # result_df should be 7* length of df_base_covid
   result_df <- create_pairwise_variations(df_base_covid)
-
-  # Permutations  of COVID hub (3 + 3 + 2 + 2)
-
-
 
   config <- list(
     norovirus = list(
@@ -114,13 +110,13 @@ write_config <- function(noro_nowcast_dates = NULL,
     covid = list(
       url = covid_url,
       KIT_nowcast_url_prefix = KIT_nowcast_url_prefix,
-      nowcast_dates = df_base_covid |> pull(nowcast_dates) |> as.vector(),
-      age_groups = df_base_covid |> pull(age_groups) |> as.vector(),
-      n_history_delay = df_base_covid |> pull(n_history_delay) |> as.vector(),
-      n_history_uncertainty = df_base_covid |> pull(n_history_uncertainty) |> as.vector(),
-      n_history_dispersion = df_base_covid |> pull(n_history_uncertainty) |> as.vector(),
-      borrow_delay = df_base_covid |> pull(borrow_delay) |> as.vector(),
-      borrow_uncertainty = df_base_covid |> pull(borrow_uncertainty) |> as.vector(),
+      nowcast_dates = result_df |> pull(nowcast_dates) |> as.vector(),
+      age_groups = result_df |> pull(age_groups) |> as.vector(),
+      n_history_delay = result_df |> pull(n_history_delay) |> as.vector(),
+      n_history_uncertainty = result_df |> pull(n_history_uncertainty) |> as.vector(),
+      n_history_dispersion = result_df |> pull(n_history_uncertainty) |> as.vector(),
+      borrow_delay = result_df |> pull(borrow_delay) |> as.vector(),
+      borrow_uncertainty = result_df |> pull(borrow_uncertainty) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
@@ -139,20 +135,16 @@ write_config <- function(noro_nowcast_dates = NULL,
 
 create_pairwise_variations <- function(df_base_covid) {
   # Original parameters
-  params <- c("n_history_delay", "n_history_uncertainty", "borrow_delay", "borrow_uncertainty")
+  params <- c("n_history_delay", "n_history_uncertainty")
+  params_bool <- c("borrow_delay", "borrow_uncertainty")
 
-  # Initialize list to store all variations
-  all_variations <- list(df_base_covid)
 
   # Define multipliers
   multipliers <- c(2.0, 0.5) # 200% and 50%
 
-  # Loop through each parameter
+  # Loop through each numeric parameter
   for (i in seq_along(params)) {
     param_i <- params[i]
-
-    # Check if the parameter is numeric or logical
-    is_numeric <- is.numeric(df_base_covid[[param_i]])
 
     # Create pairwise variations
     for (j in seq_along(multipliers)) {
@@ -160,18 +152,26 @@ create_pairwise_variations <- function(df_base_covid) {
       # Create a copy of the base dataframe
       df_variation <- df_base_covid
 
-      # Apply multiplier to parameter i if numeric
-      if (is_numeric) {
-        df_variation[[param_i]] <- df_base_covid[[param_i]] * mult
-      } else {
-        # For logical, we toggle it (this is a simplification as multiplying by 200% or 50% doesn't make sense for logical)
-        df_variation[[param_i]] <- !df_base_covid[[param_i]]
-      }
-      if (i == 1) {
-        df_long <- df_variation
+      # Apply multiplier to parameter i
+      df_variation[[param_i]] <- df_base_covid[[param_i]] * mult
+      if (i == 1 && j == 1) {
+        df_long <- bind_rows(df_base_covid, df_variation)
       } else {
         df_long <- bind_rows(df_long, df_variation)
       }
     }
   }
+
+  # Loop through each boolean parameter
+  for (i in seq_along(params_bool)) {
+    param_i <- params_bool[i]
+
+    # Create pairwise variations
+    df_variation <- df_base_covid
+
+    # Apply multiplier to parameter i
+    df_variation[[param_i]] <- !df_base_covid[[param_i]]
+    df_long <- bind_rows(df_long, df_variation)
+  }
+  return(df_long)
 }

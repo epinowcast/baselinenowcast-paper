@@ -7,7 +7,7 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = long_df_for_borrow,
     command = {
-      if (isTRUE(borrow_delay)) {
+      if (isTRUE(borrow_delay) || isTRUE(borrow_uncertainty)) {
         covid_long |> filter(age_group == "00+")
       } else {
         NULL

@@ -9,6 +9,7 @@
 #' @autoglobal
 #' @returns ggplot object
 #' @importFrom dplyr filter
+#' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip
 #' @importFrom ggpattern geom_col_pattern
@@ -47,6 +48,7 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       pattern = "Score Breakdown",
       color = "Model"
     ) +
-    theme_bw()
+    theme_bw() +
+    ggtitle(glue("Overall WIS: {strata}"))
   return(p)
 }

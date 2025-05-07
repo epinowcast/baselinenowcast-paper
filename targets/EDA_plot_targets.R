@@ -45,7 +45,21 @@ EDA_plot_targets <- list(
         ),
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
-      pathogen = "Covid 7 day"
+      pathogen = "Covid 7 day",
+      title = "baselinenowcast nowcasts"
+    )
+  ),
+  tar_target(
+    name = plot_kit_nowcasts,
+    command = get_plot_mult_nowcasts(
+      all_nowcasts = all_nowcasts_kit |>
+        filter(
+          age_group == "00+"
+        ),
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid 7 day",
+      title = "KIT nowcasts"
     )
   ),
   # Norovirus--------------------------------------------------------------------

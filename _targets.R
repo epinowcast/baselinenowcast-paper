@@ -66,6 +66,31 @@ data_targets <- list(
 # Results-------------------------------------------------------------------
 
 ## Run real-world German Nowcast Hub case study validation --------------------
+mapped_kit_nowcasts <- tar_map(
+  unlist = FALSE,
+  values = list(
+    nowcast_dates_covid = unique(config$covid$nowcast_dates)
+  ),
+  kit_nowcast_targets
+)
+
+# Aggregate the summaried quantiles for visualising
+combined_kit_nowcasts <- tar_combine(
+  name = all_nowcasts_kit,
+  mapped_kit_nowcasts$summary_nowcast_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_kit_scores <- tar_combine(
+  name = all_scores_kit,
+  mapped_kit_nowcasts$scores_quantile_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_kit_coverage <- tar_combine(
+  name = all_coverage_kit,
+  mapped_kit_nowcasts$coverage_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
+
 ### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
   unlist = FALSE,
@@ -100,6 +125,8 @@ combined_covid_coverage <- tar_combine(
   command = dplyr::bind_rows(!!!.x)
 )
 
+# Make the combinations needed for the validation study---------------------
+nowcast_hub_validation_targets
 
 ## Run multiple model spec on real data
 ### Loop over each nowcast date, strata, data scenario, and model spec-------
@@ -171,16 +198,22 @@ plot_targets <- list(
 
 list(
   data_targets,
+  # Covid targets: validation
+  mapped_kit_nowcasts,
+  combined_kit_nowcasts,
+  combined_kit_scores,
+  combined_kit_coverage,
+  nowcast_hub_validation_targets,
+  # Covid targets: model permutations
+  mapped_covid,
+  combined_covid_nowcasts,
+  combined_covid_scores,
+  combined_covid_coverage,
   # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,
   combined_noro_scores,
   combined_noro_coverage,
-  # Covid targets
-  mapped_covid,
-  combined_covid_nowcasts,
-  combined_covid_scores,
-  combined_covid_coverage,
   # Plotting
   plot_targets
 )

@@ -4,7 +4,7 @@
 #'    date and report date, the data we want to nowcast from, and the
 #'    `baselinenowcast` model specifications and returns a probabilistic
 #'    nowcast of the expected total cases by reference date up until the
-#'    specified nowcast date.
+#'    specified nowcast date. Note this is not being used.
 #'
 #' @param long_df Data.frame containing the following columns: `reference_date`,
 #'    `report_date`, and `count` indicating the cases on each reference
@@ -106,7 +106,7 @@ run_baselinenowcast_pipeline <- function(long_df,
 #'    date and report date, the data we want to nowcast from, and the
 #'    `baselinenowcast` model specifications and returns a probabilistic
 #'    nowcast of the expected total cases by reference date up until the
-#'    specified nowcast date.
+#'    specified nowcast date. Note this is not being used.
 #'
 #' @param long_df Data.frame containing the following columns:
 #'    `reference_date`, `report_date`, and `count` indicating the cases on

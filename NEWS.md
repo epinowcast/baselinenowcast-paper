@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Modularise the pipeline to avoid using the wrapper functions and instead generating each component of the `baselinenowcast` pipeline.
 -   First draft of supplement with mathematical model.
 -   Add functionality to fit the "base" scenario for to the German Nowcast Hub data for a few nowcast dates and age-groups.
 -   Update `baselinenowcast` function names to reflect updated functions.

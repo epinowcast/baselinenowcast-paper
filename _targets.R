@@ -120,7 +120,8 @@ mapped_noro <- tar_map(
   values = list(
     nowcast_dates_noro = config$norovirus$nowcast_dates,
     filter_ref_dates = config$norovirus$filter_ref_dates,
-    n_history_delay = config$norovirus$n_history_delays
+    n_history_training_volume = config$norovirus$n_history_training_volume,
+    weekdays_noro = config$norovirus$weekdays_noro
   ),
   # 1. Generate nowcasts  (baselinenowcast pipeline)
   # 2. Generate evaluation data for that nowcast date

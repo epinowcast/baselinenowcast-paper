@@ -1,30 +1,145 @@
 gen_noro_nowcasts_targets <- list(
-  # Nowcasts------------------------------------------------------------------
+  # If specified, filter to only a certain weekday for the pipeline run.
+  # These will be joined together later.
+  # This will ultimate produce nowcasts only for one specific weekday.
   tar_target(
-    name = samples_nowcast_noro,
-    command = run_baselinenowcast_pipeline(
-      long_df = noro_long,
+    name = noro_df,
+    command = {
+      if (filter_ref_dates == TRUE) {
+        noro_df <- noro_long[wday(noro_long$reference_date) == weekdays_noro]
+      } else {
+        noro_long
+      }
+    }
+  ),
+  # We pass into the mapping the varying length of the training volume, and
+  # then split in half for the delay and uncertainty.
+  tar_target(
+    name = n_history_delay,
+    command = floor(n_history_training_volume / 2)
+  ),
+  tar_target(
+    name = n_history_uncertainty,
+    command = floor(n_history_training_volume / 2)
+  ),
+
+
+  # Run baselinenowcast pipeline------------------------------------------------
+  # Generate reporting triangle
+  tar_target(
+    name = triangle,
+    command = get_rep_tri_from_long_df(
+      long_df = noro_df,
       nowcast_date = nowcast_dates_noro,
-      max_delay = config$norovirus$max_delay,
-      n_history_delay = n_history_delay,
-      n_history_uncertainty = config$norovirus$n_history_uncertainty,
-      filter_ref_date_by_wday = filter_ref_dates,
+      max_delay = config$noro$max_delay
+    ) |> select(
+      -reference_date, -nowcast_date
+    ) |> as.matrix()
+  ),
+  # Estimate delay
+  tar_target(
+    name = delay_pmf,
+    command = get_delay_estimate(
+      reporting_triangle = triangle,
+      max_delay = config$noro$max_delay,
+      n = n_history_delay
+    )
+  ),
+  # Get point nowcast matrix
+  tar_target(
+    name = point_nowcast_mat,
+    command = apply_delay(
+      rep_tri_to_nowcast = triangle,
+      delay_pmf = delay_pmf
+    )
+  ),
+  # Estimate uncertainty
+  # Get a list of truncated reporting triangles
+  tar_target(
+    name = truncated_rts,
+    command = truncate_triangles(
+      reporting_triangle = triangle,
+      n = n_history_uncertainty
+    ),
+    format = "rds"
+  ),
+  # Generate retrospective reporting triangles (what would have been available
+  # as of the last reference time)
+  tar_target(
+    name = retro_rts,
+    command = generate_triangles(
+      trunc_rep_mat_list = truncated_rts
+    ),
+    format = "rds"
+  ),
+  # Generate retrospective nowcasts
+  tar_target(
+    name = retro_nowcasts,
+    command = generate_pt_nowcast_mat_list(
+      reporting_triangle_list = retro_rts
+    ),
+    format = "rds"
+  ),
+  # Use retrospective nowcasts and the observations to estimate dispersion
+  tar_target(
+    name = disp_params,
+    command = estimate_dispersion(
+      pt_nowcast_mat_list = retro_nowcasts,
+      trunc_rep_mat_list = truncated_rts
+    )
+  ),
+  # Get a list of probabilistic draws of the nowcast matrices
+  tar_target(
+    name = nowcast_mat_list,
+    command = add_uncertainty(
+      point_nowcast_matrix = point_nowcast_mat,
+      disp = disp_params,
       n_draws = config$n_draws
     ),
     format = "rds"
+  ),
+  # Convert the list into a long tidy dataframe
+  tar_target(
+    name = nowcast_draws_df,
+    command = nowcast_matrix_list_to_df(
+      nowcast_matrix_list = nowcast_mat_list
+    )
+  ),
+  # Aggregate across reference times to get probabilistic draws of the
+  # final count
+  tar_target(
+    name = ind_nowcast,
+    command = aggregate_df_by_ref_time(nowcast_draws_df)
+  ),
+  # Generate summaries and scores with evaluation data-----------------------
+  # Join predictions and observations
+  tar_target(
+    name = reference_dates,
+    command = noro_df |>
+      filter(reference_date <= nowcast_dates_noro) |>
+      distinct(reference_date) |>
+      arrange(reference_date) |>
+      pull()
+  ),
+  tar_target(
+    name = date_df,
+    command = tibble(reference_date = reference_dates) |>
+      mutate(
+        time = row_number()
+      )
   ),
   # Get evaluation data to join
   tar_target(
     name = eval_data,
     command = get_eval_data_from_long_df(
-      long_df = noro_long,
+      long_df = noro_df,
       as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
     )
   ),
   # Get as of data we want to join
   tar_target(
     name = data_as_of,
-    command = noro_long |>
+    command = noro_df |>
       filter(report_date <= nowcast_dates_noro) |>
       group_by(reference_date) |>
       summarise(
@@ -34,12 +149,22 @@ gen_noro_nowcasts_targets <- list(
   # Join eval data to the subset of the nowcast that we are evaluating
   tar_target(
     name = comb_nc_noro,
-    command = samples_nowcast_noro |>
+    command = ind_nowcast |>
+      left_join(date_df, by = "time") |>
+      select(reference_date, draw, total_count) |>
+      mutate(nowcast_date = nowcast_dates_noro) |>
+      left_join(data_as_of, by = "reference_date") |>
+      mutate(
+        model = ifelse(filter_ref_dates, "filter_weekday", "base"),
+        # These will all vary
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty
+      ) |>
       filter(reference_date >=
         ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1)) |>
       left_join(eval_data, by = "reference_date")
   ),
-  # Forecast objects ----------------------------------------------------------
+  ## Forecast objects ---------------------------------------------------------
   tar_target(
     name = su_sample_noro,
     command = scoringutils::as_forecast_sample(
@@ -48,7 +173,8 @@ gen_noro_nowcasts_targets <- list(
         "nowcast_date",
         "reference_date",
         "model",
-        "n_history_delay"
+        "n_history_delay",
+        "n_history_uncertainty"
       ),
       observed = "observed",
       predicted = "total_count",
@@ -81,7 +207,7 @@ gen_noro_nowcasts_targets <- list(
         names_prefix = "q_"
       ) |> left_join(data_as_of, by = "reference_date")
   ),
-  # Scores--------------------------------------------------------------------
+  ## Scores--------------------------------------------------------------------
   tar_target(
     name = scores_sample_noro,
     command = scoringutils::score(su_sample_noro)

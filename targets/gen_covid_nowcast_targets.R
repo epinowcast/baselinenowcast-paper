@@ -63,7 +63,7 @@ gen_covid_nowcast_targets <- list(
     )
   ),
   # Estimate uncertainty
-  # Get triangle to estimate uncertainty (may or may not be reportin triangle
+  # Get triangle to estimate uncertainty (may or may not be reporting triangle
   # to nowcast)
   tar_target(
     name = triangle_for_uncertainty,

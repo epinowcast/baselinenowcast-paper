@@ -72,10 +72,9 @@ write_config <- function(noro_nowcast_dates = NULL,
 
   # Covid vectors of permutations-------------------------------------------
   # Set up the pairwise alterations from the base case (but start with base)
-  base_delay <- 60
-  base_uncertainty <- 60
-  base_borrow_delay <- FALSE
-  base_borrow_uncertainty <- FALSE
+  max_delay <- 40
+  base_n_history <- 3 * max_delay
+  base_borrow <- FALSE
   if (is.null(age_groups_covid)) {
     age_groups_covid <- c("00+", "00-04", "05-14", "15-34", "35-59", "60-79", "80+")
   }
@@ -83,21 +82,24 @@ write_config <- function(noro_nowcast_dates = NULL,
     nowcast_dates = covid_nowcast_dates,
     age_groups = age_groups_covid
   ) |>
+    # For the default case, n_history and n_uncertainty are split evenly
     mutate(
-      n_history_delay = base_delay,
-      n_history_uncertainty = base_uncertainty,
-      borrow_delay = base_borrow_delay,
-      borrow_uncertainty = base_borrow_uncertainty
+      n_history = base_n_history,
+      n_history_delay = round(0.5 * base_n_history),
+      n_history_uncertainty = round(0.5 * base_n_history),
+      borrow = base_borrow
     )
   # result_df should be 7* length of df_base_covid
-  result_df <- create_pairwise_variations(df_base_covid)
+  result_df <- create_pairwise_variations(df_base_covid,
+    multipliers = c(2.0, 0.5),
+    max_delay = max_delay
+  )
 
   config <- list(
     norovirus = list(
       url = norovirus_url,
       max_delay = 14,
-      borrow_delay = FALSE,
-      borrow_uncertainty = FALSE,
+      borrow = FALSE,
       days_to_eval = 7,
       quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95), # Used in Mellor et al
       eval_timeframe = 50,
@@ -115,8 +117,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       n_history_delay = result_df |> pull(n_history_delay) |> as.vector(),
       n_history_uncertainty = result_df |> pull(n_history_uncertainty) |> as.vector(),
       n_history_dispersion = result_df |> pull(n_history_uncertainty) |> as.vector(),
-      borrow_delay = result_df |> pull(borrow_delay) |> as.vector(),
-      borrow_uncertainty = result_df |> pull(borrow_uncertainty) |> as.vector(),
+      borrow = result_df |> pull(borrow) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
@@ -133,27 +134,38 @@ write_config <- function(noro_nowcast_dates = NULL,
 }
 
 
-create_pairwise_variations <- function(df_base_covid) {
+create_pairwise_variations <- function(df_base_covid,
+                                       multipliers = c(2.0, 0.5),
+                                       max_delay = max_delay) {
   # Original parameters
   params <- c("n_history_delay", "n_history_uncertainty")
-  params_bool <- c("borrow_delay", "borrow_uncertainty")
-
-
-  # Define multipliers
-  multipliers <- c(2.0, 0.5) # 200% and 50%
+  params_bool <- "borrow"
 
   # Loop through each numeric parameter
   for (i in seq_along(params)) {
     param_i <- params[i]
-
     # Create pairwise variations
     for (j in seq_along(multipliers)) {
       mult <- multipliers[j]
       # Create a copy of the base dataframe
       df_variation <- df_base_covid
-
+      df_variation[["n_history"]] <- df_base_covid[["n_history"]] * mult
       # Apply multiplier to parameter i
-      df_variation[[param_i]] <- df_base_covid[[param_i]] * mult
+      # Somewhat complicated logic here, essentially we want for each parameter
+      # to put all the extra training data on either delay or uncertainty
+      # (depending on which is specified). However, for `n_history_delay`,
+      # the minimum must be max_delay+1 so we need to shuffle accordingly.
+      if (param_i == "n_history_delay") {
+        df_variation[["n_history_delay"]] <- max(
+          (df_variation[["n_history"]] - df_variation[["n_history_uncertainty"]]), # nolint
+          max_delay + 1
+        )
+        df_variation[["n_history_uncertainty"]] <- df_variation[["n_history"]] - df_variation[["n_history_delay"]] # nolint
+      } else {
+        df_variation[["n_history_uncertainty"]] <- max(10, df_variation[["n_history"]] - df_variation[["n_history_delay"]]) # nolint
+        df_variation[["n_history_delay"]] <- df_variation[["n_history"]] - df_variation[["n_history_uncertainty"]]
+      }
+      df_variation[[param_i]]
       if (i == 1 && j == 1) {
         df_long <- bind_rows(df_base_covid, df_variation)
       } else {

@@ -7,8 +7,8 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = long_df_for_borrow,
     command = {
-      if (isTRUE(borrow_delay) || isTRUE(borrow_uncertainty)) {
-        covid_long |> filter(age_group == "00+")
+      if (isTRUE(borrow)) {
+        covid_long_all_strata |> filter(age_group == "00+")
       } else {
         NULL
       }
@@ -30,7 +30,7 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = triangle_for_delay,
     command = {
-      if (borrow_delay) {
+      if (borrow) {
         get_rep_tri_from_long_df(
           long_df = long_df_for_borrow,
           nowcast_date = nowcast_dates_covid,
@@ -68,7 +68,7 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = triangle_for_uncertainty,
     command = {
-      if (borrow_uncertainty) {
+      if (borrow) {
         get_rep_tri_from_long_df(
           long_df = long_df_for_borrow,
           nowcast_date = nowcast_dates_covid,
@@ -97,7 +97,7 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = retro_rts,
     command = generate_triangles(
-      trunc_rep_mat_list = truncated_rts
+      reporting_triangle_list = truncated_rts
     ),
     format = "rds"
   ),
@@ -114,32 +114,28 @@ gen_covid_nowcast_targets <- list(
     name = disp_params,
     command = estimate_dispersion(
       pt_nowcast_mat_list = retro_nowcasts,
-      trunc_rep_mat_list = truncated_rts
+      trunc_rep_tri_list = truncated_rts
     )
   ),
-  # Get a list of probabilistic draws of the nowcast matrices
+  # Extract only predictions from the matrix
   tar_target(
-    name = nowcast_mat_list,
-    command = add_uncertainty(
-      point_nowcast_matrix = point_nowcast_mat,
-      disp = disp_params,
-      n_draws = config$n_draws
+    name = pt_nowcast_pred_matrix,
+    command = extract_predictions(
+      pt_nowcast_mat = point_nowcast_mat,
+      rep_mat = triangle
     ),
     format = "rds"
   ),
-  # Convert the list into a long tidy dataframe
+  # Aggregate predictions by reference time
   tar_target(
-    name = nowcast_draws_df,
-    command = nowcast_matrix_list_to_df(
-      nowcast_matrix_list = nowcast_mat_list
+    name = pred_nowcast_draws_df,
+    command = get_nowcast_pred_draws(
+      point_nowcast_pred_matrix = pt_nowcast_pred_matrix,
+      disp = disp_params
     )
   ),
   # Aggregate across reference times to get probabilistic draws of the
   # final count
-  tar_target(
-    name = ind_nowcast,
-    command = aggregate_df_by_ref_time(nowcast_draws_df)
-  ),
   # Join predictions and observations
   tar_target(
     name = reference_dates,
@@ -167,18 +163,18 @@ gen_covid_nowcast_targets <- list(
   ),
   tar_target(
     name = samples_nowcast_covid_daily,
-    command = ind_nowcast |>
+    command = pred_nowcast_draws_df |>
       left_join(date_df, by = "time") |>
-      select(reference_date, draw, total_count) |>
+      select(reference_date, draw, pred_count) |>
       mutate(nowcast_date = nowcast_dates_covid) |>
       left_join(data_as_of_df, by = "reference_date") |>
       mutate(
+        total_count = pred_count + data_as_of,
         model = "base", # Here this is the only model we are using
         # These will all vary
         n_history_delay = n_history_delay,
         n_history_uncertainty = n_history_uncertainty,
-        borrow_delay = borrow_delay,
-        borrow_uncertainty = borrow_uncertainty
+        borrow = borrow
       )
   ),
 
@@ -262,8 +258,7 @@ gen_covid_nowcast_targets <- list(
         "model",
         "n_history_delay",
         "n_history_uncertainty",
-        "borrow_delay",
-        "borrow_uncertainty"
+        "borrow"
       ),
       observed = "observed",
       predicted = "total_count",
@@ -310,8 +305,7 @@ gen_covid_nowcast_targets <- list(
         "model",
         "n_history_delay",
         "n_history_uncertainty",
-        "borrow_delay",
-        "borrow_uncertainty"
+        "borrow"
       )
     )
   )

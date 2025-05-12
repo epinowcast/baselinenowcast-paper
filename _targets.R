@@ -107,92 +107,92 @@ mapped_covid <- tar_map(
   # 2. Save quantiled nowcasts for visualisation
   gen_covid_nowcast_targets
 )
-# # Aggregate the summaried quantiles for visualising
-# combined_covid_nowcasts <- tar_combine(
-#   name = all_nowcasts_covid,
-#   mapped_covid$summary_nowcast_covid,
-#   command = dplyr::bind_rows(!!!.x)
-# )
-# combined_covid_scores <- tar_combine(
-#   name = all_scores_covid,
-#   mapped_covid$scores_quantile_covid,
-#   command = dplyr::bind_rows(!!!.x)
-# )
-# combined_covid_coverage <- tar_combine(
-#   name = all_coverage_covid,
-#   mapped_covid$coverage_covid,
-#   command = dplyr::bind_rows(!!!.x)
-# )
-# 
-# # Make the combinations needed for the validation study---------------------
-# nowcast_hub_validation_targets
-# 
-# ## Run multiple model spec on real data
-# ### Loop over each nowcast date, strata, data scenario, and model spec-------
-# # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-# # 2. Generate evaluation data for that nowcast date
-# # 3. Score nowcasts - X time in days and save with metadata
-# # 4. Save quantiled nowcasts for visualisation
-# 
-# # Run norovirus case study and score------------------------------------------
-# ## Loop over each nowcast date and model spec --------------------------------
-# mapped_noro <- tar_map(
-#   unlist = FALSE,
-#   # Loop over all combinations of nowcast dates for each model spec,
-#   # where model spec is defined by `filter_ref_dates` (FALSE if base, TRUE if
-#   # filtering by day of week), and by the number of historical observations
-#   # to use for the delay estimation. (this is either orig_n_history/7 or orig
-#   # n_history)
-#   values = list(
-#     nowcast_dates_noro = config$norovirus$nowcast_dates,
-#     filter_ref_dates = config$norovirus$filter_ref_dates,
-#     n_history_training_volume = config$norovirus$n_history_training_volume,
-#     weekdays_noro = config$norovirus$weekdays_noro
-#   ),
-#   # 1. Generate nowcasts  (baselinenowcast pipeline)
-#   # 2. Generate evaluation data for that nowcast date
-#   # 3. Score for nowcast data - X time in days and save with metadata
-#   # here use WIS for consistency with norovirus scores
-#   # 4. Save quantiled nowcasts for visualisation
-#   gen_noro_nowcasts_targets
-# )
-# # Aggregate the summaried quantiles for visualising
-# combined_noro_nowcasts <- tar_combine(
-#   name = all_nowcasts_noro,
-#   mapped_noro$summary_nowcast_noro,
-#   command = dplyr::bind_rows(!!!.x)
-# )
-# combined_noro_scores <- tar_combine(
-#   name = all_scores_noro,
-#   mapped_noro$scores_quantile_noro,
-#   command = dplyr::bind_rows(!!!.x)
-# )
-# combined_noro_coverage <- tar_combine(
-#   name = all_coverage_noro,
-#   mapped_noro$coverage_noro,
-#   command = dplyr::bind_rows(!!!.x)
-# )
-# ## Gather nowcast scores for other models -------------------------------
-# # 1. Combine norovirus model scores by nowcast date and model type
-# # 2. Combine German Nowcast Hub model nowcasts and score them by model
-# # and strata
-# 
-# 
-# #### Generate outputs for each model run joined to corresponding metadata
-# 
-# ## Figures for real-world case study German Nowcast Hub
-# plot_targets <- list(
-# 
-#   ### EDA figures for norovirus and covid
-#   EDA_plot_targets,
-# 
-#   ### Figures for German Nowcast Hub validation
-#   figures_hub_validation_targets
-# 
-#   ### Figures for comparing baselinenowcast model specificaitons
-# 
-#   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-# ) # end plot targets
+# Aggregate the summaried quantiles for visualising
+combined_covid_nowcasts <- tar_combine(
+  name = all_nowcasts_covid,
+  mapped_covid$summary_nowcast_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_covid_scores <- tar_combine(
+  name = all_scores_covid,
+  mapped_covid$scores_quantile_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_covid_coverage <- tar_combine(
+  name = all_coverage_covid,
+  mapped_covid$coverage_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+
+# Make the combinations needed for the validation study---------------------
+nowcast_hub_validation_targets
+
+## Run multiple model spec on real data
+### Loop over each nowcast date, strata, data scenario, and model spec-------
+# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
+# 2. Generate evaluation data for that nowcast date
+# 3. Score nowcasts - X time in days and save with metadata
+# 4. Save quantiled nowcasts for visualisation
+
+# Run norovirus case study and score------------------------------------------
+## Loop over each nowcast date and model spec --------------------------------
+mapped_noro <- tar_map(
+  unlist = FALSE,
+  # Loop over all combinations of nowcast dates for each model spec,
+  # where model spec is defined by `filter_ref_dates` (FALSE if base, TRUE if
+  # filtering by day of week), and by the number of historical observations
+  # to use for the delay estimation. (this is either orig_n_history/7 or orig
+  # n_history)
+  values = list(
+    nowcast_dates_noro = config$norovirus$nowcast_dates,
+    filter_ref_dates = config$norovirus$filter_ref_dates,
+    n_history_training_volume = config$norovirus$n_history_training_volume,
+    weekdays_noro = config$norovirus$weekdays_noro
+  ),
+  # 1. Generate nowcasts  (baselinenowcast pipeline)
+  # 2. Generate evaluation data for that nowcast date
+  # 3. Score for nowcast data - X time in days and save with metadata
+  # here use WIS for consistency with norovirus scores
+  # 4. Save quantiled nowcasts for visualisation
+  gen_noro_nowcasts_targets
+)
+# Aggregate the summaried quantiles for visualising
+combined_noro_nowcasts <- tar_combine(
+  name = all_nowcasts_noro,
+  mapped_noro$summary_nowcast_noro,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_noro_scores <- tar_combine(
+  name = all_scores_noro,
+  mapped_noro$scores_quantile_noro,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_noro_coverage <- tar_combine(
+  name = all_coverage_noro,
+  mapped_noro$coverage_noro,
+  command = dplyr::bind_rows(!!!.x)
+)
+## Gather nowcast scores for other models -------------------------------
+# 1. Combine norovirus model scores by nowcast date and model type
+# 2. Combine German Nowcast Hub model nowcasts and score them by model
+# and strata
+
+
+#### Generate outputs for each model run joined to corresponding metadata
+
+# Figures for real-world case study German Nowcast Hub
+plot_targets <- list(
+
+  ### EDA figures for norovirus and covid
+  EDA_plot_targets,
+
+  ### Figures for German Nowcast Hub validation
+  figures_hub_validation_targets
+
+  ### Figures for comparing baselinenowcast model specificaitons
+
+  ### Figure comparing baselinenowcast performance to other norovirus nowcasts
+) # end plot targets
 
 
 list(
@@ -202,17 +202,17 @@ list(
   combined_kit_nowcasts,
   combined_kit_scores,
   combined_kit_coverage,
-  # nowcast_hub_validation_targets,
+  nowcast_hub_validation_targets,
   # # Covid targets: model permutations
-  mapped_covid
-  # combined_covid_nowcasts,
-  # combined_covid_scores,
-  # combined_covid_coverage,
-  # # Norovirus targets
-  # mapped_noro,
-  # combined_noro_nowcasts,
-  # combined_noro_scores,
-  # combined_noro_coverage,
-  # # Plotting
-  # plot_targets
+  mapped_covid,
+  combined_covid_nowcasts,
+  combined_covid_scores,
+  combined_covid_coverage,
+  # Norovirus targets
+  mapped_noro,
+  combined_noro_nowcasts,
+  combined_noro_scores,
+  combined_noro_coverage,
+  # Plotting
+  plot_targets
 )

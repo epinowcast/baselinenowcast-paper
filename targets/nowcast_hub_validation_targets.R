@@ -6,8 +6,7 @@ nowcast_hub_validation_targets <- list(
       filter(
         n_history_delay == 60,
         n_history_uncertainty == 60,
-        borrow_delay == FALSE,
-        borrow_uncertainty == FALSE
+        borrow == FALSE,
       ) |>
       select(colnames(all_scores_kit)) |>
       mutate(
@@ -35,8 +34,7 @@ nowcast_hub_validation_targets <- list(
       filter(
         n_history_delay == 60,
         n_history_uncertainty == 60,
-        borrow_delay == FALSE,
-        borrow_uncertainty == FALSE
+        borrow == FALSE
       ) |>
       select(colnames(all_coverage_kit)) |>
       mutate(

@@ -68,7 +68,7 @@ gen_noro_nowcasts_targets <- list(
   tar_target(
     name = retro_rts,
     command = generate_triangles(
-      trunc_rep_mat_list = truncated_rts
+      reporting_triangle_list = truncated_rts
     ),
     format = "rds"
   ),
@@ -85,31 +85,26 @@ gen_noro_nowcasts_targets <- list(
     name = disp_params,
     command = estimate_dispersion(
       pt_nowcast_mat_list = retro_nowcasts,
-      trunc_rep_mat_list = truncated_rts
+      trunc_rep_tri_list = truncated_rts
     )
   ),
   # Get a list of probabilistic draws of the nowcast matrices
   tar_target(
-    name = nowcast_mat_list,
-    command = add_uncertainty(
-      point_nowcast_matrix = point_nowcast_mat,
-      disp = disp_params,
-      n_draws = config$n_draws
+    name = pt_nowcast_pred_matrix,
+    command = extract_predictions(
+      pt_nowcast_mat = point_nowcast_mat,
+      rep_mat = triangle
     ),
     format = "rds"
   ),
-  # Convert the list into a long tidy dataframe
+  # Aggregate predictions by reference time
   tar_target(
-    name = nowcast_draws_df,
-    command = nowcast_matrix_list_to_df(
-      nowcast_matrix_list = nowcast_mat_list
+    name = pred_nowcast_draws_df,
+    command = get_nowcast_pred_draws(
+      point_nowcast_pred_matrix = pt_nowcast_pred_matrix,
+      disp = disp_params,
+      n_draws = config$n_draws
     )
-  ),
-  # Aggregate across reference times to get probabilistic draws of the
-  # final count
-  tar_target(
-    name = ind_nowcast,
-    command = aggregate_df_by_ref_time(nowcast_draws_df)
   ),
   # Generate summaries and scores with evaluation data-----------------------
   # Join predictions and observations
@@ -138,7 +133,7 @@ gen_noro_nowcasts_targets <- list(
   ),
   # Get as of data we want to join
   tar_target(
-    name = data_as_of,
+    name = data_as_of_df,
     command = noro_df |>
       filter(report_date <= nowcast_dates_noro) |>
       group_by(reference_date) |>
@@ -149,12 +144,13 @@ gen_noro_nowcasts_targets <- list(
   # Join eval data to the subset of the nowcast that we are evaluating
   tar_target(
     name = comb_nc_noro,
-    command = ind_nowcast |>
+    command = pred_nowcast_draws_df |>
       left_join(date_df, by = "time") |>
-      select(reference_date, draw, total_count) |>
+      select(reference_date, draw, pred_count) |>
       mutate(nowcast_date = nowcast_dates_noro) |>
-      left_join(data_as_of, by = "reference_date") |>
+      left_join(data_as_of_df, by = "reference_date") |>
       mutate(
+        total_count = pred_count + data_as_of,
         model = ifelse(filter_ref_dates, "filter_weekday", "base"),
         # These will all vary
         n_history_delay = n_history_delay,
@@ -205,7 +201,7 @@ gen_noro_nowcasts_targets <- list(
         names_from = "quantile_level",
         values_from = "predicted",
         names_prefix = "q_"
-      ) |> left_join(data_as_of, by = "reference_date")
+      ) |> left_join(data_as_of_df, by = "reference_date")
   ),
   ## Scores--------------------------------------------------------------------
   tar_target(

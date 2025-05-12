@@ -131,7 +131,8 @@ gen_covid_nowcast_targets <- list(
     name = pred_nowcast_draws_df,
     command = get_nowcast_pred_draws(
       point_nowcast_pred_matrix = pt_nowcast_pred_matrix,
-      disp = disp_params
+      disp = disp_params,
+      n_draws = config$n_draws
     )
   ),
   # Aggregate across reference times to get probabilistic draws of the

@@ -65,7 +65,7 @@ data_targets <- list(
 
 # Results-------------------------------------------------------------------
 
-## Run real-world German Nowcast Hub case study validation --------------------
+# Run real-world German Nowcast Hub case study validation --------------------
 mapped_kit_nowcasts <- tar_map(
   unlist = FALSE,
   values = list(
@@ -91,7 +91,7 @@ combined_kit_coverage <- tar_combine(
   command = dplyr::bind_rows(!!!.x)
 )
 
-### Loop over each nowcast date and strata ----------------------------------
+# ### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
   unlist = FALSE,
   # Loop over each nowcast date, strata, data scenario, and model spec\
@@ -101,8 +101,7 @@ mapped_covid <- tar_map(
     age_group_to_nowcast = config$covid$age_groups,
     n_history_delay = config$covid$n_history_delay,
     n_history_uncertainty = config$covid$n_history_uncertainty,
-    borrow_delay = config$covid$borrow_delay,
-    borrow_uncertainty = config$covid$borrow_uncertainty
+    borrow = config$covid$borrow
   ),
   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
   # 2. Save quantiled nowcasts for visualisation
@@ -181,7 +180,7 @@ combined_noro_coverage <- tar_combine(
 
 #### Generate outputs for each model run joined to corresponding metadata
 
-## Figures for real-world case study German Nowcast Hub
+# Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
 
   ### EDA figures for norovirus and covid
@@ -204,7 +203,7 @@ list(
   combined_kit_scores,
   combined_kit_coverage,
   nowcast_hub_validation_targets,
-  # Covid targets: model permutations
+  # # Covid targets: model permutations
   mapped_covid,
   combined_covid_nowcasts,
   combined_covid_scores,

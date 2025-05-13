@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Generate a configuration file to generate the model permuations applied to the Covid case study.
 -   Load in the KIT simple nowcasts for each nowcast date in the Covid case study and combine with the correspoding model permutation.
 -   Modularise the pipeline to avoid using the wrapper functions and instead generating each component of the `baselinenowcast` pipeline.
 -   First draft of supplement with mathematical model.

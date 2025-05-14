@@ -78,7 +78,23 @@ covid:
   - '2022-02-01'
   - '2022-04-01'
   - '2022-04-20'
+  - '2021-12-01'
+  - '2022-02-01'
+  - '2022-04-01'
+  - '2022-04-20'
+  - '2021-12-01'
+  - '2022-02-01'
+  - '2022-04-01'
+  - '2022-04-20'
   age_groups:
+  - 00+
+  - 00+
+  - 00+
+  - 00+
+  - 60-79
+  - 60-79
+  - 60-79
+  - 60-79
   - 00+
   - 00+
   - 00+
@@ -176,6 +192,14 @@ covid:
   - 60.0
   - 60.0
   - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
   n_history_uncertainty:
   - 60.0
   - 60.0
@@ -217,6 +241,14 @@ covid:
   - 10.0
   - 10.0
   - 10.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
   - 60.0
   - 60.0
   - 60.0
@@ -274,6 +306,14 @@ covid:
   - 60.0
   - 60.0
   - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
+  - 60.0
   borrow:
   - no
   - no
@@ -323,6 +363,71 @@ covid:
   - yes
   - yes
   - yes
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  partial_rep_tri:
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - yes
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
+  - no
   max_delay: 40.0
   days_to_eval: 29.0
   quantiles:

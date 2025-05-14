@@ -101,7 +101,8 @@ mapped_covid <- tar_map(
     age_group_to_nowcast = config$covid$age_groups,
     n_history_delay = config$covid$n_history_delay,
     n_history_uncertainty = config$covid$n_history_uncertainty,
-    borrow = config$covid$borrow
+    borrow = config$covid$borrow,
+    partial_rep_tri = config$covid$partial_rep_tri
   ),
   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
   # 2. Save quantiled nowcasts for visualisation

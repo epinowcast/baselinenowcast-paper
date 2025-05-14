@@ -40,6 +40,18 @@ gen_covid_nowcast_targets <- list(
             -reference_date, -nowcast_date
           ) |>
           as.matrix()
+      } else if (!partial_rep_tri) {
+        get_rep_tri_from_long_df(
+          long_df = covid_long,
+          nowcast_date = nowcast_dates_covid,
+          max_delay = config$covid$max_delay
+        ) |>
+          # Remove all the reference dates with incomplete data
+          filter(reference_date <= ymd(nowcast_dates_covid) - days(config$covid$max_delay)) |>
+          select(
+            -reference_date, -nowcast_date
+          ) |>
+          as.matrix()
       } else {
         triangle
       }
@@ -74,6 +86,18 @@ gen_covid_nowcast_targets <- list(
           nowcast_date = nowcast_dates_covid,
           max_delay = config$covid$max_delay
         ) |>
+          select(
+            -reference_date, -nowcast_date
+          ) |>
+          as.matrix()
+      } else if (!partial_rep_tri) {
+        get_rep_tri_from_long_df(
+          long_df = covid_long,
+          nowcast_date = nowcast_dates_covid,
+          max_delay = config$covid$max_delay
+        ) |>
+          # Remove all the reference dates with incomplete data
+          filter(reference_date <= ymd(nowcast_dates_covid) - days(config$covid$max_delay)) |>
           select(
             -reference_date, -nowcast_date
           ) |>

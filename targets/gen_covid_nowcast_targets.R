@@ -121,7 +121,7 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = retro_rts,
     command = generate_triangles(
-      reporting_triangle_list = truncated_rts
+      trunc_rep_tri_list = truncated_rts
     ),
     format = "rds"
   ),
@@ -138,25 +138,18 @@ gen_covid_nowcast_targets <- list(
     name = disp_params,
     command = estimate_dispersion(
       pt_nowcast_mat_list = retro_nowcasts,
-      trunc_rep_tri_list = truncated_rts
+      trunc_rep_tri_list = truncated_rts,
+      reporting_triangle_list = retro_rts
     )
   ),
-  # Extract only predictions from the matrix
+  # Aggregate nowcasts by reference time
   tar_target(
-    name = pt_nowcast_pred_matrix,
-    command = extract_predictions(
-      pt_nowcast_mat = point_nowcast_mat,
-      rep_mat = triangle
-    ),
-    format = "rds"
-  ),
-  # Aggregate predictions by reference time
-  tar_target(
-    name = pred_nowcast_draws_df,
-    command = get_nowcast_pred_draws(
-      point_nowcast_pred_matrix = pt_nowcast_pred_matrix,
-      disp = disp_params,
-      n_draws = config$n_draws
+    name = nowcast_draws_df,
+    command = get_nowcast_draws(
+      point_nowcast_matrix = point_nowcast_mat,
+      reporting_triangle = triangle,
+      dispersion = disp_params,
+      draws = config$n_draws
     )
   ),
   # Aggregate across reference times to get probabilistic draws of the
@@ -188,13 +181,13 @@ gen_covid_nowcast_targets <- list(
   ),
   tar_target(
     name = samples_nowcast_covid_daily,
-    command = pred_nowcast_draws_df |>
+    command = nowcast_draws_df |>
       left_join(date_df, by = "time") |>
       select(reference_date, draw, pred_count) |>
       mutate(nowcast_date = nowcast_dates_covid) |>
       left_join(data_as_of_df, by = "reference_date") |>
       mutate(
-        total_count = pred_count + data_as_of,
+        total_count = pred_count,
         model = "base", # Here this is the only model we are using
         # These will all vary
         n_history_delay = n_history_delay,

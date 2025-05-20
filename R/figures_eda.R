@@ -86,14 +86,14 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
         x = reference_date, ymin = `q_0.025`, ymax = `q_0.975`,
         group = nowcast_date
       ),
-      alpha = 0.3, fill = "darkgreen"
+      alpha = 0.35, fill = "darkgreen"
     ) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.25`, ymax = `q_0.75`,
         group = nowcast_date
       ),
-      alpha = 0.3, fill = "darkgreen"
+      alpha = 0.35, fill = "darkgreen"
     ) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,

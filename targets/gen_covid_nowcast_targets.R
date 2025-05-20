@@ -133,13 +133,16 @@ gen_covid_nowcast_targets <- list(
     ),
     format = "rds"
   ),
-  # Use retrospective nowcasts and the observations to estimate dispersion
+  # Use retrospective nowcasts and the observations to estimate dispersion on
+  # 7 day rolling sum
   tar_target(
     name = disp_params,
     command = estimate_dispersion(
       pt_nowcast_mat_list = retro_nowcasts,
       trunc_rep_tri_list = truncated_rts,
-      reporting_triangle_list = retro_rts
+      reporting_triangle_list = retro_rts,
+      fun_to_aggregate = sum,
+      k = 7
     )
   ),
   # Aggregate nowcasts by reference time

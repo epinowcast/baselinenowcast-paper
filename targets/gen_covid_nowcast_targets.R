@@ -192,10 +192,22 @@ gen_covid_nowcast_targets <- list(
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
   tar_target(
+    name = pt_nowcast_df,
+    command = data.frame(pt_nowcast = rollapply(
+      rowSums(point_nowcast_mat),
+      7,
+      sum,
+      fill = NA,
+      align = "right"
+    )) |>
+      mutate(time = 1:nrow(point_nowcast_mat))
+  ),
+  tar_target(
     name = samples_nowcast_covid_7d,
     command = nowcast_draws_df |>
       left_join(date_df, by = "time") |>
-      select(reference_date, draw, pred_count) |>
+      left_join(pt_nowcast_df, by = "time") |>
+      select(reference_date, draw, pred_count, pt_nowcast) |>
       mutate(nowcast_date = nowcast_dates_covid) |>
       left_join(data_as_of_df, by = "reference_date") |>
       mutate(
@@ -204,10 +216,12 @@ gen_covid_nowcast_targets <- list(
         # These will all vary
         n_history_delay = n_history_delay,
         n_history_uncertainty = n_history_uncertainty,
-        borrow = borrow
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri
       ) |>
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
+
 
 
   # Generate summaries and scores with evaluation data ----------------------
@@ -260,7 +274,8 @@ gen_covid_nowcast_targets <- list(
         "model",
         "n_history_delay",
         "n_history_uncertainty",
-        "borrow"
+        "borrow",
+        "partial_rep_tri"
       ),
       observed = "observed",
       predicted = "total_count",
@@ -307,7 +322,8 @@ gen_covid_nowcast_targets <- list(
         "model",
         "n_history_delay",
         "n_history_uncertainty",
-        "borrow"
+        "borrow",
+        "partial_rep_tri"
       )
     )
   )

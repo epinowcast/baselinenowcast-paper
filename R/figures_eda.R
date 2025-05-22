@@ -136,7 +136,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     ) +
     xlab("Reference date") +
     ylab(glue("{pathogen} cases")) +
-    coord_cartesian(ylim = c(0, 1.1 * max(final_df$observed))) +
+    coord_cartesian(ylim = c(0, 1.01 * max(all_nowcasts$`q_0.975`))) +
     ggtitle(glue("{title}"))
 
   return(p)
@@ -165,6 +165,9 @@ get_plot_ind_nowcast_draws <- function(nowcast_draws,
     ) +
     geom_line(aes(x = reference_date, y = observed),
       color = "magenta4"
+    ) +
+    geom_line(aes(x = reference_date, y = pt_nowcast),
+      color = "green"
     ) +
     scale_x_date(
       date_breaks = "1 week",
@@ -210,7 +213,11 @@ get_plot_ind_nowcast_quantiles <- function(nowcast_draws,
       q_lb_95th = quantile(total_count, 0.025, na.rm = TRUE),
       q_ub_95th = quantile(total_count, 0.975, na.rm = TRUE)
     ) |>
-    left_join(nowcast_draws |> distinct(reference_date, observed, data_as_of),
+    left_join(
+      nowcast_draws |> distinct(
+        reference_date, observed, data_as_of,
+        pt_nowcast
+      ),
       by = "reference_date"
     )
 
@@ -233,6 +240,9 @@ get_plot_ind_nowcast_quantiles <- function(nowcast_draws,
         ymax = q_ub_95th
       ),
       fill = "darkgreen", alpha = 0.3
+    ) +
+    geom_line(aes(x = reference_date, y = pt_nowcast),
+      color = "green"
     ) +
     geom_line(aes(x = reference_date, y = data_as_of),
       color = "magenta4"

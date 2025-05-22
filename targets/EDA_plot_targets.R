@@ -40,7 +40,8 @@ EDA_plot_targets <- list(
           model == "base",
           n_history_delay == 60,
           n_history_uncertainty == 60,
-          borrow == FALSE
+          borrow == FALSE,
+          partial_rep_tri == TRUE
         ),
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),

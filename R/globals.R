@@ -14,6 +14,11 @@ utils::globalVariables(c(
   "q_0.5", # <get_plot_mult_nowcasts>
   "data_as_of", # <get_plot_mult_nowcasts>
   "observed", # <get_plot_mult_nowcasts>
+  "reference_date", # <get_plot_ind_nowcast>
+  "total_count", # <get_plot_ind_nowcast>
+  "draw", # <get_plot_ind_nowcast>
+  "data_as_of", # <get_plot_ind_nowcast>
+  "observed", # <get_plot_ind_nowcast>
   "age_group", # <get_plot_bar_chart_sum_scores>
   "model", # <get_plot_bar_chart_sum_scores>
   "overprediction", # <get_plot_bar_chart_sum_scores>

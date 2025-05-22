@@ -86,14 +86,14 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
         x = reference_date, ymin = `q_0.025`, ymax = `q_0.975`,
         group = nowcast_date
       ),
-      alpha = 0.35, fill = "darkgreen"
+      alpha = 0.3, fill = "darkgreen"
     ) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.25`, ymax = `q_0.75`,
         group = nowcast_date
       ),
-      alpha = 0.35, fill = "darkgreen"
+      alpha = 0.3, fill = "darkgreen"
     ) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
@@ -138,6 +138,51 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     ylab(glue("{pathogen} cases")) +
     coord_cartesian(ylim = c(0, 1.1 * max(final_df$observed))) +
     ggtitle(glue("{title}"))
+
+  return(p)
+}
+#' Get a plot of the draws of an individual nowcast
+#'
+#' @param nowcast_draws Dataframe of the draws of the nowcast with data
+#' @param nowcast_target Character string indicating the quantity being
+#'    nowcasted
+#'
+#' @autoglobal
+#' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
+#'    theme scale_x_date element_text coord_cartesian
+#'    geom_vline
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_ind_nowcast <- function(nowcast_draws,
+                                 nowcast_target = "7-day rolling sum COVID-19 admissions") { # nolint
+
+  p <- ggplot(nowcast_draws) +
+    geom_line(aes(x = reference_date, y = total_count, group = draw),
+      alpha = 0.2, color = "gray"
+    ) +
+    geom_line(aes(x = reference_date, y = data_as_of),
+      color = "darkred"
+    ) +
+    geom_line(aes(x = reference_date, y = observed),
+      color = "darkblue"
+    ) +
+    scale_x_date(
+      date_breaks = "1 week",
+      date_labels = "%Y-%m-%d"
+    ) +
+    theme(
+      axis.text.x = element_text(
+        vjust = 1,
+        hjust = 1,
+        angle = 45
+      )
+    ) +
+    coord_cartesian(ylim = c(0, 1.1 * max(nowcast_draws$total_count))) +
+    theme_bw() +
+    xlab("Reference date") +
+    ylab(glue("{nowcast_target}")) +
+    ggtitle("Individual nowcast")
+
 
   return(p)
 }

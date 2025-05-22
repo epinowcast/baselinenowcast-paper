@@ -153,18 +153,92 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
 #'    geom_vline
 #' @importFrom glue glue
 #' @returns ggplot object
-get_plot_ind_nowcast <- function(nowcast_draws,
-                                 nowcast_target = "7-day rolling sum COVID-19 admissions") { # nolint
+get_plot_ind_nowcast_draws <- function(nowcast_draws,
+                                       nowcast_target = "7-day rolling sum COVID-19 admissions") { # nolint
 
   p <- ggplot(nowcast_draws) +
     geom_line(aes(x = reference_date, y = total_count, group = draw),
       alpha = 0.2, color = "gray"
     ) +
     geom_line(aes(x = reference_date, y = data_as_of),
-      color = "darkred"
+      color = "black"
     ) +
     geom_line(aes(x = reference_date, y = observed),
-      color = "darkblue"
+      color = "magenta4"
+    ) +
+    scale_x_date(
+      date_breaks = "1 week",
+      date_labels = "%Y-%m-%d"
+    ) +
+    theme(
+      axis.text.x = element_text(
+        vjust = 1,
+        hjust = 1,
+        angle = 45
+      )
+    ) +
+    coord_cartesian(ylim = c(0, 1.1 * max(nowcast_draws$total_count))) +
+    theme_bw() +
+    xlab("Reference date") +
+    ylab(glue("{nowcast_target}")) +
+    ggtitle("Individual nowcast")
+
+
+  return(p)
+}
+
+#' Get a plot of the draws of an individual nowcast
+#'
+#' @param nowcast_draws Dataframe of the draws of the nowcast with data
+#' @param nowcast_target Character string indicating the quantity being
+#'    nowcasted
+#'
+#' @autoglobal
+#' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
+#'    theme scale_x_date element_text coord_cartesian
+#'    geom_vline
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_ind_nowcast_quantiles <- function(nowcast_draws,
+                                           nowcast_target = "7-day rolling sum COVID-19 admissions") { # nolint
+  nowcast_quantiles <- nowcast_draws |>
+    group_by(reference_date) |>
+    summarise(
+      q_50 = quantile(total_count, 0.5, na.rm = TRUE),
+      q_lb_50th = quantile(total_count, 0.25, na.rm = TRUE),
+      q_ub_50th = quantile(total_count, 0.75, na.rm = TRUE),
+      q_lb_95th = quantile(total_count, 0.025, na.rm = TRUE),
+      q_ub_95th = quantile(total_count, 0.975, na.rm = TRUE)
+    ) |>
+    left_join(nowcast_draws |> distinct(reference_date, observed, data_as_of),
+      by = "reference_date"
+    )
+
+
+
+  p <- ggplot(nowcast_quantiles) +
+    geom_line(aes(x = reference_date, y = q_50),
+      color = "darkgreen"
+    ) +
+    geom_ribbon(
+      aes(
+        x = reference_date, ymin = q_lb_50th,
+        ymax = q_ub_50th
+      ),
+      fill = "darkgreen", alpha = 0.3
+    ) +
+    geom_ribbon(
+      aes(
+        x = reference_date, ymin = q_lb_95th,
+        ymax = q_ub_95th
+      ),
+      fill = "darkgreen", alpha = 0.3
+    ) +
+    geom_line(aes(x = reference_date, y = data_as_of),
+      color = "magenta4"
+    ) +
+    geom_line(aes(x = reference_date, y = observed),
+      color = "black"
     ) +
     scale_x_date(
       date_breaks = "1 week",

@@ -241,7 +241,11 @@ gen_covid_nowcast_targets <- list(
   # Make a quick plot of the individual nowcast as a test
   tar_target(
     name = plot_ind_nowcast,
-    command = get_plot_ind_nowcast(comb_nc_covid)
+    command = get_plot_ind_nowcast_draws(comb_nc_covid)
+  ),
+  tar_target(
+    name = plot_ind_nowcast_quantiles,
+    command = get_plot_ind_nowcast_quantiles(comb_nc_covid)
   ),
   ## Forecast objects ---------------------------------------------------------
   tar_target(

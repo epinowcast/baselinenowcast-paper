@@ -136,7 +136,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     ) +
     xlab("Reference date") +
     ylab(glue("{pathogen} cases")) +
-    coord_cartesian(ylim = c(0, 1.01 * max(all_nowcasts$`q_0.975`))) +
+    coord_cartesian(ylim = c(0, 1.01 * max(all_nowcasts$`q_0.975`))) + # nolint
     ggtitle(glue("{title}"))
 
   return(p)
@@ -286,6 +286,7 @@ get_plot_ind_nowcast_draws <- function(nowcast_draws,
 #'    theme scale_x_date element_text coord_cartesian
 #'    geom_vline
 #' @importFrom glue glue
+#' @importFrom dplyr group_by left_join summarise distinct
 #' @returns ggplot object
 get_plot_ind_nowcast_quantiles <- function(nowcast_draws,
                                            nowcast_target = "7-day rolling sum COVID-19 admissions") { # nolint
@@ -299,7 +300,8 @@ get_plot_ind_nowcast_quantiles <- function(nowcast_draws,
       q_ub_95th = quantile(total_count, 0.975, na.rm = TRUE)
     ) |>
     left_join(
-      nowcast_draws |> distinct(
+      distinct(
+        nowcast_draws,
         reference_date, observed, data_as_of,
         pt_nowcast
       ),

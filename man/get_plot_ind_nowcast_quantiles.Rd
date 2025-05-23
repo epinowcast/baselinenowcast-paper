@@ -2,7 +2,7 @@
 % Please edit documentation in R/figures_eda.R
 \name{get_plot_ind_nowcast_quantiles}
 \alias{get_plot_ind_nowcast_quantiles}
-\title{Get a plot of the draws of an individual nowcast}
+\title{Get a plot of the quantiles of an individual nowcast}
 \usage{
 get_plot_ind_nowcast_quantiles(
   nowcast_draws,
@@ -19,5 +19,5 @@ nowcasted}
 ggplot object
 }
 \description{
-Get a plot of the draws of an individual nowcast
+Get a plot of the quantiles of an individual nowcast
 }

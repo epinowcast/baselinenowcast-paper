@@ -87,14 +87,14 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
         x = reference_date, ymin = `q_0.025`, ymax = `q_0.975`,
         group = nowcast_date_model, fill = model
       ),
-      alpha = 0.3,
+      alpha = 0.3
     ) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.25`, ymax = `q_0.75`,
         group = nowcast_date_model, fill = model
       ),
-      alpha = 0.3,
+      alpha = 0.3
     ) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
@@ -288,7 +288,7 @@ get_plot_ind_nowcast_draws <- function(nowcast_draws,
   return(p)
 }
 
-#' Get a plot of the draws of an individual nowcast
+#' Get a plot of the quantiles of an individual nowcast
 #'
 #' @param nowcast_draws Dataframe of the draws of the nowcast with data
 #' @param nowcast_target Character string indicating the quantity being

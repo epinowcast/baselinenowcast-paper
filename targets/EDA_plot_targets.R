@@ -63,6 +63,28 @@ EDA_plot_targets <- list(
     )
   ),
   tar_target(
+    name = plot_nowcast_comparison,
+    command = get_plot_mult_nowcasts(
+      all_nowcasts = all_nowcasts_kit |>
+        filter(
+          age_group == "00+"
+        ) |> bind_rows(all_nowcasts_covid |>
+          filter(
+            age_group == "00+",
+            model == "base",
+            n_history_delay == 60,
+            n_history_uncertainty == 60,
+            borrow == FALSE,
+            partial_rep_tri == TRUE
+          ) |> select(colnames(all_nowcasts_kit)) |>
+          mutate(nowcast_date = ymd(nowcast_date))),
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid 7 day",
+      title = "KIT vs baselinenowcast nowcasts"
+    )
+  ),
+  tar_target(
     name = pt_nowcasts_combined,
     command = all_pt_nowcasts |>
       filter(

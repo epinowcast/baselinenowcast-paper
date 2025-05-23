@@ -59,7 +59,7 @@ get_plot_data_as_of <- function(final_df,
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
 #'    theme geom_ribbon geom_point scale_x_date element_text coord_cartesian
-#'    geom_vline
+#'    geom_vline scale_color_manual scale_fill_manual
 #' @importFrom glue glue
 #' @importFrom dplyr filter
 #' @importFrom lubridate ymd
@@ -77,28 +77,29 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
 
   if (!is.null(nowcast_dates_to_plot)) {
     all_nowcasts <- all_nowcasts |>
-      filter(nowcast_date %in% c(nowcast_dates_to_plot))
+      filter(nowcast_date %in% c(nowcast_dates_to_plot)) |>
+      mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
   }
 
   p <- ggplot(all_nowcasts) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.025`, ymax = `q_0.975`,
-        group = nowcast_date
+        group = nowcast_date_model, fill = model
       ),
-      alpha = 0.3, fill = "darkgreen"
+      alpha = 0.3,
     ) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.25`, ymax = `q_0.75`,
-        group = nowcast_date
+        group = nowcast_date_model, fill = model
       ),
-      alpha = 0.3, fill = "darkgreen"
+      alpha = 0.3,
     ) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
-      group = nowcast_date
-    ), color = "darkgreen") +
+      group = nowcast_date_model, color = model
+    )) +
     geom_line(
       aes(
         x = reference_date,
@@ -132,6 +133,18 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
         vjust = 1,
         hjust = 1,
         angle = 45
+      )
+    ) +
+    scale_color_manual(
+      values = c(
+        "base" = "darkgreen",
+        "KIT simple nowcast" = "orange4"
+      )
+    ) +
+    scale_fill_manual(
+      values = c(
+        "base" = "darkgreen",
+        "KIT simple nowcast" = "orange4"
       )
     ) +
     xlab("Reference date") +

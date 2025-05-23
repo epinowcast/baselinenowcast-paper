@@ -141,6 +141,91 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
 
   return(p)
 }
+
+
+#' Get a plot comparing just the point nowcasts
+#'
+#' @param pt_nowcasts_combined Dataframe of the point nowcasts from  multiple
+#'    models.
+#' @param final_summed_data Dtaaframe of the sum of the counts by reference
+#'    date as of the final reference data + the eval time frame.
+#' @param nowcast_dates_to_plot Vector of character strings of the dates you
+#'   wish to plot, default is `NULL` which will plot all of them
+#' @param pathogen Character sting of the pathogen being plotted
+#' @param title Character string indicating the title
+#'
+#' @autoglobal
+#' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
+#'    theme geom_ribbon geom_point scale_x_date element_text coord_cartesian
+#'    geom_vline
+#' @importFrom glue glue
+#' @importFrom dplyr filter
+#' @importFrom lubridate ymd
+#' @returns ggplot object
+get_plot_pt_nowcasts <- function(pt_nowcasts_combined,
+                                 final_summed_data,
+                                 nowcast_dates_to_plot = NULL,
+                                 pathogen = "",
+                                 title = "") {
+  final_df <- final_summed_data |>
+    filter(
+      reference_date >= min(pt_nowcasts_combined$reference_date),
+      reference_date <= max(pt_nowcasts_combined$reference_date)
+    )
+
+  if (!is.null(nowcast_dates_to_plot)) {
+    all_nowcasts <- pt_nowcasts_combined |>
+      filter(nowcast_date %in% c(nowcast_dates_to_plot))
+  }
+
+  p <- ggplot(all_nowcasts) +
+    geom_line(aes(
+      x = reference_date, y = predicted,
+      group = nowcast_date,
+      color = model
+    )) +
+    geom_line(
+      aes(
+        x = reference_date,
+        y = data_as_of, group = nowcast_date
+      ),
+      color = "magenta4"
+    ) +
+    geom_line(
+      aes(
+        x = reference_date,
+        y = data_as_of, group = nowcast_date
+      ),
+      color = "magenta4"
+    ) +
+    geom_point(
+      aes(x = reference_date, y = observed),
+      color = "darkblue", linewidth = 0.7
+    ) +
+    geom_line(
+      data = final_df,
+      aes(x = reference_date, y = observed), color = "black"
+    ) +
+    geom_vline(aes(xintercept = ymd(nowcast_date)), linetype = "dashed") +
+    theme_bw() +
+    scale_x_date(
+      date_breaks = "1 week",
+      date_labels = "%Y-%m-%d"
+    ) +
+    theme(
+      axis.text.x = element_text(
+        vjust = 1,
+        hjust = 1,
+        angle = 45
+      )
+    ) +
+    xlab("Reference date") +
+    ylab(glue("{pathogen} cases")) +
+    coord_cartesian(ylim = c(0, 1.1 * max(all_nowcasts$predicted))) +
+    ggtitle(glue("{title}"))
+
+  return(p)
+}
 #' Get a plot of the draws of an individual nowcast
 #'
 #' @param nowcast_draws Dataframe of the draws of the nowcast with data

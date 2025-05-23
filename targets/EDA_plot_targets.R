@@ -62,6 +62,59 @@ EDA_plot_targets <- list(
       title = "KIT nowcasts"
     )
   ),
+  tar_target(
+    name = pt_nowcasts_combined,
+    command = all_pt_nowcasts |>
+      filter(
+        age_group == "00+",
+        model == "base",
+        n_history_delay == 60,
+        n_history_uncertainty == 60,
+        borrow == FALSE,
+        partial_rep_tri == TRUE
+      ) |>
+      select(colnames(all_pt_nowcasts_kit)) |>
+      mutate(nowcast_date = ymd(nowcast_date)) |>
+      bind_rows(all_pt_nowcasts_kit |> filter(age_group == "00+"))
+  ),
+  tar_target(
+    name = plot_pt_nowcast_comparison,
+    command = get_plot_pt_nowcasts(
+      pt_nowcasts_combined = pt_nowcasts_combined,
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid 7 day",
+      title = "Point nowcast comparison"
+    )
+  ),
+  tar_target(
+    name = plot_pt_nowcast_kit,
+    command = get_plot_pt_nowcasts(
+      pt_nowcasts_combined = all_pt_nowcasts_kit |> filter(age_group == "00+"),
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid 7 day",
+      title = "KIT point nowcasts"
+    )
+  ),
+  tar_target(
+    name = plot_pt_nowcast_bc,
+    command = get_plot_pt_nowcasts(
+      pt_nowcasts_combined = all_pt_nowcasts |>
+        filter(
+          age_group == "00+",
+          model == "base",
+          n_history_delay == 60,
+          n_history_uncertainty == 60,
+          borrow == FALSE,
+          partial_rep_tri == TRUE
+        ),
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      pathogen = "Covid 7 day",
+      title = "baselinenowcast point nowcasts"
+    )
+  ),
   # Norovirus--------------------------------------------------------------------
   # Data plots
   tar_target(

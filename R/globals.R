@@ -14,11 +14,28 @@ utils::globalVariables(c(
   "q_0.5", # <get_plot_mult_nowcasts>
   "data_as_of", # <get_plot_mult_nowcasts>
   "observed", # <get_plot_mult_nowcasts>
-  "reference_date", # <get_plot_ind_nowcast>
-  "total_count", # <get_plot_ind_nowcast>
-  "draw", # <get_plot_ind_nowcast>
-  "data_as_of", # <get_plot_ind_nowcast>
-  "observed", # <get_plot_ind_nowcast>
+  "reference_date", # <get_plot_pt_nowcasts>
+  "nowcast_date", # <get_plot_pt_nowcasts>
+  "predicted", # <get_plot_pt_nowcasts>
+  "model", # <get_plot_pt_nowcasts>
+  "data_as_of", # <get_plot_pt_nowcasts>
+  "observed", # <get_plot_pt_nowcasts>
+  "reference_date", # <get_plot_ind_nowcast_draws>
+  "total_count", # <get_plot_ind_nowcast_draws>
+  "draw", # <get_plot_ind_nowcast_draws>
+  "data_as_of", # <get_plot_ind_nowcast_draws>
+  "observed", # <get_plot_ind_nowcast_draws>
+  "pt_nowcast", # <get_plot_ind_nowcast_draws>
+  "reference_date", # <get_plot_ind_nowcast_quantiles>
+  "total_count", # <get_plot_ind_nowcast_quantiles>
+  "observed", # <get_plot_ind_nowcast_quantiles>
+  "data_as_of", # <get_plot_ind_nowcast_quantiles>
+  "pt_nowcast", # <get_plot_ind_nowcast_quantiles>
+  "q_50", # <get_plot_ind_nowcast_quantiles>
+  "q_lb_50th", # <get_plot_ind_nowcast_quantiles>
+  "q_ub_50th", # <get_plot_ind_nowcast_quantiles>
+  "q_lb_95th", # <get_plot_ind_nowcast_quantiles>
+  "q_ub_95th", # <get_plot_ind_nowcast_quantiles>
   "age_group", # <get_plot_bar_chart_sum_scores>
   "model", # <get_plot_bar_chart_sum_scores>
   "overprediction", # <get_plot_bar_chart_sum_scores>

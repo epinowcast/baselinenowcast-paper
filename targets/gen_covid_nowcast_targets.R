@@ -223,7 +223,6 @@ gen_covid_nowcast_targets <- list(
   ),
 
 
-
   # Generate summaries and scores with evaluation data ----------------------
   tar_target(
     name = eval_data_daily,
@@ -301,6 +300,31 @@ gen_covid_nowcast_targets <- list(
         names_prefix = "q_"
       ) |> left_join(data_as_of_df, by = "reference_date")
   ),
+  tar_target(
+    name = pt_nowcast_7d,
+    command = pt_nowcast_df |>
+      left_join(date_df, by = "time") |>
+      select(reference_date, pt_nowcast) |>
+      filter(reference_date >=
+        ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
+      mutate(
+        nowcast_date = nowcast_dates_covid,
+        age_group = age_group_to_nowcast
+      ) |>
+      rename(predicted = pt_nowcast) |>
+      left_join(data_as_of_df, by = "reference_date") |>
+      mutate(
+        model = "base", # Here this is the only model we are using
+        # These will all vary
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri,
+      ) |>
+      filter(reference_date >= min(reference_date) + days(6)) |> # exclude NA days
+      left_join(eval_data_7d, by = "reference_date")
+  ),
+
   ## Scores--------------------------------------------------------------------
   tar_target(
     name = scores_sample_covid,

@@ -90,6 +90,11 @@ combined_kit_coverage <- tar_combine(
   mapped_kit_nowcasts$coverage_kit,
   command = dplyr::bind_rows(!!!.x)
 )
+combined_kit_pt_nowcast <- tar_combine(
+  name = all_pt_nowcasts_kit,
+  mapped_kit_nowcasts$summary_pt_nowcast_kit,
+  command = dplyr::bind_rows(!!!.x)
+)
 
 # ### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
@@ -122,6 +127,11 @@ combined_covid_scores <- tar_combine(
 combined_covid_coverage <- tar_combine(
   name = all_coverage_covid,
   mapped_covid$coverage_covid,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_pt_nowcast<- tar_combine(
+  name = all_pt_nowcasts,
+  mapped_covid$pt_nowcast_7d,
   command = dplyr::bind_rows(!!!.x)
 )
 
@@ -203,12 +213,14 @@ list(
   combined_kit_nowcasts,
   combined_kit_scores,
   combined_kit_coverage,
+  combined_kit_pt_nowcast,
   nowcast_hub_validation_targets,
   # # Covid targets: model permutations
   mapped_covid,
   combined_covid_nowcasts,
   combined_covid_scores,
   combined_covid_coverage,
+  combined_pt_nowcast,
   # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,

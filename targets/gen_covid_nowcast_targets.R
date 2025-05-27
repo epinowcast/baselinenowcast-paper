@@ -121,7 +121,7 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = retro_rts,
     command = generate_triangles(
-      reporting_triangle_list = truncated_rts
+      trunc_rep_tri_list = truncated_rts
     ),
     format = "rds"
   ),
@@ -133,30 +133,28 @@ gen_covid_nowcast_targets <- list(
     ),
     format = "rds"
   ),
-  # Use retrospective nowcasts and the observations to estimate dispersion
+  # Use retrospective nowcasts and the observations to estimate dispersion on
+  # 7 day rolling sum
   tar_target(
     name = disp_params,
     command = estimate_dispersion(
       pt_nowcast_mat_list = retro_nowcasts,
-      trunc_rep_tri_list = truncated_rts
+      trunc_rep_tri_list = truncated_rts,
+      reporting_triangle_list = retro_rts,
+      fun_to_aggregate = sum,
+      k = 7
     )
   ),
-  # Extract only predictions from the matrix
+  # Aggregate nowcasts by reference time using a 7 day rolling sum
   tar_target(
-    name = pt_nowcast_pred_matrix,
-    command = extract_predictions(
-      pt_nowcast_mat = point_nowcast_mat,
-      rep_mat = triangle
-    ),
-    format = "rds"
-  ),
-  # Aggregate predictions by reference time
-  tar_target(
-    name = pred_nowcast_draws_df,
-    command = get_nowcast_pred_draws(
-      point_nowcast_pred_matrix = pt_nowcast_pred_matrix,
-      disp = disp_params,
-      n_draws = config$n_draws
+    name = nowcast_draws_df,
+    command = get_nowcast_draws(
+      point_nowcast_matrix = point_nowcast_mat,
+      reporting_triangle = triangle,
+      dispersion = disp_params,
+      draws = 100,
+      fun_to_aggregate = sum,
+      k = 7
     )
   ),
   # Aggregate across reference times to get probabilistic draws of the
@@ -184,43 +182,46 @@ gen_covid_nowcast_targets <- list(
       group_by(reference_date) |>
       summarise(
         data_as_of = sum(count, na.rm = TRUE)
-      )
+      ) |> ungroup() |>
+      mutate(
+        data_as_of = rollsum(data_as_of,
+          k = 7,
+          fill = NA, align = "right"
+        )
+      ) |>
+      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
   tar_target(
-    name = samples_nowcast_covid_daily,
-    command = pred_nowcast_draws_df |>
+    name = pt_nowcast_df,
+    command = data.frame(pt_nowcast = rollapply(
+      rowSums(point_nowcast_mat),
+      7,
+      sum,
+      fill = NA,
+      align = "right"
+    )) |>
+      mutate(time = 1:nrow(point_nowcast_mat))
+  ),
+  tar_target(
+    name = samples_nowcast_covid_7d,
+    command = nowcast_draws_df |>
       left_join(date_df, by = "time") |>
-      select(reference_date, draw, pred_count) |>
+      left_join(pt_nowcast_df, by = "time") |>
+      select(reference_date, draw, pred_count, pt_nowcast) |>
       mutate(nowcast_date = nowcast_dates_covid) |>
       left_join(data_as_of_df, by = "reference_date") |>
       mutate(
-        total_count = pred_count + data_as_of,
+        total_count = pred_count,
         model = "base", # Here this is the only model we are using
         # These will all vary
         n_history_delay = n_history_delay,
         n_history_uncertainty = n_history_uncertainty,
-        borrow = borrow
-      )
-  ),
-
-  # Make nowcasts into 7 day incidence
-  tar_target(
-    name = samples_nowcast_covid_7d,
-    command = samples_nowcast_covid_daily |>
-      group_by(draw) |>
-      arrange(reference_date) |>
-      mutate(
-        total_count = rollsum(total_count,
-          k = 7,
-          fill = NA, align = "right"
-        ),
-        data_as_of = rollsum(data_as_of,
-          k = 7,
-          fill = NA, align = "right"
-        ),
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri
       ) |>
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
+
 
   # Generate summaries and scores with evaluation data ----------------------
   tar_target(
@@ -240,27 +241,7 @@ gen_covid_nowcast_targets <- list(
       )) |>
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
-  # Get as of data we want to join
-  tar_target(
-    name = data_as_of_daily,
-    command = covid_long |>
-      filter(report_date <= nowcast_dates_covid) |>
-      group_by(reference_date) |>
-      summarise(
-        data_as_of = sum(count, na.rm = TRUE)
-      )
-  ),
-  # Get as of data we want to join
-  tar_target(
-    name = data_as_of_7d,
-    command = data_as_of_daily |>
-      arrange(reference_date) |>
-      mutate(data_as_of = rollsum(data_as_of,
-        k = 7,
-        fill = NA, align = "right"
-      )) |>
-      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
-  ),
+
   # Join eval data to the subset of the nowcast that we are evaluating
   tar_target(
     name = comb_nc_covid,
@@ -269,6 +250,15 @@ gen_covid_nowcast_targets <- list(
         ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
       left_join(eval_data_7d, by = "reference_date") |>
       mutate(age_group = age_group_to_nowcast)
+  ),
+  # Make a quick plot of the individual nowcast as a test
+  tar_target(
+    name = plot_ind_nowcast,
+    command = get_plot_ind_nowcast_draws(comb_nc_covid)
+  ),
+  tar_target(
+    name = plot_ind_nowcast_quantiles,
+    command = get_plot_ind_nowcast_quantiles(comb_nc_covid)
   ),
   ## Forecast objects ---------------------------------------------------------
   tar_target(
@@ -283,7 +273,8 @@ gen_covid_nowcast_targets <- list(
         "model",
         "n_history_delay",
         "n_history_uncertainty",
-        "borrow"
+        "borrow",
+        "partial_rep_tri"
       ),
       observed = "observed",
       predicted = "total_count",
@@ -307,8 +298,33 @@ gen_covid_nowcast_targets <- list(
         names_from = "quantile_level",
         values_from = "predicted",
         names_prefix = "q_"
-      ) |> left_join(data_as_of_7d, by = "reference_date")
+      ) |> left_join(data_as_of_df, by = "reference_date")
   ),
+  tar_target(
+    name = pt_nowcast_7d,
+    command = pt_nowcast_df |>
+      left_join(date_df, by = "time") |>
+      select(reference_date, pt_nowcast) |>
+      filter(reference_date >=
+        ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
+      mutate(
+        nowcast_date = nowcast_dates_covid,
+        age_group = age_group_to_nowcast
+      ) |>
+      rename(predicted = pt_nowcast) |>
+      left_join(data_as_of_df, by = "reference_date") |>
+      mutate(
+        model = "base", # Here this is the only model we are using
+        # These will all vary
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri,
+      ) |>
+      filter(reference_date >= min(reference_date) + days(6)) |> # exclude NA days
+      left_join(eval_data_7d, by = "reference_date")
+  ),
+
   ## Scores--------------------------------------------------------------------
   tar_target(
     name = scores_sample_covid,
@@ -330,7 +346,8 @@ gen_covid_nowcast_targets <- list(
         "model",
         "n_history_delay",
         "n_history_uncertainty",
-        "borrow"
+        "borrow",
+        "partial_rep_tri"
       )
     )
   )

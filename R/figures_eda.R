@@ -77,9 +77,10 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
 
   if (!is.null(nowcast_dates_to_plot)) {
     all_nowcasts <- all_nowcasts |>
-      filter(nowcast_date %in% c(nowcast_dates_to_plot)) |>
-      mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
+      filter(nowcast_date %in% c(nowcast_dates_to_plot))
   }
+  all_nowcasts <- all_nowcasts |>
+    mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
 
   p <- ggplot(all_nowcasts) +
     geom_ribbon(
@@ -238,7 +239,9 @@ get_plot_pt_nowcasts <- function(pt_nowcasts_combined,
     ) +
     xlab("Reference date") +
     ylab(glue("{pathogen} cases")) +
-    coord_cartesian(ylim = c(0, 1.1 * max(all_nowcasts$predicted))) +
+    coord_cartesian(ylim = c(0, 1.1 * max(all_nowcasts$predicted,
+      na.rm = TRUE
+    ))) +
     ggtitle(glue("{title}"))
 
   return(p)
@@ -282,7 +285,9 @@ get_plot_ind_nowcast_draws <- function(nowcast_draws,
         angle = 45
       )
     ) +
-    coord_cartesian(ylim = c(0, 1.1 * max(nowcast_draws$total_count))) +
+    coord_cartesian(ylim = c(0, 1.1 * max(nowcast_draws$total_count,
+      na.rm = TRUE
+    ))) +
     theme_bw() +
     xlab("Reference date") +
     ylab(glue("{nowcast_target}")) +

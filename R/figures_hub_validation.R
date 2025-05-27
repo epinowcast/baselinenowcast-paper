@@ -71,9 +71,8 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
 get_plot_nowcasts_over_time <- function(combined_nowcasts,
                                         horizon_to_plot,
                                         facet = FALSE) {
-  nc <- combined_nowcasts |>
-    filter(horizon == horizon_to_plot)
-  colors <- plot_components()
+  nc <- filter(combined_nowcasts, horizon == horizon_to_plot)
+  plot_colors <- plot_components()
   p <- ggplot(nc) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
@@ -106,8 +105,8 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    scale_color_manual(values = colors$model_colors) +
-    scale_fill_manual(values = colors$model_colors) +
+    scale_color_manual(values = plot_colors$model_colors) +
+    scale_fill_manual(values = plot_colors$model_colors) +
     ggtitle(glue("Horizon: {-horizon_to_plot} days")) +
     xlab("") +
     ylab("7-day hospitalisation incidence")

@@ -16,7 +16,7 @@ get_plot_pt_nowcasts(
 \item{pt_nowcasts_combined}{Dataframe of the point nowcasts from  multiple
 models.}
 
-\item{final_summed_data}{Dtaaframe of the sum of the counts by reference
+\item{final_summed_data}{Dataframe of the sum of the counts by reference
 date as of the final reference data + the eval time frame.}
 
 \item{nowcast_dates_to_plot}{Vector of character strings of the dates you

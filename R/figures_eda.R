@@ -135,6 +135,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
         angle = 45
       )
     ) +
+    # nolint start
     scale_color_manual(
       values = c(
         "base" = "darkgreen",
@@ -147,6 +148,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
         "KIT simple nowcast" = "orange4"
       )
     ) +
+    # nolint end
     xlab("Reference date") +
     ylab(glue("{pathogen} cases")) +
     coord_cartesian(ylim = c(0, 1.01 * max(all_nowcasts$`q_0.975`))) + # nolint
@@ -160,7 +162,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
 #'
 #' @param pt_nowcasts_combined Dataframe of the point nowcasts from  multiple
 #'    models.
-#' @param final_summed_data Dtaaframe of the sum of the counts by reference
+#' @param final_summed_data Dataframe of the sum of the counts by reference
 #'    date as of the final reference data + the eval time frame.
 #' @param nowcast_dates_to_plot Vector of character strings of the dates you
 #'   wish to plot, default is `NULL` which will plot all of them
@@ -189,6 +191,8 @@ get_plot_pt_nowcasts <- function(pt_nowcasts_combined,
   if (!is.null(nowcast_dates_to_plot)) {
     all_nowcasts <- pt_nowcasts_combined |>
       filter(nowcast_date %in% c(nowcast_dates_to_plot))
+  } else {
+    all_nowcasts <- pt_nowcasts_combined
   }
 
   p <- ggplot(all_nowcasts) +
@@ -288,7 +292,7 @@ get_plot_ind_nowcast_draws <- function(nowcast_draws,
   return(p)
 }
 
-#' Get a plot of the quantiles of an individual nowcast
+#' Get a plot of the quantiles from individual nowcast nowcast draws
 #'
 #' @param nowcast_draws Dataframe of the draws of the nowcast with data
 #' @param nowcast_target Character string indicating the quantity being

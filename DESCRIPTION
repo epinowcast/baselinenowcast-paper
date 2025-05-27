@@ -41,7 +41,8 @@ Imports:
   baselinenowcast,
   tidyr,
   tibble,
-  lubridate
+  lubridate,
+  cowplot
 Suggests:
     bookdown,
     targets,

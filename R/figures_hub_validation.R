@@ -52,3 +52,70 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
     ggtitle(glue("Overall WIS: {strata}"))
   return(p)
 }
+
+#' Get a plot of the nowcasts over time for both KIT and baselinenowcast
+#'
+#' Hub validation figure A
+#'
+#' @param combined_nowcasts Dataframe of the combined quantiles across
+#'    horizons and nowcast dates
+#' @param horizon_to_plot Integer indicating which horizon to plot
+#' @param facet Boolean indicating whether or not to make separate facets
+#'    of each model
+#' @importFrom glue glue
+#' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
+#'    facet_wrap scale_color_manual scale_fill_manual
+#' @importFrom dplyr filter
+#' @returns ggplot object
+#' @autoglobal
+get_plot_nowcasts_over_time <- function(combined_nowcasts,
+                                        horizon_to_plot,
+                                        facet = FALSE) {
+  nc <- combined_nowcasts |>
+    filter(horizon == horizon_to_plot)
+  colors <- plot_components()
+  p <- ggplot(nc) +
+    geom_line(aes(
+      x = reference_date, y = `q_0.5`,
+      color = model
+    )) +
+    geom_ribbon(
+      aes(
+        x = reference_date,
+        ymin = `q_0.25`,
+        ymax = `q_0.75`, fill = model
+      ),
+      alpha = 0.3
+    ) +
+    geom_ribbon(
+      aes(
+        x = reference_date,
+        ymin = `q_0.025`,
+        ymax = `q_0.975`, fill = model
+      ),
+      alpha = 0.3
+    ) +
+    geom_line(aes(x = reference_date, y = observed),
+      color = "red"
+    ) +
+    geom_line(aes(x = reference_date, y = data_as_of),
+      color = "gray"
+    ) +
+    get_plot_theme() +
+    scale_x_date(
+      date_breaks = "2 months",
+      date_labels = "%b %Y"
+    ) +
+    scale_color_manual(values = colors$model_colors) +
+    scale_fill_manual(values = colors$model_colors) +
+    ggtitle(glue("Horizon: {-horizon_to_plot} days")) +
+    xlab("") +
+    ylab("7-day hospitalisation incidence")
+
+  if (isTRUE(facet)) {
+    p <- p + facet_wrap(~model)
+  }
+
+
+  return(p)
+}

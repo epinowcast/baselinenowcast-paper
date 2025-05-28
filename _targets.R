@@ -129,11 +129,23 @@ combined_covid_coverage <- tar_combine(
   mapped_covid$coverage_covid,
   command = dplyr::bind_rows(!!!.x)
 )
-combined_pt_nowcast<- tar_combine(
+combined_pt_nowcast <- tar_combine(
   name = all_pt_nowcasts,
   mapped_covid$pt_nowcast_7d,
   command = dplyr::bind_rows(!!!.x)
 )
+combined_mean_delay <- tar_combine(
+  name = all_mean_delays,
+  mapped_covid$mean_delay_df,
+  command = dplyr::bind_rows(!!!.x)
+)
+combined_delay_df <- tar_combine(
+  name = all_delay_dfs,
+  mapped_covid$delay_df,
+  command = dplyr::bind_rows(!!!.x)
+)
+
+
 
 # Make the combinations needed for the validation study---------------------
 nowcast_hub_validation_targets
@@ -221,6 +233,8 @@ list(
   combined_covid_scores,
   combined_covid_coverage,
   combined_pt_nowcast,
+  combined_mean_delay,
+  combined_delay_df,
   # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,

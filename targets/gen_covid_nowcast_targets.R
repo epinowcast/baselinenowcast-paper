@@ -221,6 +221,35 @@ gen_covid_nowcast_targets <- list(
       ) |>
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
+  tar_target(
+    name = delay_df,
+    command = data.frame(
+      delay = delay_pmf,
+      delay = 0:(length(delay_pmf) - 1)
+    ) |>
+      mutate(
+        model = "base",
+        nowcast_date = nowcast_dates_covid,
+        age_group = age_group_to_nowcast,
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri
+      )
+  ),
+  tar_target(
+    name = mean_delay_df,
+    command = data.frame(mean_delay = sum(delay_pmf * (1:length(delay_pmf)))) |>
+      mutate(
+        model = "base",
+        nowcast_date = nowcast_dates_covid,
+        age_group = age_group_to_nowcast,
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri
+      )
+  ),
 
 
   # Generate summaries and scores with evaluation data ----------------------

@@ -1,10 +1,9 @@
 nowcast_hub_validation_targets <- list(
-  # Nowcasts
+  # Nowcasts-----------------------------------------------------------------
   tar_target(
     name = combined_nowcasts,
     command = all_nowcasts_covid |>
       filter(
-        age_group == "00+",
         model == "base",
         n_history_delay == 60,
         n_history_uncertainty == 60,
@@ -13,11 +12,39 @@ nowcast_hub_validation_targets <- list(
       ) |>
       mutate(nowcast_date = as.Date(nowcast_date)) |>
       select(colnames(all_nowcasts_kit)) |>
-      bind_rows(all_nowcasts_kit |> filter(age_group == "00+")) |>
+      bind_rows(all_nowcasts_kit) |>
       mutate(
         horizon = as.integer(reference_date - nowcast_date),
         model = ifelse(model == "base", "baselinenowcast", model)
       )
+  ),
+  tar_target(
+    name = delay_over_time_validation,
+    command = all_mean_delays |>
+      filter(
+        model == "base",
+        n_history_delay == 60,
+        n_history_uncertainty == 60,
+        borrow == FALSE,
+        partial_rep_tri == TRUE
+      ) |>
+      mutate(model = ifelse(model == "base", "baselinenowcast", model))
+  ),
+  tar_target(
+    name = mean_delay_validation,
+    command = all_delay_dfs |>
+      filter(
+        model == "base",
+        n_history_delay == 60,
+        n_history_uncertainty == 60,
+        borrow == FALSE,
+        partial_rep_tri == TRUE
+      ) |>
+      # Estimate a dely fore
+      group_by(age_group) |>
+      summarise(mean_delay = mean(delay)) |>
+      mutate(cdf = cumsum(mean_delay)) |>
+      mutate(model = ifelse(model == "base", "baselinenowcast", model))
   ),
   # Scores --------------------------------------------------------------------
   tar_target(
@@ -55,6 +82,12 @@ nowcast_hub_validation_targets <- list(
       filter(age_group != "00+") |>
       # Summarise across horizons (reference dates) and age groups
       scoringutils::summarise_scores(by = c("model", "nowcast_date"))
+  ),
+  tar_target(scores_by_age_group,
+    command = validation_scores |>
+      filter(age_group != "00+") |>
+      # Summarise across horizons (reference dates) and nowcast_dates
+      scoringutils::summarise_scores(by = c("model", "age_group"))
   ),
   # Coverage ------------------------------------------------------------------
   tar_target(

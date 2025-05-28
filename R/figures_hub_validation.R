@@ -29,6 +29,7 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
   pattern_types <- c("stripe", "crosshatch", "circle")
   names(pattern_types) <- unique(scores_summary$name)
   scores_summary$pattern <- pattern_types[scores_summary$name]
+  plot_colors <- plot_components()
 
   p <- ggplot(
     scores_summary,
@@ -43,12 +44,13 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       pattern_spacing = 0.05
     ) +
     coord_flip() +
+    get_plot_theme() +
+    scale_fill_manual(values = plot_colors$model_colors) +
     labs(
       x = "Model", y = "WIS",
       pattern = "Score Breakdown",
       color = "Model"
     ) +
-    theme_bw() +
     ggtitle(glue("Overall WIS: {strata}"))
   return(p)
 }

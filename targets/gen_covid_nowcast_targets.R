@@ -279,6 +279,9 @@ gen_covid_nowcast_targets <- list(
       observed = "observed",
       predicted = "total_count",
       sample_id = "draw"
+    ) |> scoringutils::transform_forecasts(
+      fun = scoringutils::log_shift,
+      offset = 1
     )
   ),
   # Forecast quantiles as a scoringutils forecast object

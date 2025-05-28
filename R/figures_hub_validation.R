@@ -216,16 +216,19 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
 #'    scale_x_date
 #' @importFrom dplyr filter
 get_plot_mean_delay_over_time <- function(delays_over_time) {
-  plot_colors <- plot_components()
   p <- ggplot() +
     geom_line(
-      data = delays_over_time |>
-        filter(age_group != "00+"),
+      data = filter(
+        delays_over_time,
+        age_group != "00+"
+      ),
       aes(x = nowcast_date, y = mean_delay, color = age_group)
     ) +
     geom_line(
-      data = delays_over_time |>
-        filter(age_group == "00+"),
+      data = filter(
+        delays_over_time,
+        age_group == "00+"
+      ),
       aes(x = nowcast_date, y = mean_delay),
       color = "black", size = 2
     ) +
@@ -252,16 +255,19 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #' @importFrom dplyr filter
 get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
-  plot_colors <- plot_components()
   p <- ggplot() +
     geom_line(
-      data = avg_delays_by_age |>
-        filter(age_group != "00+"),
+      data = filter(
+        avg_delays_by_age,
+        age_group != "00+"
+      ),
       aes(x = delay, y = cdf, color = age_group)
     ) +
     geom_line(
-      data = avg_delays_by_age |>
-        filter(age_group == "00+"),
+      data = filter(
+        avg_delays_by_age,
+        age_group == "00+"
+      ),
       aes(x = delay, y = cdf),
       color = "black", size = 2
     ) +

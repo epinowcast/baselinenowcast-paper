@@ -42,7 +42,8 @@ Imports:
   tidyr,
   tibble,
   lubridate,
-  cowplot
+  cowplot,
+  RColorBrewer
 Suggests:
     bookdown,
     targets,

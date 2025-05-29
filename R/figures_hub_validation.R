@@ -165,7 +165,7 @@ get_plot_wis_over_time <- function(scores_summarised) {
 #' @autoglobal
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
-#'    ggtitle
+#'    ggtitle element_blank
 #' @importFrom ggpattern geom_col_pattern
 get_plot_score_by_age_group <- function(scores_by_age_group) {
   plot_colors <- plot_components()
@@ -215,7 +215,7 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #'    scale_x_date scale_color_manual scale_linewidth_manual
-#'    show.legend guides
+#'    guides
 get_plot_mean_delay_over_time <- function(delays_over_time) {
   plot_comps <- plot_components()
   p <- ggplot(data = delays_over_time) +
@@ -251,7 +251,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
 #'
 #' @returns ggplot object
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_line aes labs show.legend guides
+#' @importFrom ggplot2 ggplot geom_line aes labs guides
 get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
   plot_comps <- plot_components()
   p <- ggplot(avg_delays_by_age) +

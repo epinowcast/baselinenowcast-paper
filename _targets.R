@@ -39,6 +39,8 @@ tar_option_set(
     "RColorBrewer"
   ),
   workspace_on_error = TRUE,
+  storage = "worker",
+  retrieval = "worker",
   memory = "transient",
   garbage_collection = TRUE,
   format = "parquet", # default storage format

@@ -45,13 +45,19 @@ plot_components <- function() {
     "60-79" = 1,
     "80+" = 1
   )
+  score_patterns <- c(
+    "overprediction" = "stripe",
+    "underprediction" = "crosshatch",
+    "dispersion" = "circle"
+  )
   # nolint end
 
   plot_comp_list <-
     list(
       model_colors = model_colors,
       age_colors = age_colors,
-      age_linewidth = age_linewidth
+      age_linewidth = age_linewidth,
+      score_patterns = score_patterns
     )
   return(plot_comp_list)
 }

@@ -12,7 +12,7 @@
 #' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip
-#' @importFrom ggpattern geom_col_pattern
+#' @importFrom ggpattern geom_col_pattern scale_pattern_manual
 get_plot_bar_chart_sum_scores <- function(joined_scores,
                                           strata = "age groups") {
   if (strata == "age groups") {
@@ -25,15 +25,10 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
     summarise_scores(by = "model") |>
     select(model, overprediction, underprediction, dispersion) |>
     pivot_longer(!model)
-
-  pattern_types <- c("stripe", "crosshatch", "circle")
-  names(pattern_types) <- unique(scores_summary$name)
-  scores_summary$pattern <- pattern_types[scores_summary$name]
   plot_colors <- plot_components()
-
   p <- ggplot(
     scores_summary,
-    aes(x = model, y = value, fill = model, pattern = pattern)
+    aes(x = model, y = value, fill = model, pattern = name)
   ) +
     geom_col_pattern(
       position = "stack",
@@ -50,6 +45,10 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       x = "Model", y = "WIS",
       pattern = "Score Breakdown",
       color = "Model"
+    ) +
+    scale_pattern_manual(
+      name = "WIS breakdown",
+      values = plot_colors$score_patterns
     ) +
     ggtitle(glue("Overall WIS: {strata}"))
   return(p)
@@ -173,12 +172,9 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
   scores_summary <- scores_by_age_group |>
     select(model, age_group, overprediction, underprediction, dispersion) |>
     pivot_longer(cols = c("overprediction", "underprediction", "dispersion"))
-  pattern_types <- c("stripe", "crosshatch", "circle")
-  names(pattern_types) <- unique(scores_summary$name)
-  scores_summary$pattern <- pattern_types[scores_summary$name]
   p <- ggplot(
     scores_summary,
-    aes(x = model, y = value, fill = model, pattern = pattern)
+    aes(x = model, y = value, fill = model, pattern = name)
   ) +
     geom_col_pattern(
       position = "stack",
@@ -202,7 +198,15 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       color = "Model"
     ) +
     facet_grid(. ~ age_group, switch = "x") +
-    scale_fill_manual(values = plot_colors$model_colors)
+    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_pattern_manual(
+      name = "WIS breakdown",
+      values = plot_colors$score_patterns
+    ) +
+    scale_pattern_manual(
+      name = "WIS breakdown",
+      values = plot_colors$score_patterns
+    )
   return(p)
 }
 

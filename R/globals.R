@@ -44,7 +44,7 @@ utils::globalVariables(c(
   "underprediction", # <get_plot_bar_chart_sum_scores>
   "dispersion", # <get_plot_bar_chart_sum_scores>
   "value", # <get_plot_bar_chart_sum_scores>
-  "pattern", # <get_plot_bar_chart_sum_scores>
+  "name", # <get_plot_bar_chart_sum_scores>
   "horizon", # <get_plot_nowcasts_over_time>
   "age_group", # <get_plot_nowcasts_over_time>
   "reference_date", # <get_plot_nowcasts_over_time>
@@ -65,7 +65,7 @@ utils::globalVariables(c(
   "underprediction", # <get_plot_score_by_age_group>
   "dispersion", # <get_plot_score_by_age_group>
   "value", # <get_plot_score_by_age_group>
-  "pattern", # <get_plot_score_by_age_group>
+  "name", # <get_plot_score_by_age_group>
   "nowcast_date", # <get_plot_mean_delay_over_time>
   "mean_delay", # <get_plot_mean_delay_over_time>
   "age_group", # <get_plot_mean_delay_over_time>

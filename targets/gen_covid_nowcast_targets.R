@@ -239,7 +239,10 @@ gen_covid_nowcast_targets <- list(
   ),
   tar_target(
     name = mean_delay_df,
-    command = data.frame(mean_delay = sum(delay_pmf * (1:length(delay_pmf)))) |>
+    command = data.frame(
+      mean_delay =
+        sum(delay_pmf * (0:(length(delay_pmf) - 1)))
+    ) |>
       mutate(
         model = "base",
         nowcast_date = nowcast_dates_covid,

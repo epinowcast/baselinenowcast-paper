@@ -163,9 +163,10 @@ get_plot_wis_over_time <- function(scores_summarised) {
 #'
 #' @returns ggplot object
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_col_pattern aes labs
+#' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
 #'    ggtitle
+#' @importFrom ggpattern geom_col_pattern
 get_plot_score_by_age_group <- function(scores_by_age_group) {
   plot_colors <- plot_components()
 
@@ -213,34 +214,32 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
 #' @returns ggplot object
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs
-#'    scale_x_date
-#' @importFrom dplyr filter
+#'    scale_x_date scale_color_manual scale_linewidth_manual
+#'    show.legend guides
 get_plot_mean_delay_over_time <- function(delays_over_time) {
-  p <- ggplot() +
-    geom_line(
-      data = filter(
-        delays_over_time,
-        age_group != "00+"
-      ),
-      aes(x = nowcast_date, y = mean_delay, color = age_group)
-    ) +
-    geom_line(
-      data = filter(
-        delays_over_time,
-        age_group == "00+"
-      ),
-      aes(x = nowcast_date, y = mean_delay),
-      color = "black", size = 2
-    ) +
+  plot_comps <- plot_components()
+  p <- ggplot(data = delays_over_time) +
+    geom_line(aes(
+      x = ymd(nowcast_date), y = mean_delay,
+      color = age_group,
+      linewidth = age_group
+    )) +
+    guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    labs(
-      color = "Age group",
-      x = "", y = "Mean delay over time"
-    )
+    scale_color_manual(
+      name = "Age group",
+      values = plot_comps$age_colors
+    ) +
+    scale_linewidth_manual(
+      values = plot_comps$age_linewidth,
+      labels = NULL
+    ) +
+    xlab("") +
+    ylab("Mean delay over time")
 
   return(p)
 }
@@ -252,30 +251,26 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
 #'
 #' @returns ggplot object
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_line aes labs
-#' @importFrom dplyr filter
+#' @importFrom ggplot2 ggplot geom_line aes labs show.legend guides
 get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
-  p <- ggplot() +
+  plot_comps <- plot_components()
+  p <- ggplot(avg_delays_by_age) +
     geom_line(
-      data = filter(
-        avg_delays_by_age,
-        age_group != "00+"
-      ),
-      aes(x = delay, y = cdf, color = age_group)
+      aes(x = delay_time, y = cdf, color = age_group, linewidth = age_group)
     ) +
-    geom_line(
-      data = filter(
-        avg_delays_by_age,
-        age_group == "00+"
-      ),
-      aes(x = delay, y = cdf),
-      color = "black", size = 2
+    guides(linewidth = "none") +
+    scale_color_manual(
+      name = "Age group",
+      values = plot_comps$age_colors
     ) +
-    get_plot_theme() +
-    labs(
-      color = "Age group",
-      x = "Delay", y = "Cumulative delay distribution"
-    )
+    scale_linewidth_manual(
+      values = plot_comps$age_linewidth,
+      labels = NULL
+    ) +
+    xlab("Delay (days)") +
+    ylab("Cumulative delay distribution") +
+    get_plot_theme()
+
 
   return(p)
 }

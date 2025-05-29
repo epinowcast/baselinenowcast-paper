@@ -15,6 +15,7 @@ library(zoo)
 library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
+library(RColorBrewer)
 
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
@@ -34,10 +35,12 @@ tar_option_set(
     "readr", "tidyr",
     "zoo",
     "epinowcast",
-    "scoringutils"
+    "scoringutils",
+    "RColorBrewer"
   ),
   workspace_on_error = TRUE,
   memory = "transient",
+  garbage_collection = TRUE,
   format = "parquet", # default storage format
   error = "null"
 )

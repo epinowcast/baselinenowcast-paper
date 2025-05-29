@@ -4,13 +4,21 @@
 \alias{get_plot_nowcasts_over_time}
 \title{Get a plot of the nowcasts over time for both KIT and baselinenowcast}
 \usage{
-get_plot_nowcasts_over_time(combined_nowcasts, horizon_to_plot, facet = FALSE)
+get_plot_nowcasts_over_time(
+  combined_nowcasts,
+  horizon_to_plot,
+  age_group_to_plot = "00+",
+  facet = FALSE
+)
 }
 \arguments{
 \item{combined_nowcasts}{Dataframe of the combined quantiles across
 horizons and nowcast dates}
 
 \item{horizon_to_plot}{Integer indicating which horizon to plot}
+
+\item{age_group_to_plot}{Character string indicating which age group to
+show in the plot, default is "00+" for all age groups.}
 
 \item{facet}{Boolean indicating whether or not to make separate facets
 of each model}

@@ -30,11 +30,11 @@ figures_hub_validation_targets <- list(
     command = get_plot_score_by_age_group(scores_by_age_group)
   ),
   tar_target(
-    name = mean_delay_over_time_by_age,
+    name = plot_mean_delay_over_time_by_age,
     command = get_plot_mean_delay_over_time(delay_over_time_validation)
   ),
   tar_target(
-    name = mean_cdf_delay_by_age,
+    name = plot_mean_cdf_delay_by_age,
     command = get_plot_of_delay_cdf_by_age(mean_delay_validation)
   )
 )

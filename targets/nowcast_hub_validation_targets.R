@@ -27,8 +27,7 @@ nowcast_hub_validation_targets <- list(
         n_history_uncertainty == 60,
         borrow == FALSE,
         partial_rep_tri == TRUE
-      ) |>
-      mutate(model = ifelse(model == "base", "baselinenowcast", model))
+      )
   ),
   tar_target(
     name = mean_delay_validation,
@@ -41,10 +40,9 @@ nowcast_hub_validation_targets <- list(
         partial_rep_tri == TRUE
       ) |>
       # Estimate a dely fore
-      group_by(age_group) |>
+      group_by(age_group, delay_time) |>
       summarise(mean_delay = mean(delay)) |>
-      mutate(cdf = cumsum(mean_delay)) |>
-      mutate(model = ifelse(model == "base", "baselinenowcast", model))
+      mutate(cdf = cumsum(mean_delay))
   ),
   # Scores --------------------------------------------------------------------
   tar_target(

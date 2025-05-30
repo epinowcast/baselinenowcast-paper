@@ -44,7 +44,34 @@ utils::globalVariables(c(
   "underprediction", # <get_plot_bar_chart_sum_scores>
   "dispersion", # <get_plot_bar_chart_sum_scores>
   "value", # <get_plot_bar_chart_sum_scores>
-  "pattern", # <get_plot_bar_chart_sum_scores>
+  "name", # <get_plot_bar_chart_sum_scores>
+  "horizon", # <get_plot_nowcasts_over_time>
+  "age_group", # <get_plot_nowcasts_over_time>
+  "reference_date", # <get_plot_nowcasts_over_time>
+  "q_0.5", # <get_plot_nowcasts_over_time>
+  "model", # <get_plot_nowcasts_over_time>
+  "q_0.25", # <get_plot_nowcasts_over_time>
+  "q_0.75", # <get_plot_nowcasts_over_time>
+  "q_0.025", # <get_plot_nowcasts_over_time>
+  "q_0.975", # <get_plot_nowcasts_over_time>
+  "observed", # <get_plot_nowcasts_over_time>
+  "data_as_of", # <get_plot_nowcasts_over_time>
+  "nowcast_date", # <get_plot_wis_over_time>
+  "wis", # <get_plot_wis_over_time>
+  "model", # <get_plot_wis_over_time>
+  "model", # <get_plot_score_by_age_group>
+  "age_group", # <get_plot_score_by_age_group>
+  "overprediction", # <get_plot_score_by_age_group>
+  "underprediction", # <get_plot_score_by_age_group>
+  "dispersion", # <get_plot_score_by_age_group>
+  "value", # <get_plot_score_by_age_group>
+  "name", # <get_plot_score_by_age_group>
+  "nowcast_date", # <get_plot_mean_delay_over_time>
+  "mean_delay", # <get_plot_mean_delay_over_time>
+  "age_group", # <get_plot_mean_delay_over_time>
+  "delay_time", # <get_plot_of_delay_cdf_by_age>
+  "cdf", # <get_plot_of_delay_cdf_by_age>
+  "age_group", # <get_plot_of_delay_cdf_by_age>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

@@ -221,6 +221,38 @@ gen_covid_nowcast_targets <- list(
       ) |>
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
+  tar_target(
+    name = delay_df,
+    command = data.frame(
+      delay = delay_pmf,
+      delay_time = 0:(length(delay_pmf) - 1)
+    ) |>
+      mutate(
+        model = "base",
+        nowcast_date = nowcast_dates_covid,
+        age_group = age_group_to_nowcast,
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri
+      )
+  ),
+  tar_target(
+    name = mean_delay_df,
+    command = data.frame(
+      mean_delay =
+        sum(delay_pmf * (0:(length(delay_pmf) - 1)))
+    ) |>
+      mutate(
+        model = "base",
+        nowcast_date = nowcast_dates_covid,
+        age_group = age_group_to_nowcast,
+        n_history_delay = n_history_delay,
+        n_history_uncertainty = n_history_uncertainty,
+        borrow = borrow,
+        partial_rep_tri = partial_rep_tri
+      )
+  ),
 
 
   # Generate summaries and scores with evaluation data ----------------------
@@ -262,7 +294,7 @@ gen_covid_nowcast_targets <- list(
   ),
   ## Forecast objects ---------------------------------------------------------
   tar_target(
-    name = su_sample_covid,
+    name = su_quantile_covid,
     command = scoringutils::as_forecast_sample(
       data = comb_nc_covid,
       # All the metadata we will want to keep track of
@@ -279,13 +311,10 @@ gen_covid_nowcast_targets <- list(
       observed = "observed",
       predicted = "total_count",
       sample_id = "draw"
-    )
-  ),
-  # Forecast quantiles as a scoringutils forecast object
-  tar_target(
-    name = su_quantile_covid,
-    command = scoringutils::as_forecast_quantile(
-      data = su_sample_covid,
+    ) |> scoringutils::transform_forecasts(
+      fun = scoringutils::log_shift,
+      offset = 1
+    ) |> scoringutils::as_forecast_quantile(
       probs = config$covid$quantiles
     )
   ),
@@ -326,10 +355,6 @@ gen_covid_nowcast_targets <- list(
   ),
 
   ## Scores--------------------------------------------------------------------
-  tar_target(
-    name = scores_sample_covid,
-    command = scoringutils::score(su_sample_covid)
-  ),
   tar_target(
     name = scores_quantile_covid,
     command = scoringutils::score(su_quantile_covid)

@@ -41,7 +41,8 @@ Imports:
   baselinenowcast,
   tidyr,
   tibble,
-  lubridate
+  cowplot,
+  RColorBrewer
 Suggests:
     bookdown,
     targets,

@@ -66,7 +66,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
     select(reference_date, draw, pred_count) |>
     mutate(nowcast_date = nowcast_date) |>
     left_join(data_as_of_df, by = "reference_date") |>
-    filter(reference_date >= ymd(nowcast_date) - days(days_to_eval - 1)) |>
+    filter(reference_date >= ymd(!!nowcast_date) - days(days_to_eval - 1)) |>
     left_join(eval_data, by = "reference_date") |>
     rename(total_count = pred_count) |>
     mutate(
@@ -101,6 +101,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
       fun = scoringutils::log_shift,
       offset = 1
     ) |>
+    filter(scale == "log") |>
     scoringutils::as_forecast_quantile(
       probs = config$covid$quantiles
     )

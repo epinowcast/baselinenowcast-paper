@@ -271,6 +271,11 @@ gen_covid_nowcast_targets <- list(
   tar_target(
     name = summary_nowcast_covid,
     command = su_quantile_covid |>
+      # Need to transform back to natural scale
+      mutate(
+        observed = exp(observed),
+        predicted = exp(predicted)
+      ) |>
       filter(quantile_level %in% config$plot_quantiles) |>
       pivot_wider(
         names_from = "quantile_level",

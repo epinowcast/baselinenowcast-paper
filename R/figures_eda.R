@@ -81,6 +81,7 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
   }
   all_nowcasts <- all_nowcasts |>
     mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
+  plot_colors <- plot_components()
 
   p <- ggplot(all_nowcasts) +
     geom_ribbon(
@@ -138,16 +139,10 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     ) +
     # nolint start
     scale_color_manual(
-      values = c(
-        "base" = "darkgreen",
-        "KIT simple nowcast" = "orange4"
-      )
+      values = plot_colors$model_colors
     ) +
     scale_fill_manual(
-      values = c(
-        "base" = "darkgreen",
-        "KIT simple nowcast" = "orange4"
-      )
+      values = plot_colors$model_colors
     ) +
     # nolint end
     xlab("Reference date") +

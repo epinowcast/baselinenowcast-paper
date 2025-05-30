@@ -145,20 +145,7 @@ gen_covid_nowcast_targets <- list(
       k = 7
     )
   ),
-  # Aggregate nowcasts by reference time using a 7 day rolling sum
-  tar_target(
-    name = nowcast_draws_df,
-    command = get_nowcast_draws(
-      point_nowcast_matrix = point_nowcast_mat,
-      reporting_triangle = triangle,
-      dispersion = disp_params,
-      draws = 100,
-      fun_to_aggregate = sum,
-      k = 7
-    )
-  ),
-  # Aggregate across reference times to get probabilistic draws of the
-  # final count
+  # Make metadata dataframes --------------------------------------------------
   # Join predictions and observations
   tar_target(
     name = reference_dates,
@@ -192,6 +179,49 @@ gen_covid_nowcast_targets <- list(
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
   tar_target(
+    name = eval_data_daily,
+    command = get_eval_data_from_long_df(
+      long_df = covid_long,
+      as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
+    )
+  ),
+  tar_target(
+    name = eval_data_7d,
+    command = eval_data_daily |>
+      arrange(reference_date) |>
+      mutate(observed = rollsum(observed,
+        k = 7,
+        fill = NA, align = "right"
+      )) |>
+      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
+  ),
+  # Generate summaries and scores with evaluation data ----------------------
+  # Create a mega wrapper function so that we are not pulling all the draws
+  # into memory when returning the `mapped_values`
+  tar_target(
+    name = su_quantile_covid,
+    command = get_nowcast_quantiles(
+      point_nowcast_matrix = point_nowcast_mat,
+      reporting_triangle = triangle,
+      dispersion = disp_params,
+      draws = config$n_draws,
+      fun_to_aggregate = sum,
+      k = 7,
+      days_to_eval = config$covid$days_to_eval,
+      nowcast_date = nowcast_dates_covid,
+      date_df = date_df,
+      data_as_of_df = data_as_of_df,
+      eval_data = eval_data_7d,
+      model = "base", # Here this is the only model we are using
+      # These will all vary
+      n_history_delay = n_history_delay,
+      n_history_uncertainty = n_history_uncertainty,
+      borrow = borrow,
+      partial_rep_tri = partial_rep_tri,
+      age_group = age_group_to_nowcast
+    )
+  ),
+  tar_target(
     name = pt_nowcast_df,
     command = data.frame(pt_nowcast = rollapply(
       rowSums(point_nowcast_mat),
@@ -201,25 +231,6 @@ gen_covid_nowcast_targets <- list(
       align = "right"
     )) |>
       mutate(time = 1:nrow(point_nowcast_mat))
-  ),
-  tar_target(
-    name = samples_nowcast_covid_7d,
-    command = nowcast_draws_df |>
-      left_join(date_df, by = "time") |>
-      left_join(pt_nowcast_df, by = "time") |>
-      select(reference_date, draw, pred_count, pt_nowcast) |>
-      mutate(nowcast_date = nowcast_dates_covid) |>
-      left_join(data_as_of_df, by = "reference_date") |>
-      mutate(
-        total_count = pred_count,
-        model = "base", # Here this is the only model we are using
-        # These will all vary
-        n_history_delay = n_history_delay,
-        n_history_uncertainty = n_history_uncertainty,
-        borrow = borrow,
-        partial_rep_tri = partial_rep_tri
-      ) |>
-      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
   tar_target(
     name = delay_df,
@@ -254,70 +265,8 @@ gen_covid_nowcast_targets <- list(
       )
   ),
 
-
-  # Generate summaries and scores with evaluation data ----------------------
-  tar_target(
-    name = eval_data_daily,
-    command = get_eval_data_from_long_df(
-      long_df = covid_long,
-      as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
-    )
-  ),
-  tar_target(
-    name = eval_data_7d,
-    command = eval_data_daily |>
-      arrange(reference_date) |>
-      mutate(observed = rollsum(observed,
-        k = 7,
-        fill = NA, align = "right"
-      )) |>
-      filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
-  ),
-
-  # Join eval data to the subset of the nowcast that we are evaluating
-  tar_target(
-    name = comb_nc_covid,
-    command = samples_nowcast_covid_7d |>
-      filter(reference_date >=
-        ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
-      left_join(eval_data_7d, by = "reference_date") |>
-      mutate(age_group = age_group_to_nowcast)
-  ),
-  # Make a quick plot of the individual nowcast as a test
-  tar_target(
-    name = plot_ind_nowcast,
-    command = get_plot_ind_nowcast_draws(comb_nc_covid)
-  ),
-  tar_target(
-    name = plot_ind_nowcast_quantiles,
-    command = get_plot_ind_nowcast_quantiles(comb_nc_covid)
-  ),
   ## Forecast objects ---------------------------------------------------------
-  tar_target(
-    name = su_quantile_covid,
-    command = scoringutils::as_forecast_sample(
-      data = comb_nc_covid,
-      # All the metadata we will want to keep track of
-      forecast_unit = c(
-        "nowcast_date",
-        "reference_date",
-        "age_group",
-        "model",
-        "n_history_delay",
-        "n_history_uncertainty",
-        "borrow",
-        "partial_rep_tri"
-      ),
-      observed = "observed",
-      predicted = "total_count",
-      sample_id = "draw"
-    ) |> scoringutils::transform_forecasts(
-      fun = scoringutils::log_shift,
-      offset = 1
-    ) |> scoringutils::as_forecast_quantile(
-      probs = config$covid$quantiles
-    )
-  ),
+
   # Get a wide dataframe with only 50th and 90th for plotting
   tar_target(
     name = summary_nowcast_covid,

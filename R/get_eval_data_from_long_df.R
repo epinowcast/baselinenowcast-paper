@@ -11,7 +11,7 @@ get_eval_data_from_long_df <- function(long_df,
                                        as_of_date) {
   eval_df <- long_df |>
     filter(report_date <= ymd(as_of_date)) |>
-    group_by(reference_date) |>
+    group_by(reference_date, age_group) |>
     summarise(
       observed = sum(count, na.rm = TRUE)
     ) |>

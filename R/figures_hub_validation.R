@@ -203,10 +203,6 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
-    ) +
-    scale_pattern_manual(
-      name = "WIS breakdown",
-      values = plot_colors$score_patterns
     )
   return(p)
 }
@@ -290,6 +286,7 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
 #'    scale_fill_manual
 #' @importFrom dplyr filter group_by summarise mutate
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
 #' @returns bar chart
 get_plot_bar_chart_coverage <- function(all_coverage,
                                         strata,

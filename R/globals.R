@@ -72,12 +72,20 @@ utils::globalVariables(c(
   "delay_time", # <get_plot_of_delay_cdf_by_age>
   "cdf", # <get_plot_of_delay_cdf_by_age>
   "age_group", # <get_plot_of_delay_cdf_by_age>
+  "age_group", # <get_plot_bar_chart_coverage>
+  "interval_range", # <get_plot_bar_chart_coverage>
+  "model", # <get_plot_bar_chart_coverage>
+  "interval_coverage", # <get_plot_bar_chart_coverage>
+  "empirical_coverage", # <get_plot_bar_chart_coverage>
+  "95", # <get_plot_bar_chart_coverage>
+  "50", # <get_plot_bar_chart_coverage>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>
   "location", # <get_covid_data>
   "report_date", # <get_eval_data_from_long_df>
   "reference_date", # <get_eval_data_from_long_df>
+  "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
   "reference_date", # <get_nowcast_quantiles>
   "draw", # <get_nowcast_quantiles>

@@ -16,19 +16,18 @@ get_triangle <- function(long_df,
                          max_delay,
                          age_group,
                          partial_rep_tri = TRUE) {
-  df_filtered <- long_df |>
-    filter(age_group == !!age_group)
+  df_filtered <- filter(long_df, age_group == !!age_group)
 
   triangle_raw <- get_rep_tri_from_long_df(
     long_df = df_filtered,
     nowcast_date = nowcast_date,
     max_delay = max_delay
   )
-  if (!partial_rep_tri) {
+  if (partial_rep_tri) {
+    triangle <- triangle_raw
+  } else {
     triangle <- triangle_raw |>
       filter(reference_date <= ymd(nowcast_date) - days(max_delay))
-  } else {
-    triangle <- triangle_raw
   }
   triangle_matrix <- triangle |>
     select(

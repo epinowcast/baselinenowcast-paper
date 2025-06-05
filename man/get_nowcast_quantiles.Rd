@@ -20,6 +20,7 @@ get_nowcast_quantiles(
   borrow,
   partial_rep_tri,
   age_group,
+  quantiles,
   fun_to_aggregate = sum,
   k = 1
 )
@@ -65,6 +66,8 @@ complete reporting triangle is used or the latest complete triangle is
 used.}
 
 \item{age_group}{Character string indicating the age group.}
+
+\item{quantiles}{Vector of quantiles to generate.}
 
 \item{fun_to_aggregate}{Function to apply across the \code{k} reference dates,
 default is \code{sum}.}

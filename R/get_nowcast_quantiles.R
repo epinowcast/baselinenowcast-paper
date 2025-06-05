@@ -26,6 +26,7 @@
 #'    complete reporting triangle is used or the latest complete triangle is
 #'    used.
 #' @param age_group Character string indicating the age group.
+#' @param quantiles Vector of quantiles to generate.
 #' @param fun_to_aggregate Function to apply across the `k` reference dates,
 #'    default is `sum`.
 #' @param k Width of reference dates to apply transform to, default is `1`
@@ -51,6 +52,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
                                   borrow,
                                   partial_rep_tri,
                                   age_group,
+                                  quantiles,
                                   fun_to_aggregate = sum,
                                   k = 1) {
   nowcast_draws_df <- get_nowcast_draws(
@@ -98,7 +100,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
     sample_id = "draw"
   ) |>
     scoringutils::as_forecast_quantile(
-      probs = config$covid$quantiles
+      probs = quantiles
     )
 
   return(su_quantiles)

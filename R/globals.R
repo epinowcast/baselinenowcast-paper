@@ -90,7 +90,6 @@ utils::globalVariables(c(
   "reference_date", # <get_nowcast_quantiles>
   "draw", # <get_nowcast_quantiles>
   "pred_count", # <get_nowcast_quantiles>
-  "config", # <get_nowcast_quantiles>
   "report_date", # <get_rep_tri_from_long_df>
   "reference_date", # <get_rep_tri_from_long_df>
   "delay", # <get_rep_tri_from_long_df>

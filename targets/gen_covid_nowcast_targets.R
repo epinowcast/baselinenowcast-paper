@@ -183,7 +183,10 @@ gen_covid_nowcast_targets <- list(
       n_history_uncertainty = n_history_uncertainty,
       borrow = borrow,
       partial_rep_tri = partial_rep_tri,
-      age_group = age_group_to_nowcast
+      age_group = age_group_to_nowcast,
+      quantiles = config$covid$quantiles,
+      fun_to_aggregate = 1,
+      k = 7
     )
   ),
   tar_target(

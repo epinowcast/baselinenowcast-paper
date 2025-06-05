@@ -128,7 +128,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       partial_rep_tri = result_df |> pull(partial_rep_tri) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
-      quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.975),
+      quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
       eval_timeframe = 40
     ),
     n_draws = 100,

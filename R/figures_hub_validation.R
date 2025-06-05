@@ -283,8 +283,8 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
 #' @param strata Character string indicating which strata to summarize over.
 #' @param intervals Vector of integers to plot coverage of.
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
-#'    scale_fill_manual
-#' @importFrom dplyr filter group_by summarise mutate
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @autoglobal
 #' @returns bar chart

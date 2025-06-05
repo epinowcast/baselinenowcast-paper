@@ -5,7 +5,8 @@ write_config <- function(noro_nowcast_dates = NULL,
                          age_groups_covid = NULL,
                          n_history_uncertainty_covid = NULL,
                          n_history_delay_covid = NULL,
-                         borrow = NULL) {
+                         borrow = NULL,
+                         permutations_covid = TRUE) {
   norovirus_url <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv" # nolint
   # covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
   # Use the august 8th data, as is in the paper
@@ -91,10 +92,15 @@ write_config <- function(noro_nowcast_dates = NULL,
       partial_rep_tri = partial_rep_tri
     )
   # result_df should be 7* length of df_base_covid
-  result_df <- create_pairwise_variations(df_base_covid,
-    multipliers = c(2.0, 0.5),
-    max_delay = max_delay
-  )
+  if (permutations_covid) {
+    result_df <- create_pairwise_variations(df_base_covid,
+      multipliers = c(2.0, 0.5),
+      max_delay = max_delay
+    )
+  } else {
+    result_df <- df_base_covid
+  }
+
 
   config <- list(
     norovirus = list(

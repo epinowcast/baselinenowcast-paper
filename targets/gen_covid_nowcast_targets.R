@@ -1,62 +1,82 @@
 gen_covid_nowcast_targets <- list(
   tar_target(
-    name = covid_long,
-    command = covid_long_all_strata |>
-      filter(age_group == age_group_to_nowcast)
-  ),
-  tar_target(
-    name = long_df_for_borrow,
-    command = {
-      if (isTRUE(borrow)) {
-        covid_long_all_strata |> filter(age_group == "00+")
-      } else {
-        NULL
-      }
-    }
-  ),
-  # Run baselinenowcast pipeline-----------------------------------------------
-  # Generate reporting triangle
-  tar_target(
     name = triangle,
-    command = get_rep_tri_from_long_df(
-      long_df = covid_long,
+    command = get_triangle(
+      long_df = covid_long_all_strata,
       nowcast_date = nowcast_dates_covid,
-      max_delay = config$covid$max_delay
-    ) |> select(
-      -reference_date, -nowcast_date
-    ) |> as.matrix()
+      max_delay = config$covid$max_delay,
+      age_group = age_group_to_nowcast,
+      partial_rep_tri = TRUE
+    )
   ),
-  # Get triangle for delay (may or may not be same as reporting triangle)
   tar_target(
     name = triangle_for_delay,
-    command = {
-      if (borrow) {
-        get_rep_tri_from_long_df(
-          long_df = long_df_for_borrow,
-          nowcast_date = nowcast_dates_covid,
-          max_delay = config$covid$max_delay
-        ) |>
-          select(
-            -reference_date, -nowcast_date
-          ) |>
-          as.matrix()
-      } else if (!partial_rep_tri) {
-        get_rep_tri_from_long_df(
-          long_df = covid_long,
-          nowcast_date = nowcast_dates_covid,
-          max_delay = config$covid$max_delay
-        ) |>
-          # Remove all the reference dates with incomplete data
-          filter(reference_date <= ymd(nowcast_dates_covid) - days(config$covid$max_delay)) |>
-          select(
-            -reference_date, -nowcast_date
-          ) |>
-          as.matrix()
-      } else {
-        triangle
-      }
-    }
+    command = get_triangle(
+      long_df = covid_long_all_strata,
+      nowcast_date = nowcast_dates_covid,
+      max_delay = config$covid$max_delay,
+      age_group = ifelse(borrow, "00+", age_group_to_nowcast),
+      partial_rep_tri = partial_rep_tri
+    )
   ),
+  # tar_target(
+  #   name = covid_long,
+  #   command = covid_long_all_strata |>
+  #     filter(age_group == age_group_to_nowcast)
+  # ),
+  # tar_target(
+  #   name = long_df_for_borrow,
+  #   command = {
+  #     if (isTRUE(borrow)) {
+  #       covid_long_all_strata |> filter(age_group == "00+")
+  #     } else {
+  #       NULL
+  #     }
+  #   }
+  # ),
+  # Run baselinenowcast pipeline-----------------------------------------------
+  # Generate reporting triangle
+  # tar_target(
+  #   name = triangle,
+  #   command = get_rep_tri_from_long_df(
+  #     long_df = covid_long,
+  #     nowcast_date = nowcast_dates_covid,
+  #     max_delay = config$covid$max_delay
+  #   ) |> select(
+  #     -reference_date, -nowcast_date
+  #   ) |> as.matrix()
+  # ),
+  # Get triangle for delay (may or may not be same as reporting triangle)
+  # tar_target(
+  #   name = triangle_for_delay,
+  #   command = {
+  #     if (borrow) {
+  #       get_rep_tri_from_long_df(
+  #         long_df = long_df_for_borrow,
+  #         nowcast_date = nowcast_dates_covid,
+  #         max_delay = config$covid$max_delay
+  #       ) |>
+  #         select(
+  #           -reference_date, -nowcast_date
+  #         ) |>
+  #         as.matrix()
+  #     } else if (!partial_rep_tri) {
+  #       get_rep_tri_from_long_df(
+  #         long_df = covid_long,
+  #         nowcast_date = nowcast_dates_covid,
+  #         max_delay = config$covid$max_delay
+  #       ) |>
+  #         # Remove all the reference dates with incomplete data
+  #         filter(reference_date <= ymd(nowcast_dates_covid) - days(config$covid$max_delay)) |>
+  #         select(
+  #           -reference_date, -nowcast_date
+  #         ) |>
+  #         as.matrix()
+  #     } else {
+  #       triangle
+  #     }
+  #   }
+  # ),
   # Estimate delay
   tar_target(
     name = delay_pmf,
@@ -75,72 +95,14 @@ gen_covid_nowcast_targets <- list(
     )
   ),
   # Estimate uncertainty
-  # Get triangle to estimate uncertainty (may or may not be reporting triangle
-  # to nowcast)
-  tar_target(
-    name = triangle_for_uncertainty,
-    command = {
-      if (borrow) {
-        get_rep_tri_from_long_df(
-          long_df = long_df_for_borrow,
-          nowcast_date = nowcast_dates_covid,
-          max_delay = config$covid$max_delay
-        ) |>
-          select(
-            -reference_date, -nowcast_date
-          ) |>
-          as.matrix()
-      } else if (!partial_rep_tri) {
-        get_rep_tri_from_long_df(
-          long_df = covid_long,
-          nowcast_date = nowcast_dates_covid,
-          max_delay = config$covid$max_delay
-        ) |>
-          # Remove all the reference dates with incomplete data
-          filter(reference_date <= ymd(nowcast_dates_covid) - days(config$covid$max_delay)) |>
-          select(
-            -reference_date, -nowcast_date
-          ) |>
-          as.matrix()
-      } else {
-        triangle
-      }
-    }
-  ),
-  # Get a list of truncated reporting triangles
-  tar_target(
-    name = truncated_rts,
-    command = truncate_triangles(
-      reporting_triangle = triangle_for_uncertainty,
-      n = n_history_uncertainty
-    ),
-    format = "rds"
-  ),
-  # Generate retrospective reporting triangles (what would have been available
-  # as of the last reference time)
-  tar_target(
-    name = retro_rts,
-    command = generate_triangles(
-      trunc_rep_tri_list = truncated_rts
-    ),
-    format = "rds"
-  ),
-  # Generate retrospective nowcasts
-  tar_target(
-    name = retro_nowcasts,
-    command = generate_pt_nowcast_mat_list(
-      reporting_triangle_list = retro_rts
-    ),
-    format = "rds"
-  ),
-  # Use retrospective nowcasts and the observations to estimate dispersion on
-  # 7 day rolling sum
+  # As written, this will always use the triangle used for delay estimation
+  # (which may be "borrowed" from national, or use only complete data")
   tar_target(
     name = disp_params,
-    command = estimate_dispersion(
-      pt_nowcast_mat_list = retro_nowcasts,
-      trunc_rep_tri_list = truncated_rts,
-      reporting_triangle_list = retro_rts,
+    command = estimate_uncertainty(
+      triangle_for_uncertainty = triangle_for_delay,
+      n_history_uncertainty = n_history_uncertainty,
+      n_history_delay = n_history_delay,
       fun_to_aggregate = sum,
       k = 7
     )
@@ -149,8 +111,11 @@ gen_covid_nowcast_targets <- list(
   # Join predictions and observations
   tar_target(
     name = reference_dates,
-    command = covid_long |>
-      filter(reference_date <= nowcast_dates_covid) |>
+    command = covid_long_all_strata |>
+      filter(
+        age_group == age_group_to_nowcast,
+        reference_date <= nowcast_dates_covid
+      ) |>
       distinct(reference_date) |>
       arrange(reference_date) |>
       pull()
@@ -164,8 +129,11 @@ gen_covid_nowcast_targets <- list(
   ),
   tar_target(
     name = data_as_of_df,
-    command = covid_long |>
-      filter(report_date <= nowcast_dates_covid) |>
+    command = covid_long_all_strata |>
+      filter(
+        age_group == age_group_to_nowcast,
+        report_date <= nowcast_dates_covid
+      ) |>
       group_by(reference_date) |>
       summarise(
         data_as_of = sum(count, na.rm = TRUE)
@@ -179,15 +147,12 @@ gen_covid_nowcast_targets <- list(
       filter(reference_date >= min(reference_date) + days(6)) # exclude NA days
   ),
   tar_target(
-    name = eval_data_daily,
-    command = get_eval_data_from_long_df(
-      long_df = covid_long,
-      as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
-    )
-  ),
-  tar_target(
     name = eval_data_7d,
-    command = eval_data_daily |>
+    command = get_eval_data_from_long_df(
+      long_df = covid_long_all_strata |>
+        filter(age_group == age_group_to_nowcast),
+      as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
+    ) |>
       arrange(reference_date) |>
       mutate(observed = rollsum(observed,
         k = 7,

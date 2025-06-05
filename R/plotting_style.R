@@ -45,10 +45,14 @@ plot_components <- function() {
     "60-79" = 1,
     "80+" = 1
   )
-  score_patterns <- c(
-    "overprediction" = "stripe",
-    "underprediction" = "crosshatch",
-    "dispersion" = "circle"
+  coverage_alpha <- c(
+    "95" = 0.2,
+    "50" = 0.8
+  )
+  score_alpha <- c(
+    "overprediction" = 0.5,
+    "underprediction" = 0.8,
+    "dispersion" = 0.2
   )
   # nolint end
 
@@ -57,7 +61,8 @@ plot_components <- function() {
       model_colors = model_colors,
       age_colors = age_colors,
       age_linewidth = age_linewidth,
-      score_patterns = score_patterns
+      score_alpha = score_alpha,
+      coverage_alpha = coverage_alpha
     )
   return(plot_comp_list)
 }

@@ -4,7 +4,13 @@
 \alias{get_triangle}
 \title{Get reporting triangle}
 \usage{
-get_triangle(long_df, nowcast_date, max_delay, age_group)
+get_triangle(
+  long_df,
+  nowcast_date,
+  max_delay,
+  age_group,
+  partial_rep_tri = TRUE
+)
 }
 \arguments{
 \item{long_df}{Dataframe with all age groups, reference dates, and report}
@@ -14,6 +20,10 @@ get_triangle(long_df, nowcast_date, max_delay, age_group)
 \item{max_delay}{Integer indicating the maximum delay}
 
 \item{age_group}{Character string indicating the age group for this triangle}
+
+\item{partial_rep_tri}{Boolean indicating whether to use the partial
+reporting triangle or only pull from complete reporting matrix. Default
+is \code{TRUE}.}
 }
 \value{
 \code{triangle} Matrix of reporting triangle

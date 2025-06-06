@@ -1,4 +1,4 @@
-EDA_plot_targets <- list(
+EDA_plot_targets_covid <- list(
   # Covid---------------------------------------------------------------------
   tar_target(
     name = plot_covid_data,
@@ -138,38 +138,6 @@ EDA_plot_targets <- list(
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid 7 day",
       title = "baselinenowcast point nowcasts"
-    )
-  ),
-  # Norovirus--------------------------------------------------------------------
-  # Data plots
-  tar_target(
-    name = plot_noro_data,
-    command = get_plot_data_as_of(
-      final_df = noro_long,
-      as_of_dates = c(
-        "2023-12-10", "2024-01-21",
-        "2024-02-25"
-      ),
-      pathogen = "Norovirus"
-    ),
-    format = "rds"
-  ),
-  tar_target(
-    name = final_eval_data_noro,
-    command = get_eval_data_from_long_df(
-      long_df = noro_long,
-      as_of_date = ymd(max(config$norovirus$nowcast_dates)) + days(config$norovirus$eval_timeframe)
-    )
-  ),
-  # Make sure quantiled nowcasts are performing reasonably.
-  tar_target(
-    name = plot_noro_nowcasts,
-    command = get_plot_mult_nowcasts(
-      all_nowcasts = all_nowcasts_noro |>
-        filter(model == "base", n_history_delay == 28),
-      final_summed_data = final_eval_data_noro,
-      nowcast_dates_to_plot = c("2023-12-10", "2024-01-21", "2024-02-25"),
-      pathogen = "Norovirus"
     )
   )
 )

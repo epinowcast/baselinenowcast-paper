@@ -76,7 +76,8 @@ gen_noro_nowcasts_targets <- list(
   tar_target(
     name = retro_nowcasts,
     command = generate_pt_nowcast_mat_list(
-      reporting_triangle_list = retro_rts
+      reporting_triangle_list = retro_rts,
+      n = n_history_delay
     ),
     format = "rds"
   ),

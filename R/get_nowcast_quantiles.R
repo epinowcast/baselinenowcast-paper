@@ -54,13 +54,13 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
                                   age_group,
                                   quantiles,
                                   fun_to_aggregate = sum,
-                                  k = 1) {
+                                  k = 7) {
   nowcast_draws_df <- get_nowcast_draws(
     point_nowcast_matrix = point_nowcast_matrix,
     reporting_triangle = reporting_triangle,
     dispersion = dispersion,
     draws = draws,
-    fun_to_aggregate = fun_to_aggregate,
+    fun_to_aggregate = sum,
     k = k
   )
   samples_w_metadata <- nowcast_draws_df |>
@@ -77,10 +77,8 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
       borrow = borrow,
-      partial_rep_tri = partial_rep_tri,
-      age_group = age_group
-    ) |>
-    filter(reference_date >= min(reference_date) + days((k - 1))) # exclude NAs
+      partial_rep_tri = partial_rep_tri
+    )
 
 
   su_quantiles <- scoringutils::as_forecast_sample(samples_w_metadata,

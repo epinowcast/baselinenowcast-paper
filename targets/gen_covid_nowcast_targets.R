@@ -170,8 +170,6 @@ gen_covid_nowcast_targets <- list(
       reporting_triangle = triangle,
       dispersion = disp_params,
       draws = config$n_draws,
-      fun_to_aggregate = sum,
-      k = 7,
       days_to_eval = config$covid$days_to_eval,
       nowcast_date = nowcast_dates_covid,
       date_df = date_df,
@@ -185,7 +183,7 @@ gen_covid_nowcast_targets <- list(
       partial_rep_tri = partial_rep_tri,
       age_group = age_group_to_nowcast,
       quantiles = config$covid$quantiles,
-      fun_to_aggregate = 1,
+      fun_to_aggregate = sum,
       k = 7
     )
   ),
@@ -267,8 +265,7 @@ gen_covid_nowcast_targets <- list(
         borrow = borrow,
         partial_rep_tri = partial_rep_tri,
       ) |>
-      filter(reference_date >= min(reference_date) + days(6)) |> # exclude NA days
-      left_join(eval_data_7d, by = "reference_date")
+      left_join(eval_data_7d, by = c("reference_date", "age_group"))
   ),
 
   ## Scores--------------------------------------------------------------------

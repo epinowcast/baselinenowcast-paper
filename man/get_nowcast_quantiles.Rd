@@ -22,7 +22,7 @@ get_nowcast_quantiles(
   age_group,
   quantiles,
   fun_to_aggregate = sum,
-  k = 1
+  k = 7
 )
 }
 \arguments{

@@ -79,6 +79,45 @@ utils::globalVariables(c(
   "empirical_coverage", # <get_plot_bar_chart_coverage>
   "95", # <get_plot_bar_chart_coverage>
   "50", # <get_plot_bar_chart_coverage>
+  "wis", # <get_plot_rel_wis_by_age_group>
+  "model", # <get_plot_rel_wis_by_age_group>
+  "age_group", # <get_plot_rel_wis_by_age_group>
+  "baselinenowcast", # <get_plot_rel_wis_by_age_group>
+  "KIT simple nowcast", # <get_plot_rel_wis_by_age_group>
+  "relative_wis", # <get_plot_rel_wis_by_age_group>
+  "age_group", # <get_plot_mean_wis_by_horizon>
+  "reference_date", # <get_plot_mean_wis_by_horizon>
+  "nowcast_date", # <get_plot_mean_wis_by_horizon>
+  "horizon", # <get_plot_mean_wis_by_horizon>
+  "wis", # <get_plot_mean_wis_by_horizon>
+  "model", # <get_plot_mean_wis_by_horizon>
+  "age_group", # <get_plot_rel_wis_by_horizon>
+  "reference_date", # <get_plot_rel_wis_by_horizon>
+  "nowcast_date", # <get_plot_rel_wis_by_horizon>
+  "model", # <get_plot_rel_wis_by_horizon>
+  "horizon", # <get_plot_rel_wis_by_horizon>
+  "wis", # <get_plot_rel_wis_by_horizon>
+  "baselinenowcast", # <get_plot_rel_wis_by_horizon>
+  "KIT simple nowcast", # <get_plot_rel_wis_by_horizon>
+  "relative_wis", # <get_plot_rel_wis_by_horizon>
+  "age_group", # <get_plot_coverage_by_horizon>
+  "interval_range", # <get_plot_coverage_by_horizon>
+  "reference_date", # <get_plot_coverage_by_horizon>
+  "nowcast_date", # <get_plot_coverage_by_horizon>
+  "model", # <get_plot_coverage_by_horizon>
+  "horizon", # <get_plot_coverage_by_horizon>
+  "interval_coverage", # <get_plot_coverage_by_horizon>
+  "empirical_coverage", # <get_plot_coverage_by_horizon>
+  "50", # <get_plot_coverage_by_horizon>
+  "95", # <get_plot_coverage_by_horizon>
+  "int_cont", # <get_plot_coverage_by_horizon>
+  "age_group", # <get_plot_coverage_by_age_group>
+  "interval_range", # <get_plot_coverage_by_age_group>
+  "model", # <get_plot_coverage_by_age_group>
+  "interval_coverage", # <get_plot_coverage_by_age_group>
+  "empirical_coverage", # <get_plot_coverage_by_age_group>
+  "95", # <get_plot_coverage_by_age_group>
+  "50", # <get_plot_coverage_by_age_group>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

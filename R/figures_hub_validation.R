@@ -454,7 +454,6 @@ get_plot_rel_wis_by_horizon <- function(scores,
     ) |>
     mutate(relative_wis = baselinenowcast / `KIT simple nowcast`)
 
-  plot_comps <- plot_components()
   p <- ggplot(scores_sum, aes(x = horizon, y = relative_wis)) +
     geom_line() +
     get_plot_theme() +

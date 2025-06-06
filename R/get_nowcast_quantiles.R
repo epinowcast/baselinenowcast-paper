@@ -15,7 +15,7 @@
 #'    (should be transformed to the target already).
 #' @param days_to_eval Integer indicating the number of days before the nowcast
 #'    date to evaluate against.
-#' @param model Character string indicatoing which model is being used
+#' @param model Character string indicating which model is being used
 #' @param n_history_delay Integer indicating number of reference times used for
 #'    delay estimate.
 #' @param n_history_uncertainty Integer indicating number of retrospective
@@ -60,7 +60,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
     reporting_triangle = reporting_triangle,
     dispersion = dispersion,
     draws = draws,
-    fun_to_aggregate = sum,
+    fun_to_aggregate = fun_to_aggregate,
     k = k
   )
   samples_w_metadata <- nowcast_draws_df |>
@@ -72,7 +72,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
     left_join(eval_data, by = "reference_date") |>
     rename(total_count = pred_count) |>
     mutate(
-      model = "base", # Here this is the only model we are using
+      model = model,
       # These will all vary
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,

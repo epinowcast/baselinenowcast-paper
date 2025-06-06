@@ -18,6 +18,23 @@ estimate_uncertainty <- function(triangle_for_uncertainty,
                                  n_history_delay,
                                  fun_to_aggregate = sum,
                                  k = 7) {
+  # Input validation
+  if (!is.matrix(triangle_for_uncertainty)) {
+    stop("triangle_for_uncertainty must be a matrix")
+  }
+  if (!is.numeric(n_history_uncertainty) || n_history_uncertainty <= 0) {
+    stop("n_history_uncertainty must be a positive integer")
+  }
+  if (!is.numeric(n_history_delay) || n_history_delay <= 0) {
+    stop("n_history_delay must be a positive integer")
+  }
+  if (!is.function(fun_to_aggregate)) {
+    stop("fun_to_aggregate must be a function")
+  }
+  if (!is.numeric(k) || k <= 0) {
+    stop("k must be a positive integer")
+  }
+
   truncated_rts <- truncate_triangles(
     reporting_triangle = triangle_for_uncertainty,
     n = n_history_uncertainty

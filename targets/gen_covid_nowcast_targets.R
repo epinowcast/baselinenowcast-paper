@@ -19,64 +19,6 @@ gen_covid_nowcast_targets <- list(
       partial_rep_tri = partial_rep_tri
     )
   ),
-  # tar_target(
-  #   name = covid_long,
-  #   command = covid_long_all_strata |>
-  #     filter(age_group == age_group_to_nowcast)
-  # ),
-  # tar_target(
-  #   name = long_df_for_borrow,
-  #   command = {
-  #     if (isTRUE(borrow)) {
-  #       covid_long_all_strata |> filter(age_group == "00+")
-  #     } else {
-  #       NULL
-  #     }
-  #   }
-  # ),
-  # Run baselinenowcast pipeline-----------------------------------------------
-  # Generate reporting triangle
-  # tar_target(
-  #   name = triangle,
-  #   command = get_rep_tri_from_long_df(
-  #     long_df = covid_long,
-  #     nowcast_date = nowcast_dates_covid,
-  #     max_delay = config$covid$max_delay
-  #   ) |> select(
-  #     -reference_date, -nowcast_date
-  #   ) |> as.matrix()
-  # ),
-  # Get triangle for delay (may or may not be same as reporting triangle)
-  # tar_target(
-  #   name = triangle_for_delay,
-  #   command = {
-  #     if (borrow) {
-  #       get_rep_tri_from_long_df(
-  #         long_df = long_df_for_borrow,
-  #         nowcast_date = nowcast_dates_covid,
-  #         max_delay = config$covid$max_delay
-  #       ) |>
-  #         select(
-  #           -reference_date, -nowcast_date
-  #         ) |>
-  #         as.matrix()
-  #     } else if (!partial_rep_tri) {
-  #       get_rep_tri_from_long_df(
-  #         long_df = covid_long,
-  #         nowcast_date = nowcast_dates_covid,
-  #         max_delay = config$covid$max_delay
-  #       ) |>
-  #         # Remove all the reference dates with incomplete data
-  #         filter(reference_date <= ymd(nowcast_dates_covid) - days(config$covid$max_delay)) |>
-  #         select(
-  #           -reference_date, -nowcast_date
-  #         ) |>
-  #         as.matrix()
-  #     } else {
-  #       triangle
-  #     }
-  #   }
-  # ),
   # Estimate delay
   tar_target(
     name = delay_pmf,

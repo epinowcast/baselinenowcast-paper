@@ -591,7 +591,6 @@ get_plot_coverage_by_age_group <- function(all_coverage,
       strip.background = element_rect(color = NA, fill = NA),
       legend.title = element_blank()
     ) +
-    scale_fill_manual(values = plot_comps$model_colors) +
     scale_alpha_manual(
       name = "Empirical coverage",
       values = plot_comps$coverage_alpha

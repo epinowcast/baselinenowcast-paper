@@ -50,7 +50,7 @@ for each reference time.}
 \item{days_to_eval}{Integer indicating the number of days before the nowcast
 date to evaluate against.}
 
-\item{model}{Character string indicatoing which model is being used}
+\item{model}{Character string indicating which model is being used}
 
 \item{n_history_delay}{Integer indicating number of reference times used for
 delay estimate.}

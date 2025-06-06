@@ -517,7 +517,7 @@ get_plot_coverage_by_horizon <- function(all_coverage,
       aes(
         x = horizon, y = empirical_coverage,
         color = model
-      ),
+      )
     ) +
     geom_hline(aes(yintercept = int_cont), linetype = "dashed") +
     scale_color_manual(

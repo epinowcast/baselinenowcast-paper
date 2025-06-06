@@ -79,7 +79,20 @@ nowcast_hub_validation_targets <- list(
     command = validation_scores |>
       filter(age_group != "00+") |>
       # Summarise across horizons (reference dates) and age groups
-      scoringutils::summarise_scores(by = c("model", "nowcast_date"))
+      scoringutils::summarise_scores(by = c(
+        "model",
+        "nowcast_date"
+      ))
+  ),
+  tar_target(
+    name = scores_over_time_ntl,
+    command = validation_scores |>
+      filter(age_group == "00+") |>
+      # Summarise across horizons (reference dates) and age groups
+      scoringutils::summarise_scores(by = c(
+        "model",
+        "nowcast_date"
+      ))
   ),
   tar_target(scores_by_age_group,
     command = validation_scores |>
@@ -92,7 +105,7 @@ nowcast_hub_validation_targets <- list(
     name = covid_coverage_filtered,
     command = all_coverage_covid |>
       filter(
-        model == "base",
+        model == "baselinenowcast",
         n_history_delay == 60,
         n_history_uncertainty == 60,
         borrow == FALSE,
@@ -100,8 +113,7 @@ nowcast_hub_validation_targets <- list(
       ) |>
       select(colnames(all_coverage_kit)) |>
       mutate(
-        nowcast_date = ymd(nowcast_date),
-        model = "baselinenowcast"
+        nowcast_date = ymd(nowcast_date)
       )
   ),
   # Ensures we are only comparing the same set of age groups

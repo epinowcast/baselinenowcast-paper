@@ -4,11 +4,14 @@
 \alias{get_plot_wis_over_time}
 \title{Plot the average WIS by model over time}
 \usage{
-get_plot_wis_over_time(scores_summarised)
+get_plot_wis_over_time(scores_summarised, strata)
 }
 \arguments{
 \item{scores_summarised}{Dataframe of scores averaged across age groups and
 reference times}
+
+\item{strata}{Character string indicating whether scores are across age
+groups or nationally.}
 }
 \value{
 ggplot object

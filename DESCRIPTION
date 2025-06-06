@@ -33,7 +33,6 @@ Imports:
   dplyr,
   ggplot2,
   readr,
-  ggpattern,
   epinowcast,
   glue,
   lubridate,

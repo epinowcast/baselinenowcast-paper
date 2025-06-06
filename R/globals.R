@@ -43,8 +43,8 @@ utils::globalVariables(c(
   "overprediction", # <get_plot_bar_chart_sum_scores>
   "underprediction", # <get_plot_bar_chart_sum_scores>
   "dispersion", # <get_plot_bar_chart_sum_scores>
-  "value", # <get_plot_bar_chart_sum_scores>
   "name", # <get_plot_bar_chart_sum_scores>
+  "value", # <get_plot_bar_chart_sum_scores>
   "horizon", # <get_plot_nowcasts_over_time>
   "age_group", # <get_plot_nowcasts_over_time>
   "reference_date", # <get_plot_nowcasts_over_time>
@@ -64,21 +64,71 @@ utils::globalVariables(c(
   "overprediction", # <get_plot_score_by_age_group>
   "underprediction", # <get_plot_score_by_age_group>
   "dispersion", # <get_plot_score_by_age_group>
-  "value", # <get_plot_score_by_age_group>
   "name", # <get_plot_score_by_age_group>
+  "value", # <get_plot_score_by_age_group>
   "nowcast_date", # <get_plot_mean_delay_over_time>
   "mean_delay", # <get_plot_mean_delay_over_time>
   "age_group", # <get_plot_mean_delay_over_time>
   "delay_time", # <get_plot_of_delay_cdf_by_age>
   "cdf", # <get_plot_of_delay_cdf_by_age>
   "age_group", # <get_plot_of_delay_cdf_by_age>
+  "age_group", # <get_plot_bar_chart_coverage>
+  "interval_range", # <get_plot_bar_chart_coverage>
+  "model", # <get_plot_bar_chart_coverage>
+  "interval_coverage", # <get_plot_bar_chart_coverage>
+  "empirical_coverage", # <get_plot_bar_chart_coverage>
+  "95", # <get_plot_bar_chart_coverage>
+  "50", # <get_plot_bar_chart_coverage>
+  "wis", # <get_plot_rel_wis_by_age_group>
+  "model", # <get_plot_rel_wis_by_age_group>
+  "age_group", # <get_plot_rel_wis_by_age_group>
+  "baselinenowcast", # <get_plot_rel_wis_by_age_group>
+  "KIT simple nowcast", # <get_plot_rel_wis_by_age_group>
+  "relative_wis", # <get_plot_rel_wis_by_age_group>
+  "age_group", # <get_plot_mean_wis_by_horizon>
+  "reference_date", # <get_plot_mean_wis_by_horizon>
+  "nowcast_date", # <get_plot_mean_wis_by_horizon>
+  "horizon", # <get_plot_mean_wis_by_horizon>
+  "wis", # <get_plot_mean_wis_by_horizon>
+  "model", # <get_plot_mean_wis_by_horizon>
+  "age_group", # <get_plot_rel_wis_by_horizon>
+  "reference_date", # <get_plot_rel_wis_by_horizon>
+  "nowcast_date", # <get_plot_rel_wis_by_horizon>
+  "model", # <get_plot_rel_wis_by_horizon>
+  "horizon", # <get_plot_rel_wis_by_horizon>
+  "wis", # <get_plot_rel_wis_by_horizon>
+  "baselinenowcast", # <get_plot_rel_wis_by_horizon>
+  "KIT simple nowcast", # <get_plot_rel_wis_by_horizon>
+  "relative_wis", # <get_plot_rel_wis_by_horizon>
+  "age_group", # <get_plot_coverage_by_horizon>
+  "interval_range", # <get_plot_coverage_by_horizon>
+  "reference_date", # <get_plot_coverage_by_horizon>
+  "nowcast_date", # <get_plot_coverage_by_horizon>
+  "model", # <get_plot_coverage_by_horizon>
+  "horizon", # <get_plot_coverage_by_horizon>
+  "interval_coverage", # <get_plot_coverage_by_horizon>
+  "empirical_coverage", # <get_plot_coverage_by_horizon>
+  "50", # <get_plot_coverage_by_horizon>
+  "95", # <get_plot_coverage_by_horizon>
+  "int_cont", # <get_plot_coverage_by_horizon>
+  "age_group", # <get_plot_coverage_by_age_group>
+  "interval_range", # <get_plot_coverage_by_age_group>
+  "model", # <get_plot_coverage_by_age_group>
+  "interval_coverage", # <get_plot_coverage_by_age_group>
+  "empirical_coverage", # <get_plot_coverage_by_age_group>
+  "95", # <get_plot_coverage_by_age_group>
+  "50", # <get_plot_coverage_by_age_group>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>
   "location", # <get_covid_data>
   "report_date", # <get_eval_data_from_long_df>
   "reference_date", # <get_eval_data_from_long_df>
+  "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
+  "reference_date", # <get_nowcast_quantiles>
+  "draw", # <get_nowcast_quantiles>
+  "pred_count", # <get_nowcast_quantiles>
   "report_date", # <get_rep_tri_from_long_df>
   "reference_date", # <get_rep_tri_from_long_df>
   "delay", # <get_rep_tri_from_long_df>

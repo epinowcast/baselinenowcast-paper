@@ -155,13 +155,8 @@ combined_delay_df <- tar_combine(
 # Make the combinations needed for the validation study---------------------
 nowcast_hub_validation_targets
 
-## Run multiple model spec on real data
-### Loop over each nowcast date, strata, data scenario, and model spec-------
-# 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
-# 2. Generate evaluation data for that nowcast date
-# 3. Score nowcasts - X time in days and save with metadata
-# 4. Save quantiled nowcasts for visualisation
-
+# Combinations needed for model permutation study--------------------------
+model_permutation_targets
 # Run norovirus case study and score------------------------------------------
 ## Loop over each nowcast date and model spec --------------------------------
 mapped_noro <- tar_map(
@@ -218,6 +213,7 @@ plot_targets <- list(
   figures_hub_validation_targets
 
   ### Figures for comparing baselinenowcast model specificaitons
+  # figures_model_permutation_targets
 
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
 ) # end plot targets
@@ -232,7 +228,6 @@ list(
   combined_kit_coverage,
   combined_kit_pt_nowcast,
   nowcast_hub_validation_targets,
-  # # Covid targets: model permutations
   mapped_covid,
   combined_covid_nowcasts,
   combined_covid_scores,
@@ -240,6 +235,10 @@ list(
   combined_pt_nowcast,
   combined_mean_delay,
   combined_delay_df,
+
+  # Covid targets: model permutations
+  model_permutation_targets,
+
   # Norovirus targets
   mapped_noro,
   combined_noro_nowcasts,

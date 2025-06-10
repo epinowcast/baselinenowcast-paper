@@ -144,6 +144,15 @@ utils::globalVariables(c(
   "model_variation", # <get_plot_rel_wis_over_time_mp>
   "nowcast_date", # <get_plot_rel_wis_over_time_mp>
   "baseline_wis", # <get_plot_rel_wis_over_time_mp>
+  "age_group", # <get_plot_coverage_by_mp>
+  "interval_range", # <get_plot_coverage_by_mp>
+  "model", # <get_plot_coverage_by_mp>
+  "model_variation", # <get_plot_coverage_by_mp>
+  "model_variation_string", # <get_plot_coverage_by_mp>
+  "interval_coverage", # <get_plot_coverage_by_mp>
+  "empirical_coverage", # <get_plot_coverage_by_mp>
+  "95", # <get_plot_coverage_by_mp>
+  "50", # <get_plot_coverage_by_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

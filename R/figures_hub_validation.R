@@ -598,7 +598,7 @@ get_plot_coverage_by_age_group <- function(all_coverage,
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
     labs(
-      x = "Empirical coverage", y = "",
+      x = "", y = "Empirical coverage",
       fill = ""
     ) +
     ggtitle("Empirical coverage by age group") +

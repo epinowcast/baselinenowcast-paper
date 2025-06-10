@@ -17,5 +17,9 @@ figures_model_permutation_targets <- list(
     command = get_plot_rel_wis_over_time_mp(scores_mp,
       strata = "age groups"
     )
+  ),
+  tar_target(
+    name = bar_chart_coverage_mp,
+    command = get_plot_coverage_by_mp(coverage_mp)
   )
 )

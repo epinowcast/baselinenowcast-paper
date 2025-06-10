@@ -199,3 +199,72 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     ylab("Relative WIS compared\nto baseline validation approach")
   return(p)
 }
+
+#' Get a plot of coverage by model permutation for each model
+#'
+#' @param all_coverage Dataframe of the combined individual level coverage for
+#'    days and intervals.
+#' @param intervals Vector of integers to plot coverage of.
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
+#' @returns bar chart
+get_plot_coverage_by_mp <- function(all_coverage,
+                                    intervals = c(50, 95)) {
+  coverage <- filter(
+    all_coverage, age_group != "00+",
+    interval_range %in% c(intervals)
+  )
+
+  coverage_summarised <- coverage |>
+    group_by(model, interval_range, model_variation, model_variation_string) |>
+    summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+    pivot_wider(
+      names_from = interval_range,
+      values_from = empirical_coverage
+    ) |>
+    mutate(`95` = `95` - `50`) |>
+    pivot_longer(
+      cols = c(`50`, `95`),
+      names_to = "interval_range",
+      values_to = "empirical_coverage"
+    ) |>
+    mutate(interval_range = factor(interval_range, levels = c("95", "50")))
+
+  plot_comps <- plot_components()
+  p <- ggplot(coverage_summarised) +
+    geom_bar(
+      aes(
+        x = model_variation_string, y = empirical_coverage,
+        alpha = interval_range,
+        fill = model_variation_string
+      ),
+      stat = "identity", position = "stack"
+    ) +
+    facet_grid(. ~ model_variation, switch = "x") +
+    get_plot_theme() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.title = element_blank()
+    ) +
+    scale_fill_manual(
+      name = "",
+      values = plot_comps$permutation_colors
+    ) +
+    scale_alpha_manual(
+      name = "Empirical coverage",
+      values = plot_comps$coverage_alpha
+    ) +
+    geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
+    geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
+    labs(
+      y = "Empirical coverage", x = "",
+      fill = ""
+    ) +
+    ggtitle("Empirical coverage by model permutation across age groups")
+}

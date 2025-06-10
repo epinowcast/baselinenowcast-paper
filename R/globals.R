@@ -118,6 +118,18 @@ utils::globalVariables(c(
   "empirical_coverage", # <get_plot_coverage_by_age_group>
   "95", # <get_plot_coverage_by_age_group>
   "50", # <get_plot_coverage_by_age_group>
+  "horizon", # <get_plot_nowcast_perms_over_time>
+  "age_group", # <get_plot_nowcast_perms_over_time>
+  "model_variation", # <get_plot_nowcast_perms_over_time>
+  "reference_date", # <get_plot_nowcast_perms_over_time>
+  "q_0.5", # <get_plot_nowcast_perms_over_time>
+  "model_variation_string", # <get_plot_nowcast_perms_over_time>
+  "q_0.25", # <get_plot_nowcast_perms_over_time>
+  "q_0.75", # <get_plot_nowcast_perms_over_time>
+  "q_0.025", # <get_plot_nowcast_perms_over_time>
+  "q_0.975", # <get_plot_nowcast_perms_over_time>
+  "observed", # <get_plot_nowcast_perms_over_time>
+  "data_as_of", # <get_plot_nowcast_perms_over_time>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

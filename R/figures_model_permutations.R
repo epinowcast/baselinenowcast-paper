@@ -14,22 +14,21 @@
 #' @importFrom dplyr filter
 #' @returns ggplot object
 #' @autoglobal
-get_plot_nowcast_perms_over_time <- function(combined_nowcasts,
-                                             horizon_to_plot,
-                                             age_group_to_plot = "00+") {
+get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
+                                           horizon_to_plot,
+                                           age_group_to_plot = "00+") {
   nc <- filter(
     combined_nowcasts,
     horizon == horizon_to_plot,
     age_group == age_group_to_plot
   )
 
-  nc_base <- nc |> filter(model_variation == "Baseline validation")
+  nc_base <- filter(nc, model_variation == "Baseline validation")
 
-  nc_perms <- nc |>
-    filter(model_variation != "Baseline validation") |>
-    bind_rows(nc_base |> mutate(model_variation = "Borrow for delay and uncertainty estimation")) |>
-    bind_rows(nc_base |> mutate(model_variation = "Reporting triangle completeness")) |>
-    bind_rows(nc_base |> mutate(model_variation = "Training volume"))
+  nc_perms <- filter(nc, model_variation != "Baseline validation") |>
+    bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
+    bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |>
+    bind_rows(mutate(nc_base, model_variation = "Training volume"))
 
   plot_colors <- plot_components()
   p <- ggplot(nc_perms) +
@@ -172,12 +171,13 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     )) |>
     select(wis, model_variation_string, model_variation, nowcast_date)
 
+  baseline_score <- summarised_scores |>
+    filter(model_variation_string == "Baseline validation approach") |>
+    rename(baseline_wis = wis) |>
+    select(baseline_wis, nowcast_date)
   rel_wis <- summarised_scores |>
     filter(model_variation_string != "Baseline validation approach") |>
-    left_join(summarised_scores |>
-      filter(model_variation_string == "Baseline validation approach") |> # nolint
-      rename(baseline_wis = wis) |>
-      select(baseline_wis, nowcast_date), by = "nowcast_date") |>
+    left_join(baseline_score, by = "nowcast_date") |>
     mutate(rel_wis = wis / baseline_wis)
 
   p <- ggplot(rel_wis) +
@@ -194,7 +194,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
     labs(color = "Model permutation", linetype = "Permutation grouping") +
-    ggtitle(glue("Relative WIS over time by model permutation across all horizons: {strata}")) +
+    ggtitle(glue("Relative WIS over time by model permutation across all horizons: {strata}")) + # nolint
     xlab("") +
     ylab("Relative WIS compared\nto baseline validation approach")
   return(p)
@@ -267,6 +267,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
       fill = ""
     ) +
     ggtitle("Empirical coverage by model permutation across age groups")
+  return(p)
 }
 
 #' Get a plot of relative WIS by horizon for all model permutations
@@ -299,13 +300,13 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
       "horizon"
     )) |>
     select(model_variation, model_variation_string, horizon, wis)
-
+  baseline_scores <- scores_sum |>
+    filter(model_variation_string == "Baseline validation approach") |>
+    rename(baseline_wis = wis) |>
+    select(baseline_wis, horizon)
   rel_wis <- scores_sum |>
     filter(model_variation_string != "Baseline validation approach") |>
-    left_join(scores_sum |>
-      filter(model_variation_string == "Baseline validation approach") |> # nolint
-      rename(baseline_wis = wis) |>
-      select(baseline_wis, horizon), by = "horizon") |>
+    left_join(baseline_scores, by = "horizon") |>
     mutate(relative_wis = wis / baseline_wis)
 
   plot_comps <- plot_components()
@@ -327,7 +328,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
       y = "Relative WIS compared\nto baseline validation approach",
       linetype = "Permutation grouping"
     ) +
-    ggtitle(glue::glue("Relative WIS by horizon for all model permutations: {strata}"))
+    ggtitle(glue::glue("Relative WIS by horizon for all model permutations: {strata}")) # nolint
 
   return(p)
 }
@@ -379,7 +380,7 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     facet_grid(. ~ age_group, switch = "x") +
     scale_alpha_manual(

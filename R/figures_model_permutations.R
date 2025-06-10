@@ -27,7 +27,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
 
   nc_perms <- filter(nc, model_variation != "Baseline validation") |>
     bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
-    bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |>
+    bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |> # nolint
     bind_rows(mutate(nc_base, model_variation = "Training volume"))
 
   plot_colors <- plot_components()

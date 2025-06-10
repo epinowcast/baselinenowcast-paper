@@ -11,8 +11,8 @@
 #' @importFrom dplyr filter
 #' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
-#' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip
-#' @importFrom ggpattern geom_col_pattern scale_pattern_manual
+#' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_bar
+#'    scale_alpha_manual
 get_plot_bar_chart_sum_scores <- function(joined_scores,
                                           strata = "age groups") {
   if (strata == "age groups") {
@@ -24,20 +24,18 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
   scores_summary <- joined_scores |>
     summarise_scores(by = "model") |>
     select(model, overprediction, underprediction, dispersion) |>
-    pivot_longer(!model)
+    pivot_longer(!model) |>
+    mutate(name = factor(name, levels = c(
+      "overprediction",
+      "dispersion",
+      "underprediction"
+    )))
   plot_colors <- plot_components()
   p <- ggplot(
     scores_summary,
-    aes(x = model, y = value, fill = model, pattern = name)
+    aes(x = model, y = value, fill = model, alpha = name)
   ) +
-    geom_col_pattern(
-      position = "stack",
-      color = "black",
-      pattern_fill = "black",
-      pattern_angle = 45,
-      pattern_density = 0.1,
-      pattern_spacing = 0.05
-    ) +
+    geom_bar(stat = "identity", position = "stack") +
     coord_flip() +
     get_plot_theme() +
     scale_fill_manual(values = plot_colors$model_colors) +
@@ -46,9 +44,9 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       pattern = "Score Breakdown",
       color = "Model"
     ) +
-    scale_pattern_manual(
+    scale_alpha_manual(
       name = "WIS breakdown",
-      values = plot_colors$score_patterns
+      values = plot_colors$score_alpha
     ) +
     ggtitle(glue("Overall WIS: {strata}"))
   return(p)
@@ -130,12 +128,15 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
 #'
 #' @param scores_summarised Dataframe of scores averaged across age groups and
 #'    reference times
+#' @param strata Character string indicating whether scores are across age
+#'    groups or nationally.
 #'
 #' @returns ggplot object
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes scale_x_date scale_color_manual
 #'    ggtitle xlab ylab
-get_plot_wis_over_time <- function(scores_summarised) {
+get_plot_wis_over_time <- function(scores_summarised,
+                                   strata) {
   plot_colors <- plot_components()
   p <- ggplot(scores_summarised) +
     geom_line(aes(
@@ -148,7 +149,7 @@ get_plot_wis_over_time <- function(scores_summarised) {
       date_labels = "%b %Y"
     ) +
     scale_color_manual(values = plot_colors$model_colors) +
-    ggtitle(glue("WIS over time by model across all age groups and horizons")) +
+    ggtitle(glue("WIS over time by model across all horizons: {strata}")) +
     xlab("") +
     ylab("WIS")
   return(p)
@@ -164,25 +165,25 @@ get_plot_wis_over_time <- function(scores_summarised) {
 #' @autoglobal
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
-#'    ggtitle element_blank
-#' @importFrom ggpattern geom_col_pattern
+#'    ggtitle element_blank scale_alpha_manual geom_bar
 get_plot_score_by_age_group <- function(scores_by_age_group) {
   plot_colors <- plot_components()
 
   scores_summary <- scores_by_age_group |>
     select(model, age_group, overprediction, underprediction, dispersion) |>
-    pivot_longer(cols = c("overprediction", "underprediction", "dispersion"))
+    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    mutate(name = factor(name, levels = c(
+      "overprediction",
+      "dispersion",
+      "underprediction"
+    )))
   p <- ggplot(
     scores_summary,
-    aes(x = model, y = value, fill = model, pattern = name)
+    aes(x = model, y = value, fill = model, alpha = name)
   ) +
-    geom_col_pattern(
-      position = "stack",
-      color = "black",
-      pattern_fill = "black",
-      pattern_angle = 45,
-      pattern_density = 0.1,
-      pattern_spacing = 0.05
+    geom_bar(
+      stat = "identity",
+      position = "stack"
     ) +
     get_plot_theme() +
     theme(
@@ -194,18 +195,13 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
     ) +
     labs(
       y = "WIS", x = "",
-      pattern = "Score Breakdown",
       color = "Model"
     ) +
     facet_grid(. ~ age_group, switch = "x") +
     scale_fill_manual(values = plot_colors$model_colors) +
-    scale_pattern_manual(
+    scale_alpha_manual(
       name = "WIS breakdown",
-      values = plot_colors$score_patterns
-    ) +
-    scale_pattern_manual(
-      name = "WIS breakdown",
-      values = plot_colors$score_patterns
+      values = plot_colors$score_alpha
     )
   return(p)
 }
@@ -273,6 +269,340 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
     ) +
     xlab("Delay (days)") +
     ylab("Cumulative delay distribution") +
+    get_plot_theme()
+
+
+  return(p)
+}
+
+#' Get a horizontal bar chart of coverage
+#'
+#' @param all_coverage Dataframe of the combined individual level coverage for
+#'    days and intervals.
+#' @param strata Character string indicating which strata to summarize over.
+#' @param intervals Vector of integers to plot coverage of.
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
+#' @returns bar chart
+get_plot_bar_chart_coverage <- function(all_coverage,
+                                        strata,
+                                        intervals = c(50, 95)) {
+  if (strata == "age groups") {
+    coverage <- filter(
+      all_coverage, age_group != "00+",
+      interval_range %in% c(intervals)
+    )
+  } else if (strata == "national") {
+    coverage <- filter(
+      all_coverage, age_group == "00+",
+      interval_range %in% c(intervals)
+    )
+  }
+
+  coverage_summarised <- coverage |>
+    group_by(model, interval_range) |>
+    summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+    pivot_wider(
+      names_from = interval_range,
+      values_from = empirical_coverage
+    ) |>
+    mutate(`95` = `95` - `50`) |>
+    pivot_longer(!model,
+      names_to = "interval_range",
+      values_to = "empirical_coverage"
+    ) |>
+    mutate(interval_range = factor(interval_range, levels = c("95", "50")))
+
+
+  plot_comps <- plot_components()
+  p <- ggplot(coverage_summarised) +
+    geom_bar(
+      aes(
+        x = model, y = empirical_coverage,
+        alpha = interval_range,
+        fill = model
+      ),
+      stat = "identity", position = "stack"
+    ) +
+    scale_fill_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
+    scale_alpha_manual(
+      name = "Empirical coverage",
+      values = plot_comps$coverage_alpha
+    ) +
+    geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
+    geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
+    labs(
+      x = "Empirical coverage", y = "",
+      fill = ""
+    ) +
+    ggtitle(glue::glue("Empirical coverage: {strata}")) +
+    coord_flip() +
+    get_plot_theme()
+
+  return(p)
+}
+
+#' Get a plot of relative WIS by age group
+#'
+#' @param scores_by_age_group Dataframe of the summarised scores by age group
+#'    and model
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
+#'    geom_hline scale_y_continuous
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
+#' @returns ggplot object
+get_plot_rel_wis_by_age_group <- function(scores_by_age_group) {
+  scores_wide <- scores_by_age_group |>
+    select(wis, model, age_group) |>
+    pivot_wider(
+      names_from = model,
+      values_from = wis
+    ) |>
+    mutate(relative_wis = baselinenowcast / `KIT simple nowcast`)
+  plot_comps <- plot_components()
+  p <- ggplot(scores_wide) +
+    geom_point(aes(x = age_group, y = relative_wis)) +
+    scale_fill_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    scale_y_continuous(trans = "log", limits = c(0.66, 1.5)) +
+    coord_flip() +
+    get_plot_theme() +
+    labs(x = "", y = "Relative WIS") +
+    ggtitle("Relative WIS by age group")
+  return(p)
+}
+#' Get a plot of mean WIS by horizon
+#'
+#' @param scores Dataframe of all the scores by individual reference and
+#'    nowcast dates and model and age groups
+#' @inheritParams get_plot_bar_chart_sum_scores
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#' @importFrom dplyr select filter
+#' @importFrom scoringutils summarise_scores
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_mean_wis_by_horizon <- function(scores,
+                                         strata) {
+  if (strata == "age groups") {
+    scores_filtered <- filter(
+      scores, age_group != "00+"
+    )
+  } else if (strata == "national") {
+    scores_filtered <- filter(
+      scores, age_group == "00+"
+    )
+  }
+
+  scores_sum <- scores_filtered |>
+    mutate(horizon = as.integer(reference_date - nowcast_date)) |>
+    scoringutils::summarise_scores(by = c("model", "horizon"))
+  plot_comps <- plot_components()
+  p <- ggplot(scores_sum, aes(x = horizon, y = wis, color = model)) +
+    geom_line() +
+    scale_color_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
+    get_plot_theme() +
+    labs(x = "Horizon (days)", y = "Mean WIS") +
+    ggtitle(glue::glue("Mean WIS by horizon: {strata}"))
+
+  return(p)
+}
+
+#' Get a plot of relative WIS by horizon
+#'
+#' @param scores Dataframe of all the scores by individual reference and
+#'    nowcast dates and model and age groups
+#' @inheritParams get_plot_bar_chart_sum_scores
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#' @importFrom dplyr select filter
+#' @importFrom scoringutils summarise_scores
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_rel_wis_by_horizon <- function(scores,
+                                        strata) {
+  if (strata == "age groups") {
+    scores_filtered <- filter(
+      scores, age_group != "00+"
+    )
+  } else if (strata == "national") {
+    scores_filtered <- filter(
+      scores, age_group == "00+"
+    )
+  }
+
+  scores_sum <- scores_filtered |>
+    mutate(horizon = as.integer(reference_date - nowcast_date)) |>
+    scoringutils::summarise_scores(by = c("model", "horizon")) |>
+    select(model, horizon, wis) |>
+    pivot_wider(
+      names_from = model,
+      values_from = wis
+    ) |>
+    mutate(relative_wis = baselinenowcast / `KIT simple nowcast`)
+
+  p <- ggplot(scores_sum, aes(x = horizon, y = relative_wis)) +
+    geom_line() +
+    get_plot_theme() +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    scale_y_continuous(trans = "log", limits = c(0.6, 2.5)) +
+    labs(x = "Horizon (days)", y = "Relative WIS") +
+    ggtitle(glue::glue("Relative WIS by horizon: {strata}"))
+
+  return(p)
+}
+
+#' Get a plot of coverage by horizon for each model
+#'
+#' @param all_coverage Dataframe of the combined individual level coverage for
+#'    days and intervals.
+#' @param strata Character string indicating which strata to summarize over.
+#' @param intervals Vector of integers to plot coverage of.
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
+#' @returns bar chart
+get_plot_coverage_by_horizon <- function(all_coverage,
+                                         strata,
+                                         intervals = c(50, 95)) {
+  if (strata == "age groups") {
+    coverage <- filter(
+      all_coverage, age_group != "00+",
+      interval_range %in% c(intervals)
+    )
+  } else if (strata == "national") {
+    coverage <- filter(
+      all_coverage, age_group == "00+",
+      interval_range %in% c(intervals)
+    )
+  }
+
+  coverage_summarised <- coverage |>
+    mutate(horizon = as.integer(reference_date - nowcast_date)) |>
+    group_by(model, interval_range, horizon) |>
+    summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+    pivot_wider(
+      names_from = interval_range,
+      values_from = empirical_coverage
+    ) |>
+    pivot_longer(
+      cols = c(`50`, `95`),
+      names_to = "interval_range",
+      values_to = "empirical_coverage"
+    ) |>
+    mutate(
+      int_cont = as.numeric(interval_range) / 100,
+      interval_range = factor(interval_range, levels = c("95", "50"))
+    )
+
+
+  plot_comps <- plot_components()
+  p <- ggplot(coverage_summarised) +
+    geom_line(
+      aes(
+        x = horizon, y = empirical_coverage,
+        color = model
+      )
+    ) +
+    geom_hline(aes(yintercept = int_cont), linetype = "dashed") +
+    scale_color_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
+    facet_wrap(~interval_range) +
+    labs(
+      x = "Horizon(days)", y = "Empirical coverage",
+      color = "Model"
+    ) +
+    ggtitle(glue::glue("Empirical coverage by horizon: {strata}")) +
+    get_plot_theme()
+
+  return(p)
+}
+
+#' Get a plot of coverage by age_group for each model
+#'
+#' @param all_coverage Dataframe of the combined individual level coverage for
+#'    days and intervals.
+#' @param intervals Vector of integers to plot coverage of.
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
+#' @returns bar chart
+get_plot_coverage_by_age_group <- function(all_coverage,
+                                           intervals = c(50, 95)) {
+  coverage <- filter(
+    all_coverage, age_group != "00+",
+    interval_range %in% c(intervals)
+  )
+
+  coverage_summarised <- coverage |>
+    group_by(model, interval_range, age_group) |>
+    summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+    pivot_wider(
+      names_from = interval_range,
+      values_from = empirical_coverage
+    ) |>
+    mutate(`95` = `95` - `50`) |>
+    pivot_longer(
+      cols = c(`50`, `95`),
+      names_to = "interval_range",
+      values_to = "empirical_coverage"
+    ) |>
+    mutate(interval_range = factor(interval_range, levels = c("95", "50")))
+
+
+  plot_comps <- plot_components()
+  p <- ggplot(coverage_summarised) +
+    geom_bar(
+      aes(
+        x = model, y = empirical_coverage,
+        alpha = interval_range,
+        fill = model
+      ),
+      stat = "identity", position = "stack"
+    ) +
+    scale_fill_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
+    facet_grid(. ~ age_group, switch = "x") +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.title = element_blank()
+    ) +
+    scale_alpha_manual(
+      name = "Empirical coverage",
+      values = plot_comps$coverage_alpha
+    ) +
+    geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
+    geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
+    labs(
+      x = "Empirical coverage", y = "",
+      fill = ""
+    ) +
+    ggtitle("Empirical coverage by age group") +
+    coord_flip() +
     get_plot_theme()
 
 

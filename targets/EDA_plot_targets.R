@@ -77,7 +77,10 @@ EDA_plot_targets <- list(
             borrow == FALSE,
             partial_rep_tri == TRUE
           ) |> select(colnames(all_nowcasts_kit)) |>
-          mutate(nowcast_date = ymd(nowcast_date))),
+          mutate(
+            nowcast_date = ymd(nowcast_date),
+            model = "baselinenowcast"
+          )),
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid 7 day",

@@ -50,27 +50,13 @@ kit_nowcast_targets <- list(
   ),
   # Evaluation data-------------------------------------------------------------
   tar_target(
-    name = eval_data_daily,
-    command = covid_long_all_strata |>
-      filter(report_date <= ymd(nowcast_dates_covid) +
-        days(config$covid$eval_timeframe)) |>
-      group_by(reference_date, age_group) |>
-      summarise(
-        observed = sum(count, na.rm = TRUE)
-      ) |>
-      ungroup() |>
-      mutate(
-        as_of_date = ymd(nowcast_dates_covid) +
-          days(config$covid$eval_timeframe)
-      ) |>
-      filter(reference_date <= ymd(nowcast_dates_covid) +
-        days(config$covid$eval_timeframe))
-  ),
-  tar_target(
     name = eval_data_7d,
-    command = eval_data_daily |>
-      arrange(reference_date) |>
+    command = get_eval_data_from_long_df(
+      long_df = covid_long_all_strata,
+      as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
+    ) |>
       group_by(age_group) |>
+      arrange(reference_date) |>
       mutate(observed = rollsum(observed,
         k = 7,
         fill = NA, align = "right"

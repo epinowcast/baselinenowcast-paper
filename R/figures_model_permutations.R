@@ -88,8 +88,8 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
 #' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme coord_flip geom_bar
 #'    scale_alpha_manual facet_grid scale_fill_manual xlab ylab
-get_plot_bar_chart_sum_scores_mp <- function(scores,
-                                             strata = "age groups") {
+get_plot_bar_chart_scores_mp <- function(scores,
+                                         strata = "age groups") {
   if (strata == "age groups") {
     scores <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
@@ -146,7 +146,7 @@ get_plot_bar_chart_sum_scores_mp <- function(scores,
 
 #' Get a line plot of the relative wis over time for each model permutation
 #'
-#' @inheritParams get_plot_bar_chart_sum_scores_mp
+#' @inheritParams get_plot_bar_chart_scores_mp
 #' @autoglobal
 #' @returns ggplot object
 #' @importFrom dplyr filter mutate left_join rename select
@@ -274,7 +274,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
 #'
 #' @param scores Dataframe of all the scores by individual reference and
 #'    nowcast dates and model permutation
-#' @inheritParams get_plot_bar_chart_sum_scores_mp
+#' @inheritParams get_plot_bar_chart_scores_mp
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
 #' @importFrom dplyr select filter

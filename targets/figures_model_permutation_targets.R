@@ -8,7 +8,7 @@ figures_model_permutation_targets <- list(
   ),
   tar_target(
     name = bar_chart_wis_by_mp,
-    command = get_plot_bar_chart_sum_scores_mp(scores_mp,
+    command = get_plot_bar_chart_scores_mp(scores_mp,
       strata = "age groups"
     )
   ),

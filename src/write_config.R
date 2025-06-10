@@ -132,7 +132,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       eval_timeframe = 40
     ),
     n_draws = 100,
-    plot_quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975)
+    plot_quantiles = c(0.025, 0.05, 0.25, 0.5, 0.75, 0.95, 0.975)
   )
 
   yaml::write_yaml(config,

@@ -268,3 +268,66 @@ get_plot_coverage_by_mp <- function(all_coverage,
     ) +
     ggtitle("Empirical coverage by model permutation across age groups")
 }
+
+#' Get a plot of relative WIS by horizon for all model permutations
+#'
+#' @param scores Dataframe of all the scores by individual reference and
+#'    nowcast dates and model permutation
+#' @inheritParams get_plot_bar_chart_sum_scores_mp
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#' @importFrom dplyr select filter
+#' @importFrom scoringutils summarise_scores
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_rel_wis_by_horizon_mp <- function(scores,
+                                           strata) {
+  if (strata == "age groups") {
+    scores_filtered <- filter(
+      scores, age_group != "00+"
+    )
+  } else if (strata == "national") {
+    scores_filtered <- filter(
+      scores, age_group == "00+"
+    )
+  }
+
+  scores_sum <- scores_filtered |>
+    scoringutils::summarise_scores(by = c(
+      "model_variation",
+      "model_variation_string",
+      "horizon"
+    )) |>
+    select(model_variation, model_variation_string, horizon, wis)
+
+  rel_wis <- scores_sum |>
+    filter(model_variation_string != "Baseline validation approach") |>
+    left_join(scores_sum |>
+      filter(model_variation_string == "Baseline validation approach") |> # nolint
+      rename(baseline_wis = wis) |>
+      select(baseline_wis, horizon), by = "horizon") |>
+    mutate(relative_wis = wis / baseline_wis)
+
+  plot_comps <- plot_components()
+  p <- ggplot(rel_wis, aes(
+    x = horizon, y = relative_wis,
+    color = model_variation_string,
+    linetype = model_variation
+  )) +
+    geom_line() +
+    get_plot_theme() +
+    scale_color_manual(
+      name = "Model permutation",
+      values = plot_comps$permutation_colors
+    ) +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    scale_y_continuous(trans = "log", limits = c(0.6, 2.5)) +
+    labs(
+      x = "Horizon (days)",
+      y = "Relative WIS compared\nto baseline validation approach",
+      linetype = "Permutation grouping"
+    ) +
+    ggtitle(glue::glue("Relative WIS by horizon for all model permutations: {strata}"))
+
+  return(p)
+}

@@ -153,6 +153,13 @@ utils::globalVariables(c(
   "empirical_coverage", # <get_plot_coverage_by_mp>
   "95", # <get_plot_coverage_by_mp>
   "50", # <get_plot_coverage_by_mp>
+  "age_group", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation_string", # <get_plot_rel_wis_by_horizon_mp>
+  "horizon", # <get_plot_rel_wis_by_horizon_mp>
+  "wis", # <get_plot_rel_wis_by_horizon_mp>
+  "baseline_wis", # <get_plot_rel_wis_by_horizon_mp>
+  "relative_wis", # <get_plot_rel_wis_by_horizon_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

@@ -22,6 +22,7 @@ get_plot_theme <- function() {
 #' @importFrom RColorBrewer brewer.pal
 plot_components <- function() {
   pal_age_groups <- brewer.pal(6, "Spectral")
+  pal_mps <- brewer.pal(6, "Set2")
   # nolint start
   model_colors <- c(
     "KIT simple nowcast" = "darkgreen",
@@ -35,6 +36,15 @@ plot_components <- function() {
     "35-59" = pal_age_groups[4],
     "60-79" = pal_age_groups[5],
     "80+" = pal_age_groups[6]
+  )
+  permutation_colors <- c(
+    "Baseline validation approach" = "black",
+    "Borrowed estimates from all age groups" = pal_mps[1],
+    "Complete reporting triangle" = pal_mps[2],
+    "Delay:180,\nUncertainty:60" = pal_mps[3],
+    "Delay:41,\nUncertainty:19" = pal_mps[4],
+    "Delay:50,\nUncertainty:10" = pal_mps[5],
+    "Delay:60,\nUncertainty:180" = pal_mps[6]
   )
   age_linewidth <- c(
     "00+" = 2,
@@ -62,7 +72,8 @@ plot_components <- function() {
       age_colors = age_colors,
       age_linewidth = age_linewidth,
       score_alpha = score_alpha,
-      coverage_alpha = coverage_alpha
+      coverage_alpha = coverage_alpha,
+      permutation_colors = permutation_colors
     )
   return(plot_comp_list)
 }

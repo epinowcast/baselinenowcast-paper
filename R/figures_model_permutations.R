@@ -18,20 +18,31 @@ get_plot_nowcast_perms_over_time <- function(combined_nowcasts,
                                              horizon_to_plot,
                                              age_group_to_plot = "00+") {
   nc <- filter(
-    combined_nowcasts, horizon == horizon_to_plot,
+    combined_nowcasts,
+    horizon == horizon_to_plot,
     age_group == age_group_to_plot
   )
+
+  nc_base <- nc |> filter(model_variation == "Baseline validation")
+
+  nc_perms <- nc |>
+    filter(model_variation != "Baseline validation") |>
+    bind_rows(nc_base |> mutate(model_variation = "Borrow for delay and uncertainty estimation")) |>
+    bind_rows(nc_base |> mutate(model_variation = "Reporting triangle completeness")) |>
+    bind_rows(nc_base |> mutate(model_variation = "Training volume"))
+
   plot_colors <- plot_components()
-  p <- ggplot(nc) +
+  p <- ggplot(nc_perms) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
       color = model_variation_string
-    )) +
+    ), show.legend = FALSE) +
     geom_ribbon(
       aes(
         x = reference_date,
         ymin = `q_0.25`,
-        ymax = `q_0.75`, fill = model_variation_string
+        ymax = `q_0.75`,
+        fill = model_variation_string
       ),
       alpha = 0.3
     ) +
@@ -55,11 +66,13 @@ get_plot_nowcast_perms_over_time <- function(combined_nowcasts,
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    # scale_color_manual(values = plot_colors$model_colors) +
-    # scale_fill_manual(values = plot_colors$model_colors) +
+    scale_color_manual(values = plot_colors$permutation_colors) +
+    scale_fill_manual(values = plot_colors$permutation_colors) +
+    labs(fill = "Model permutation") +
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence")
+
 
 
   return(p)

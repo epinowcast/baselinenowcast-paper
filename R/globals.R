@@ -138,6 +138,12 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_bar_chart_sum_scores_mp>
   "name", # <get_plot_bar_chart_sum_scores_mp>
   "value", # <get_plot_bar_chart_sum_scores_mp>
+  "age_group", # <get_plot_rel_wis_over_time_mp>
+  "wis", # <get_plot_rel_wis_over_time_mp>
+  "model_variation_string", # <get_plot_rel_wis_over_time_mp>
+  "model_variation", # <get_plot_rel_wis_over_time_mp>
+  "nowcast_date", # <get_plot_rel_wis_over_time_mp>
+  "baseline_wis", # <get_plot_rel_wis_over_time_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

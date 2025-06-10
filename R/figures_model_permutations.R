@@ -84,11 +84,11 @@ get_plot_nowcast_perms_over_time <- function(combined_nowcasts,
 #'    (`"national"`). Default is `"age groups"`.
 #' @autoglobal
 #' @returns ggplot object
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter select mutate
 #' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
-#' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_bar
-#'    scale_alpha_manual facet_grid scale_fill_manual
+#' @importFrom ggplot2 aes ggplot labs theme coord_flip geom_bar
+#'    scale_alpha_manual facet_grid scale_fill_manual xlab ylab
 get_plot_bar_chart_sum_scores_mp <- function(scores,
                                              strata = "age groups") {
   if (strata == "age groups") {
@@ -142,5 +142,60 @@ get_plot_bar_chart_sum_scores_mp <- function(scores,
       values = plot_colors$score_alpha
     ) +
     ggtitle(glue("Overall WIS by model permutation: {strata}"))
+  return(p)
+}
+
+#' Get a line plot of the relative wis over time for each model permutation
+#'
+#' @inheritParams get_plot_bar_chart_sum_scores_mp
+#' @autoglobal
+#' @returns ggplot object
+#' @importFrom dplyr filter mutate left_join rename select
+#' @importFrom glue glue
+#' @importFrom scoringutils summarise_scores
+#' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_line
+#'    scale_color_manual geom_hline xlab ylab ggtitle scale_x_date
+get_plot_rel_wis_over_time_mp <- function(scores,
+                                          strata) {
+  plot_colors <- plot_components()
+  if (strata == "age groups") {
+    scores <- filter(scores, age_group != "00+")
+  } else if (strata == "national") {
+    scores <- filter(scores, age_group == "00+")
+  }
+
+  summarised_scores <- scores |>
+    summarise_scores(by = c(
+      "model_variation_string",
+      "model_variation",
+      "nowcast_date"
+    )) |>
+    select(wis, model_variation_string, model_variation, nowcast_date)
+
+  rel_wis <- summarised_scores |>
+    filter(model_variation_string != "Baseline validation approach") |>
+    left_join(summarised_scores |>
+      filter(model_variation_string == "Baseline validation approach") |> # nolint
+      rename(baseline_wis = wis) |>
+      select(baseline_wis, nowcast_date), by = "nowcast_date") |>
+    mutate(rel_wis = wis / baseline_wis)
+
+  p <- ggplot(rel_wis) +
+    geom_line(aes(
+      x = nowcast_date, y = rel_wis,
+      color = model_variation_string,
+      linetype = model_variation
+    )) +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    get_plot_theme() +
+    scale_x_date(
+      date_breaks = "2 months",
+      date_labels = "%b %Y"
+    ) +
+    scale_color_manual(values = plot_colors$permutation_colors) +
+    labs(color = "Model permutation", linetype = "Permutation grouping") +
+    ggtitle(glue("Relative WIS over time by model permutation across all horizons: {strata}")) +
+    xlab("") +
+    ylab("Relative WIS compared\nto baseline validation approach")
   return(p)
 }

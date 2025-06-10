@@ -7,8 +7,14 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = bar_chart_wis_by_model_perm,
+    name = bar_chart_wis_by_mp,
     command = get_plot_bar_chart_sum_scores_mp(scores_mp,
+      strata = "age groups"
+    )
+  ),
+  tar_target(
+    name = rel_wis_over_time_mp,
+    command = get_plot_rel_wis_over_time_mp(scores_mp,
       strata = "age groups"
     )
   )

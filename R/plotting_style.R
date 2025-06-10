@@ -46,6 +46,13 @@ plot_components <- function() {
     "Delay:50,\nUncertainty:10" = pal_mps[5],
     "Delay:60,\nUncertainty:180" = pal_mps[6]
   )
+
+  permutation_linetype <- c(
+    "Baseline validation" = "solid",
+    "Training volume" = "dotted",
+    "Reporting triangle completeness" = "dotdash",
+    "Borrow for delay and uncertainty estimation" = "longdash"
+  )
   age_linewidth <- c(
     "00+" = 2,
     "00-04" = 1,
@@ -73,7 +80,8 @@ plot_components <- function() {
       age_linewidth = age_linewidth,
       score_alpha = score_alpha,
       coverage_alpha = coverage_alpha,
-      permutation_colors = permutation_colors
+      permutation_colors = permutation_colors,
+      permutation_linetype = permutation_linetype
     )
   return(plot_comp_list)
 }

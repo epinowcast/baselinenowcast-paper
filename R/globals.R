@@ -160,6 +160,14 @@ utils::globalVariables(c(
   "wis", # <get_plot_rel_wis_by_horizon_mp>
   "baseline_wis", # <get_plot_rel_wis_by_horizon_mp>
   "relative_wis", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation", # <get_plot_wis_by_age_group_mp>
+  "model_variation_string", # <get_plot_wis_by_age_group_mp>
+  "age_group", # <get_plot_wis_by_age_group_mp>
+  "overprediction", # <get_plot_wis_by_age_group_mp>
+  "underprediction", # <get_plot_wis_by_age_group_mp>
+  "dispersion", # <get_plot_wis_by_age_group_mp>
+  "name", # <get_plot_wis_by_age_group_mp>
+  "value", # <get_plot_wis_by_age_group_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

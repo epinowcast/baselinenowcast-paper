@@ -331,3 +331,62 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
 
   return(p)
 }
+
+#' Get a plot of decomposed WIS by age group for each model permutation
+#'
+#' @param scores_by_age_group Dataframe of the scores by age group
+#'    and model
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
+#'    geom_hline scale_y_continuous
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
+#' @returns ggplot object
+get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
+  scores_sum <- scores_by_age_group |>
+    scoringutils::summarise_scores(by = c(
+      "model_variation",
+      "model_variation_string",
+      "age_group"
+    )) |>
+    select(
+      model_variation, model_variation_string,
+      age_group, overprediction, underprediction, dispersion
+    ) |>
+    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    mutate(name = factor(name, levels = c(
+      "overprediction",
+      "dispersion",
+      "underprediction"
+    )))
+
+  plot_comps <- plot_components()
+  p <- ggplot(
+    scores_sum,
+    aes(
+      x = model_variation_string, y = value,
+      alpha = name,
+      fill = model_variation_string
+    )
+  ) +
+    geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(
+      name = "Model permutation",
+      values = plot_comps$permutation_colors
+    ) +
+    get_plot_theme() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+    ) +
+    facet_grid(. ~ age_group, switch = "x") +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_comps$score_alpha
+    ) +
+    labs(x = "", y = "WIS") +
+    ggtitle("WIS by age group for all model permutations")
+  return(p)
+}

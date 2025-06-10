@@ -130,6 +130,14 @@ utils::globalVariables(c(
   "q_0.975", # <get_plot_nowcast_perms_over_time>
   "observed", # <get_plot_nowcast_perms_over_time>
   "data_as_of", # <get_plot_nowcast_perms_over_time>
+  "age_group", # <get_plot_bar_chart_sum_scores_mp>
+  "model_variation", # <get_plot_bar_chart_sum_scores_mp>
+  "model_variation_string", # <get_plot_bar_chart_sum_scores_mp>
+  "overprediction", # <get_plot_bar_chart_sum_scores_mp>
+  "underprediction", # <get_plot_bar_chart_sum_scores_mp>
+  "dispersion", # <get_plot_bar_chart_sum_scores_mp>
+  "name", # <get_plot_bar_chart_sum_scores_mp>
+  "value", # <get_plot_bar_chart_sum_scores_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

@@ -72,8 +72,75 @@ get_plot_nowcast_perms_over_time <- function(combined_nowcasts,
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence")
+  return(p)
+}
+#' Get horizontal bar chart of summarised scores by model permutation and score
+#'    component
+#'
+#' @param scores Data.frame of model permutations for all nowcast dates,
+#'    horizons, and age groups.
+#' @param strata Character string indicating whether to summarise across the
+#'    different age strata (`"age groups"`) or across the nation as a whole
+#'    (`"national"`). Default is `"age groups"`.
+#' @autoglobal
+#' @returns ggplot object
+#' @importFrom dplyr filter
+#' @importFrom glue glue
+#' @importFrom scoringutils summarise_scores
+#' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_bar
+#'    scale_alpha_manual facet_grid scale_fill_manual
+get_plot_bar_chart_sum_scores_mp <- function(scores,
+                                             strata = "age groups") {
+  if (strata == "age groups") {
+    scores <- filter(scores, age_group != "00+")
+  } else if (strata == "national") {
+    scores <- filter(scores, age_group == "00+")
+  }
+  plot_colors <- plot_components()
 
+  scores_summary <- scores |>
+    summarise_scores(by = c("model_variation_string", "model_variation")) |>
+    select(
+      model_variation,
+      model_variation_string, overprediction,
+      underprediction, dispersion
+    ) |>
+    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    mutate(name = factor(name, levels = c(
+      "overprediction",
+      "dispersion",
+      "underprediction"
+    )))
 
-
+  p <- ggplot(
+    scores_summary,
+    aes(
+      x = model_variation_string,
+      y = value, fill = model_variation_string, alpha = name
+    )
+  ) +
+    geom_bar(
+      stat = "identity",
+      position = "stack"
+    ) +
+    get_plot_theme() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.title = element_blank()
+    ) +
+    labs(
+      y = "WIS", x = "",
+      color = "Model permutation"
+    ) +
+    facet_grid(. ~ model_variation, switch = "x") +
+    scale_fill_manual(values = plot_colors$permutation_colors) +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_colors$score_alpha
+    ) +
+    ggtitle(glue("Overall WIS by model permutation: {strata}"))
   return(p)
 }

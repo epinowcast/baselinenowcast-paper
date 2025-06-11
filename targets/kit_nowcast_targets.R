@@ -101,6 +101,7 @@ kit_nowcast_targets <- list(
     name = eval_data_7d,
     command = get_eval_data_from_long_df(
       long_df = covid_long_all_strata,
+      max_delay = config$covid$max_delay,
       as_of_date = ymd(nowcast_dates_covid) + days(config$covid$eval_timeframe)
     ) |>
       group_by(age_group) |>

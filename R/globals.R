@@ -121,6 +121,7 @@ utils::globalVariables(c(
   "location", # <get_covid_data>
   "report_date", # <get_eval_data_from_long_df>
   "reference_date", # <get_eval_data_from_long_df>
+  "delay", # <get_eval_data_from_long_df>
   "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
   "reference_date", # <get_nowcast_quantiles>

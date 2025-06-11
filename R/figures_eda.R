@@ -2,6 +2,7 @@
 #'
 #' @param final_df Dataframe of the latest data by reference and report date
 #' @param as_of_dates Vector of character strings of the dates you wish to plot
+#' @param max_delay Integer indicating maximum delays
 #' @param pathogen Character sting of the pathogen being plotted
 #'
 #' @autoglobal
@@ -11,6 +12,7 @@
 #' @returns ggplot object
 get_plot_data_as_of <- function(final_df,
                                 as_of_dates,
+                                max_delay,
                                 pathogen = "") {
   sum_df <- final_df |>
     group_by(reference_date) |>
@@ -23,6 +25,7 @@ get_plot_data_as_of <- function(final_df,
   for (i in seq_along(as_of_dates)) {
     as_of_df <- get_eval_data_from_long_df(
       final_df,
+      max_delay = max_delay,
       as_of_dates[i]
     )
     as_of_dfs <- bind_rows(as_of_dfs, as_of_df)

@@ -121,6 +121,7 @@ gen_noro_nowcasts_targets <- list(
     name = eval_data,
     command = get_eval_data_from_long_df(
       long_df = noro_df,
+      max_delay = config$norovirus$max_delay,
       as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
     )
   ),

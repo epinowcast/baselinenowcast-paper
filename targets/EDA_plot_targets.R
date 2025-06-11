@@ -8,6 +8,7 @@ EDA_plot_targets <- list(
           age_group == "00+",
           report_date <= "2022-07-01"
         ),
+      max_delay = config$covid$max_delay,
       as_of_dates = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid"
     ),
@@ -17,6 +18,7 @@ EDA_plot_targets <- list(
     name = final_eval_data_covid_daily,
     command = get_eval_data_from_long_df(
       long_df = covid_long_all_strata |> filter(age_group == "00+"),
+      max_delay = config$covid$max_delay,
       as_of_date = ymd(max(config$covid$nowcast_dates)) + days(config$covid$eval_timeframe)
     )
   ),

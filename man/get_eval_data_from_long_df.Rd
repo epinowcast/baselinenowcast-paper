@@ -4,10 +4,12 @@
 \alias{get_eval_data_from_long_df}
 \title{Get aggregated data as of a certain date from long tidy dataframe}
 \usage{
-get_eval_data_from_long_df(long_df, as_of_date)
+get_eval_data_from_long_df(long_df, max_delay, as_of_date)
 }
 \arguments{
 \item{long_df}{Dataframe of the latest data by reference and report date}
+
+\item{max_delay}{Integer indicating the maximum delays}
 
 \item{as_of_date}{String indicating the as of date}
 }

@@ -1,6 +1,7 @@
 #' Get aggregated data as of a certain date from long tidy dataframe
 #'
 #' @param long_df Dataframe of the latest data by reference and report date
+#' @param max_delay Integer indicating the maximum delays
 #' @param as_of_date String indicating the as of date
 #'
 #' @autoglobal
@@ -8,9 +9,19 @@
 #' @importFrom lubridate ymd
 #' @returns Data.frame summarised by reference time as of the as of date
 get_eval_data_from_long_df <- function(long_df,
+                                       max_delay,
                                        as_of_date) {
   eval_df <- long_df |>
-    filter(report_date <= ymd(as_of_date))
+    mutate(
+      delay = as.integer(difftime(report_date,
+        reference_date,
+        units = "days"
+      ))
+    ) |>
+    filter(
+      report_date <= ymd(as_of_date),
+      delay <= max_delay
+    )
   if ("age_group" %in% c(colnames(eval_df))) {
     eval_df_sum <- eval_df |>
       group_by(reference_date, age_group) |>

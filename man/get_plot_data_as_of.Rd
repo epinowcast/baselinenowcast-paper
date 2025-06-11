@@ -4,14 +4,12 @@
 \alias{get_plot_data_as_of}
 \title{Get a plot of the data as of different dates}
 \usage{
-get_plot_data_as_of(final_df, as_of_dates, max_delay, pathogen = "")
+get_plot_data_as_of(final_df, as_of_dates, pathogen = "")
 }
 \arguments{
 \item{final_df}{Dataframe of the latest data by reference and report date}
 
 \item{as_of_dates}{Vector of character strings of the dates you wish to plot}
-
-\item{max_delay}{Integer indicating maximum delays}
 
 \item{pathogen}{Character sting of the pathogen being plotted}
 }

@@ -8,7 +8,6 @@ EDA_plot_targets <- list(
           age_group == "00+",
           report_date <= "2022-07-01"
         ),
-      max_delay = config$covid$max_delay,
       as_of_dates = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid"
     ),

@@ -359,8 +359,9 @@ get_plot_bar_chart_coverage <- function(all_coverage,
 #' @importFrom tidyr pivot_wider
 #' @importFrom glue glue
 #' @returns ggplot object
-get_plot_rel_wis_by_age_group <- function(scores_by_age_group,
-                                          KIT_comparison_model = "KIT simple nowcast") {
+get_plot_rel_wis_by_age_group <- function(
+    scores_by_age_group,
+    KIT_comparison_model = "KIT simple nowcast") {
   KIT_comparison <- scores_by_age_group |>
     filter(model == KIT_comparison_model) |>
     rename(comparison_wis = wis) |>
@@ -437,7 +438,8 @@ get_plot_mean_wis_by_horizon <- function(scores,
 #'
 #' @param scores Dataframe of all the scores by individual reference and
 #'    nowcast dates and model and age groups
-#' @param KIT_comparison_model Character string indicating which model to compare to
+#' @param KIT_comparison_model Character string indicating which model to
+#'   compare to.
 #' @inheritParams get_plot_bar_chart_sum_scores
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
@@ -445,9 +447,10 @@ get_plot_mean_wis_by_horizon <- function(scores,
 #' @importFrom scoringutils summarise_scores
 #' @importFrom glue glue
 #' @returns ggplot object
-get_plot_rel_wis_by_horizon <- function(scores,
-                                        strata,
-                                        KIT_comparison_model = "KIT simple nowcast") {
+get_plot_rel_wis_by_horizon <- function(
+    scores,
+    strata,
+    KIT_comparison_model = "KIT simple nowcast") {
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -479,7 +482,7 @@ get_plot_rel_wis_by_horizon <- function(scores,
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log") +
     labs(x = "Horizon (days)", y = "Relative WIS") +
-    ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}"))
+    ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}")) # nolint
 
   return(p)
 }

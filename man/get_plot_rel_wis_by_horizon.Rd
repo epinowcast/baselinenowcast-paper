@@ -18,7 +18,8 @@ nowcast dates and model and age groups}
 different age strata (\code{"age groups"}) or across the nation as a whole
 (\code{"national"}). Default is \code{"age groups"}.}
 
-\item{KIT_comparison_model}{Character string indicating which model to compare to}
+\item{KIT_comparison_model}{Character string indicating which model to
+compare to.}
 }
 \value{
 ggplot object

@@ -55,6 +55,8 @@ get_plot_data_as_of <- function(final_df,
 #'   wish to plot, default is `NULL` which will plot all of them
 #' @param pathogen Character sting of the pathogen being plotted
 #' @param title Character string indicating the title
+#' @param facet Boolean indicating whether or not to make separate facets
+#'    of each model
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
@@ -68,7 +70,8 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
                                    final_summed_data,
                                    nowcast_dates_to_plot = NULL,
                                    pathogen = "",
-                                   title = "") {
+                                   title = "",
+                                   facet = FALSE) {
   final_df <- final_summed_data |>
     filter(
       reference_date >= min(all_nowcasts$reference_date),
@@ -116,8 +119,8 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
       ),
       color = "magenta4"
     ) +
-    geom_point(
-      aes(x = reference_date, y = observed),
+    geom_line(
+      aes(x = reference_date, y = observed, group = nowcast_date),
       color = "darkblue"
     ) +
     geom_line(
@@ -150,6 +153,11 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
     coord_cartesian(ylim = c(0, 1.01 * max(all_nowcasts$`q_0.975`))) + # nolint
     ggtitle(glue("{title}"))
 
+  if (isTRUE(facet)) {
+    p <- p + facet_wrap(~model, nrow = 3)
+  }
+
+
   return(p)
 }
 
@@ -164,6 +172,8 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
 #'   wish to plot, default is `NULL` which will plot all of them
 #' @param pathogen Character sting of the pathogen being plotted
 #' @param title Character string indicating the title
+#' @param facet Boolean indicating whether or not to make separate facets
+#'    of each model
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
@@ -177,7 +187,8 @@ get_plot_pt_nowcasts <- function(pt_nowcasts_combined,
                                  final_summed_data,
                                  nowcast_dates_to_plot = NULL,
                                  pathogen = "",
-                                 title = "") {
+                                 title = "",
+                                 facet = FALSE) {
   final_df <- final_summed_data |>
     filter(
       reference_date >= min(pt_nowcasts_combined$reference_date),
@@ -238,6 +249,11 @@ get_plot_pt_nowcasts <- function(pt_nowcasts_combined,
       na.rm = TRUE
     ))) +
     ggtitle(glue("{title}"))
+
+  if (isTRUE(facet)) {
+    p <- p + facet_wrap(~model, nrow = 3)
+  }
+
 
   return(p)
 }

@@ -51,7 +51,8 @@ Suggests:
     usethis,
     roxyglobals,
     withr,
-    knitr
+    knitr,
+    yaml
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE, roclets = c("collate", "namespace", "rd",

@@ -8,7 +8,14 @@ kit_nowcast_targets <- list(
       nowcast_date = nowcast_dates_covid
     )
   ),
-  ### Load and clean the nowcasts for each date-------------------------------
+  tar_target(
+    name = kit_nowcast_revised_url,
+    command = get_kit_nowcast_url(
+      prefix = config$covid$KIT_nowcast_revised_url_prefix,
+      nowcast_date = nowcast_dates_covid
+    )
+  ),
+  ### Load and clean the real-time nowcasts for each date----------------------
   tar_target(
     name = kit_nowcast_raw,
     # Filter to only what you need (age groups and national, no regions)
@@ -38,6 +45,47 @@ kit_nowcast_targets <- list(
   tar_target(
     name = kit_pt_nowcast,
     command = kit_nowcast_raw |>
+      filter(
+        location == "DE",
+        pathogen == "COVID-19",
+        type == "mean"
+      ) |>
+      select(
+        nowcast_date, reference_date,
+        model, age_group, predicted
+      )
+  ),
+
+  ### Load and clean the revised nowcasts for each date----------------------
+  tar_target(
+    name = kit_nowcast_revised_raw,
+    # Filter to only what you need (age groups and national, no regions)
+    command = readr::read_csv(kit_nowcast_revised_url) |>
+      rename(
+        nowcast_date = forecast_date,
+        reference_date = target_end_date,
+        predicted = value
+      ) |>
+      mutate(
+        model = "KIT simple nowcast revised"
+      )
+  ),
+  tar_target(
+    name = kit_nowcast_revised,
+    command = kit_nowcast_revised_raw |>
+      filter(
+        location == "DE",
+        pathogen == "COVID-19",
+        type == "quantile"
+      ) |>
+      select(
+        nowcast_date, reference_date,
+        model, age_group, quantile, predicted
+      )
+  ),
+  tar_target(
+    name = kit_pt_nowcast_revised,
+    command = kit_nowcast_revised_raw |>
       filter(
         location == "DE",
         pathogen == "COVID-19",
@@ -90,6 +138,10 @@ kit_nowcast_targets <- list(
     command = kit_nowcast |>
       filter(reference_date >=
         ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
+      bind_rows(kit_nowcast_revised |>
+        filter(reference_date >=
+          ymd(nowcast_dates_covid) -
+            days(config$covid$days_to_eval - 1))) |>
       left_join(eval_data_7d, by = c("reference_date", "age_group"))
   ),
   tar_target(
@@ -97,6 +149,10 @@ kit_nowcast_targets <- list(
     command = kit_pt_nowcast |>
       filter(reference_date >=
         ymd(nowcast_dates_covid) - days(config$covid$days_to_eval - 1)) |>
+      bind_rows(kit_pt_nowcast_revised |>
+        filter(reference_date >=
+          ymd(nowcast_dates_covid) -
+            days(config$covid$days_to_eval - 1))) |>
       left_join(eval_data_7d, by = c("reference_date", "age_group")) |>
       left_join(data_as_of_7d, by = c("reference_date", "age_group"))
   ),

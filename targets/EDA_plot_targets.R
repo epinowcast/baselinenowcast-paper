@@ -84,7 +84,8 @@ EDA_plot_targets <- list(
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid 7 day",
-      title = "KIT vs baselinenowcast nowcasts"
+      title = "KIT vs baselinenowcast nowcasts",
+      facet = FALSE
     )
   ),
   tar_target(
@@ -109,7 +110,8 @@ EDA_plot_targets <- list(
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid 7 day",
-      title = "Point nowcast comparison"
+      title = "Point nowcast comparison",
+      facet = FALSE
     )
   ),
   tar_target(

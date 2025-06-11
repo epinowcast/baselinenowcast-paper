@@ -91,6 +91,13 @@ figures_hub_validation_targets <- list(
     )
   ),
   tar_target(
+    name = plot_rel_wis_by_horizon_ag_revised,
+    command = get_plot_rel_wis_by_horizon(validation_scores,
+      strata = "age groups",
+      KIT_comparison_model = "KIT simple nowcast revised"
+    )
+  ),
+  tar_target(
     name = horiz_bar_chart_coverage_ntl,
     command = get_plot_bar_chart_coverage(validation_coverage,
       strata = "national"

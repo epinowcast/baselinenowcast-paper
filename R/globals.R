@@ -79,12 +79,10 @@ utils::globalVariables(c(
   "empirical_coverage", # <get_plot_bar_chart_coverage>
   "95", # <get_plot_bar_chart_coverage>
   "50", # <get_plot_bar_chart_coverage>
-  "wis", # <get_plot_rel_wis_by_age_group>
   "model", # <get_plot_rel_wis_by_age_group>
+  "wis", # <get_plot_rel_wis_by_age_group>
+  "comparison_wis", # <get_plot_rel_wis_by_age_group>
   "age_group", # <get_plot_rel_wis_by_age_group>
-  "baselinenowcast", # <get_plot_rel_wis_by_age_group>
-  "KIT simple nowcast", # <get_plot_rel_wis_by_age_group>
-  "relative_wis", # <get_plot_rel_wis_by_age_group>
   "age_group", # <get_plot_mean_wis_by_horizon>
   "reference_date", # <get_plot_mean_wis_by_horizon>
   "nowcast_date", # <get_plot_mean_wis_by_horizon>
@@ -97,9 +95,8 @@ utils::globalVariables(c(
   "model", # <get_plot_rel_wis_by_horizon>
   "horizon", # <get_plot_rel_wis_by_horizon>
   "wis", # <get_plot_rel_wis_by_horizon>
-  "baselinenowcast", # <get_plot_rel_wis_by_horizon>
-  "KIT simple nowcast", # <get_plot_rel_wis_by_horizon>
-  "relative_wis", # <get_plot_rel_wis_by_horizon>
+  "comparison_wis", # <get_plot_rel_wis_by_horizon>
+  "rel_wis", # <get_plot_rel_wis_by_horizon>
   "age_group", # <get_plot_coverage_by_horizon>
   "interval_range", # <get_plot_coverage_by_horizon>
   "reference_date", # <get_plot_coverage_by_horizon>

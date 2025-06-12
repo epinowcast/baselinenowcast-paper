@@ -185,7 +185,9 @@ kit_nowcast_targets <- list(
         names_from = "quantile_level",
         values_from = "predicted",
         names_prefix = "q_"
-      ) |> left_join(data_as_of_7d, by = c("reference_date", "age_group"))
+      ) |> left_join(data_as_of_7d,
+        by = c("reference_date", "age_group")
+      )
   ),
   ## Scores -----------------------------------------------------------------
   tar_target(

@@ -32,6 +32,7 @@ tar_option_set(
     "tibble", "dplyr", "lubridate",
     "targets", "ggplot2", "ggpattern",
     "baselinenowcast",
+    "purrr",
     "readr", "tidyr",
     "zoo",
     "epinowcast",
@@ -153,7 +154,7 @@ combined_delay_df <- tar_combine(
 
 
 # Make the combinations needed for the validation study---------------------
-nowcast_hub_validation_targets
+# nowcast_hub_validation_targets
 
 ## Run multiple model spec on real data
 ### Loop over each nowcast date, strata, data scenario, and model spec-------

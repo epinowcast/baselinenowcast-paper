@@ -29,8 +29,11 @@
 #'    default is `sum`.
 #' @param k Width of reference dates to apply transform to, default is `1`
 #' @autoglobal
-#' @importFrom dplyr filter mutate left_join select rename
-#' @importFrom baselinenowcast get_nowcast_draws
+#' @importFrom dplyr filter mutate left_join select rename pull row_number
+#'    arrange
+#' @importFrom zoo rollsum rollapply
+#' @importFrom tibble tibble
+#' @importFrom baselinenowcast get_nowcast_draws get_delay_estimate apply_delay
 #' @importFrom lubridate ymd days
 #' @importFrom scoringutils as_forecast_sample transform_forecasts log_shift
 #'    as_forecast_quantile
@@ -114,11 +117,10 @@ run_covid_nowcast_pipeline <- function(
         fill = NA, align = "right"
       )
     ) |>
-    filter(reference_date >= min(reference_date) + days(k - 1)) # exclude NA days
+    filter(reference_date >= min(reference_date) + days(k - 1)) # exclude NAs
 
   eval_data_7d <- get_eval_data_from_long_df(
-    long_df = long_df_all_strata |>
-      filter(age_group == age_group_to_nowcast),
+    long_df = filter(long_df_all_strata, age_group == age_group_to_nowcast),
     max_delay = max_delay,
     as_of_date = ymd(nowcast_date) + days(eval_timeframe)
   ) |>
@@ -167,7 +169,7 @@ run_covid_nowcast_pipeline <- function(
     fill = NA,
     align = "right"
   )) |>
-    mutate(time = 1:nrow(point_nowcast_mat))
+    mutate(time = seq_len(nrow(point_nowcast_mat)))
 
   delay_df <- data.frame(
     delay = delay_pmf,
@@ -214,14 +216,17 @@ run_covid_nowcast_pipeline <- function(
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
       borrow = borrow,
-      partial_rep_tri = partial_rep_tri,
+      partial_rep_tri = partial_rep_tri
     ) |>
     left_join(eval_data_7d, by = c("reference_date", "age_group"))
 
   scores_quantile_covid <- scoringutils::score(su_quantile_covid)
+
+  su_quantile_covid_mod <- mutate(su_quantile_covid,
+    model = "baselinenowcast"
+  )
   coverage_covid <- scoringutils::get_coverage(
-    su_quantile_covid |>
-      mutate(model = "baselinenowcast"),
+    su_quantile_covid_mod,
     by = c(
       "nowcast_date",
       "reference_date",

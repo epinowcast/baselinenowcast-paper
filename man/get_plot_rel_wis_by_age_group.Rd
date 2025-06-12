@@ -12,6 +12,9 @@ get_plot_rel_wis_by_age_group(
 \arguments{
 \item{scores_by_age_group}{Dataframe of the summarised scores by age group
 and model}
+
+\item{KIT_comparison_model}{Character string indicating which of the KIT
+models to compare to. Default is \code{"KIT simple nowcast"}.}
 }
 \value{
 ggplot object

@@ -352,6 +352,8 @@ get_plot_bar_chart_coverage <- function(all_coverage,
 #'
 #' @param scores_by_age_group Dataframe of the summarised scores by age group
 #'    and model
+#' @param KIT_comparison_model Character string indicating which of the KIT
+#'     models to compare to. Default is `"KIT simple nowcast"`.
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous

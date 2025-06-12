@@ -384,10 +384,6 @@ get_plot_rel_wis_by_age_group <- function(
       name = "",
       values = plot_comps$model_colors
     ) +
-    scale_color_manual(
-      name = "",
-      values = plot_comps$model_colors
-    ) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log", limits = c(0.66, 1.5)) +
     coord_flip() +
@@ -477,12 +473,16 @@ get_plot_rel_wis_by_horizon <- function(
     filter(model != KIT_comparison_model) |>
     left_join(KIT_comparison, by = "horizon") |>
     mutate(rel_wis = wis / comparison_wis)
-
+  plot_comps <- plot_components()
   p <- ggplot(relative_wis) +
     geom_line(aes(x = horizon, y = rel_wis, color = model)) +
     get_plot_theme() +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log") +
+    scale_color_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
     labs(x = "Horizon (days)", y = "Relative WIS") +
     ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}")) # nolint
 

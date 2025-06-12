@@ -12,7 +12,6 @@
 #'    date of the nowcast.
 #' @param days_to_eval Integer indicating the number of days before the nowcast
 #'    date to evaluate against.
-#' @param model Character string indicating which model is being used
 #' @param n_history_delay Integer indicating number of reference times used for
 #'    delay estimate.
 #' @param n_history_uncertainty Integer indicating number of retrospective
@@ -22,7 +21,7 @@
 #' @param partial_rep_tri Boolean indicating whether or not a partially
 #'    complete reporting triangle is used or the latest complete triangle is
 #'    used.
-#' @param age_group Character string indicating the age group.
+#' @param age_group_to_nowcast Character string indicating the age group.
 #' @param quantiles Vector of quantiles to generate.
 #' @param plot_quantiles Vector of quantiles for plotting.
 #' @param fun_to_aggregate Function to apply across the `k` reference dates,

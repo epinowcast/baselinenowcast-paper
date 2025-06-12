@@ -31,8 +31,7 @@ date of the nowcast.}
 
 \item{max_delay}{Integer indicating the maximum delay.}
 
-\item{age_group_to_nowcast}{Character string indicating which age group
-to nowcast.}
+\item{age_group_to_nowcast}{Character string indicating the age group.}
 
 \item{borrow}{Boolean indicating whether or not the delay and dispersion
 is borrowed from another strata.}
@@ -63,10 +62,6 @@ date to evaluate against.}
 
 \item{fun_to_aggregate}{Function to apply across the \code{k} reference dates,
 default is \code{sum}.}
-
-\item{model}{Character string indicating which model is being used}
-
-\item{age_group}{Character string indicating the age group.}
 }
 \value{
 scoringutils forecast quantile object

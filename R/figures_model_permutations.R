@@ -524,17 +524,32 @@ get_plot_wis_by_horizon_mp <- function(scores,
   p <- ggplot(
     scores_sum,
     aes(
-      x = horizon, y = value,
-      fill = model_variation_string
+      x = model_variation_string, y = value,
+      fill = model_variation_string,
+      alpha = name
     )
   ) +
-    geom_bar(stat = "identity", position = "dodge") +
+    geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(
       name = "Model permutation",
       values = plot_comps$permutation_colors
     ) +
     get_plot_theme() +
-    facet_wrap(~name, nrow = 3) +
+    cowplot::background_grid(
+      minor = "none",
+      major = "none"
+    ) +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA)
+    ) +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_comps$score_alpha
+    ) +
+    facet_grid(. ~ horizon, switch = "x") +
     labs(x = "Horizon (days)", y = "WIS breakdown") +
     ggtitle(glue::glue("WIS breakdown by horizon for all model permutations:{strata}"))
   return(p)

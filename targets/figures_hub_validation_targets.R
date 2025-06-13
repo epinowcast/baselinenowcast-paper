@@ -141,5 +141,21 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_coverage_by_age_group,
     command = get_plot_coverage_by_age_group(validation_coverage)
+  ),
+
+  # Make panels---------------------------------------------------------
+  tar_target(
+    name = fig_hub_validation,
+    command = make_fig_hub_validation(
+      plot_nowcasts_over_time,
+      horiz_bar_chart_sum_scores_ag,
+      plot_wis_comp_over_time_ag,
+      bar_chart_scores_by_age_group,
+      plot_mean_delay_over_time_by_age,
+      plot_mean_cdf_delay_by_age,
+      fig_file_name = "fig_hub_validation",
+      fig_file_dir = file.path("output", "figs"),
+      save = TRUE
+    )
   )
 )

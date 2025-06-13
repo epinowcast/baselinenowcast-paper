@@ -4,7 +4,7 @@
 \alias{get_plot_wis_by_horizon_mp}
 \title{Get a plot of decomposed WIS by horizon for each model permutation}
 \usage{
-get_plot_wis_by_horizon_mp(scores, strata)
+get_plot_wis_by_horizon_mp(scores, strata = "age groups")
 }
 \arguments{
 \item{scores}{Dataframe of the scores by age group, horizon, and model}

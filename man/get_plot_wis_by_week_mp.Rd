@@ -4,7 +4,7 @@
 \alias{get_plot_wis_by_week_mp}
 \title{Get a plot of decomposed WIS by week for each model permutation}
 \usage{
-get_plot_wis_by_week_mp(scores, strata)
+get_plot_wis_by_week_mp(scores, strata = "age groups")
 }
 \arguments{
 \item{scores}{Dataframe of the scores by age group, horizon, and model}

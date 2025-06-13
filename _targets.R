@@ -152,12 +152,6 @@ combined_delay_df <- tar_combine(
 )
 
 
-
-# Make the combinations needed for the validation study---------------------
-# nowcast_hub_validation_targets
-
-# Combinations needed for model permutation study--------------------------
-model_permutation_targets
 # Run norovirus case study and score------------------------------------------
 ## Loop over each nowcast date and model spec --------------------------------
 mapped_noro <- tar_map(

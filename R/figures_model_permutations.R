@@ -7,7 +7,7 @@
 #'    horizons and nowcast dates for all the model permutations.
 #' @param horizon_to_plot Integer indicating which horizon to plot
 #' @param age_group_to_plot Character string indicating which age group to
-#'    show in the plot, default is "00+" for all age groups.
+#'    show in the plot. Default is `"00+"`for all age groups.
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
 #'    facet_wrap scale_color_manual scale_fill_manual
@@ -178,7 +178,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
   rel_wis <- summarised_scores |>
     filter(model_variation_string != "Baseline validation approach") |>
     left_join(baseline_score, by = "nowcast_date") |>
-    mutate(rel_wis = wis / baseline_wis)
+    mutate(rel_wis = wis / pmax(baseline_wis, .Machine$double.eps))
 
   p <- ggplot(rel_wis) +
     geom_line(aes(
@@ -307,7 +307,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
   rel_wis <- scores_sum |>
     filter(model_variation_string != "Baseline validation approach") |>
     left_join(baseline_scores, by = "horizon") |>
-    mutate(relative_wis = wis / baseline_wis)
+    mutate(relative_wis = wis / pmax(baseline_wis, .Machine$double.eps))
 
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
@@ -373,10 +373,16 @@ get_plot_rel_decomposed_wis <- function(scores,
     filter(model_variation_string != "Baseline validation approach") |>
     left_join(baseline_scores, by = "age_group") |>
     mutate(
-      relative_wis = wis / baseline_wis,
-      relative_underprediction = underprediction / baseline_underprediction,
-      relative_overprediction = overprediction / baseline_overprediction,
-      relative_dispersion = dispersion / baseline_dispersion
+      relative_wis = wis / pmax(baseline_wis, .Machine$double.eps),
+      relative_underprediction = underprediction / pmax(
+        baseline_underprediction, .Machine$double.eps
+      ),
+      relative_overprediction = overprediction / pmax(
+        baseline_overprediction, .Machine$double.eps
+      ),
+      relative_dispersion = dispersion / pmax(
+        baseline_wis, .Machine$double.eps
+      )
     ) |>
     select(
       age_group, model_variation_string,
@@ -501,7 +507,7 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_wis_by_horizon_mp <- function(scores,
-                                       strata) {
+                                       strata = "age groups") {
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
@@ -579,7 +585,7 @@ get_plot_wis_by_horizon_mp <- function(scores,
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_wis_by_week_mp <- function(scores,
-                                    strata) {
+                                    strata = "age groups") {
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
   } else if (strata == "national") {

@@ -18,7 +18,7 @@ horizons and nowcast dates for all the model permutations.}
 \item{horizon_to_plot}{Integer indicating which horizon to plot}
 
 \item{age_group_to_plot}{Character string indicating which age group to
-show in the plot, default is "00+" for all age groups.}
+show in the plot. Default is \code{"00+"}for all age groups.}
 }
 \value{
 ggplot object

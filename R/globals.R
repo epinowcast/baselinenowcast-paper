@@ -190,6 +190,17 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_horizon_mp>
   "name", # <get_plot_wis_by_horizon_mp>
   "value", # <get_plot_wis_by_horizon_mp>
+  "age_group", # <get_plot_wis_by_week_mp>
+  "nowcast_date", # <get_plot_wis_by_week_mp>
+  "week", # <get_plot_wis_by_week_mp>
+  "model_variation", # <get_plot_wis_by_week_mp>
+  "model_variation_string", # <get_plot_wis_by_week_mp>
+  "week_end_date", # <get_plot_wis_by_week_mp>
+  "overprediction", # <get_plot_wis_by_week_mp>
+  "underprediction", # <get_plot_wis_by_week_mp>
+  "dispersion", # <get_plot_wis_by_week_mp>
+  "name", # <get_plot_wis_by_week_mp>
+  "value", # <get_plot_wis_by_week_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

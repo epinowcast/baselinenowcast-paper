@@ -445,7 +445,11 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
       model_variation, model_variation_string,
       age_group, overprediction, underprediction, dispersion
     ) |>
-    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    pivot_longer(cols = c(
+      "overprediction",
+      "underprediction",
+      "dispersion"
+    )) |>
     mutate(name = factor(name, levels = c(
       "overprediction",
       "dispersion",
@@ -513,7 +517,11 @@ get_plot_wis_by_horizon_mp <- function(scores,
       model_variation, model_variation_string,
       horizon, overprediction, underprediction, dispersion
     ) |>
-    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    pivot_longer(cols = c(
+      "overprediction",
+      "underprediction",
+      "dispersion"
+    )) |>
     mutate(name = factor(name, levels = c(
       "overprediction",
       "dispersion",
@@ -551,6 +559,96 @@ get_plot_wis_by_horizon_mp <- function(scores,
     ) +
     facet_grid(. ~ horizon, switch = "x") +
     labs(x = "Horizon (days)", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by horizon for all model permutations:{strata}"))
+    ggtitle(glue::glue("WIS breakdown by horizon for all model permutations: {strata}")) # nolint
+  return(p)
+}
+
+
+#' Get a plot of decomposed WIS by week for each model permutation
+#'
+#' @param scores Dataframe of the scores by age group, horizon, and model
+#' @param strata Character string indicating whether to summarise across the
+#'    different age strata (`"age groups"`) or across the nation as a whole
+#'    (`"national"`). Default is `"age groups"`.
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
+#'    geom_hline scale_y_continuous
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
+#' @importFrom lubridate isoweek
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_wis_by_week_mp <- function(scores,
+                                    strata) {
+  if (strata == "age groups") {
+    scores_filtered <- filter(scores, age_group != "00+")
+  } else if (strata == "national") {
+    scores_filtered <- filter(scores, age_group == "00+")
+  }
+  metrics_attr <- attr(scores_filtered, "metrics")
+  scores_sum <- scores_filtered |>
+    mutate(week = isoweek(nowcast_date)) |>
+    group_by(week) |>
+    mutate(week_end_date = max(nowcast_date)) |>
+    ungroup() |>
+    # Restore the metrics attribute before summarising
+    {
+      \(x) {
+        attr(x, "metrics") <- metrics_attr
+        x
+      }
+    }() |>
+    scoringutils::summarise_scores(by = c(
+      "model_variation",
+      "model_variation_string",
+      "week_end_date"
+    )) |>
+    select(
+      model_variation, model_variation_string,
+      week_end_date, overprediction, underprediction, dispersion
+    ) |>
+    pivot_longer(cols = c(
+      "overprediction",
+      "underprediction",
+      "dispersion"
+    )) |>
+    mutate(name = factor(name, levels = c(
+      "overprediction",
+      "dispersion",
+      "underprediction"
+    )))
+
+  plot_comps <- plot_components()
+  p <- ggplot(
+    scores_sum,
+    aes(
+      x = model_variation_string, y = value,
+      fill = model_variation_string,
+      alpha = name
+    )
+  ) +
+    geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(
+      name = "Model permutation",
+      values = plot_comps$permutation_colors
+    ) +
+    get_plot_theme() +
+    cowplot::background_grid(
+      minor = "none",
+      major = "none"
+    ) +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA)
+    ) +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_comps$score_alpha
+    ) +
+    facet_grid(. ~ week_end_date, switch = "x") +
+    labs(x = "Nowcast date", y = "WIS breakdown") +
+    ggtitle(glue::glue("WIS breakdown by nowcast date for all model permutations: {strata}")) # nolint
   return(p)
 }

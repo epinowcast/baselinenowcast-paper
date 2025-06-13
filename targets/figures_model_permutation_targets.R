@@ -45,5 +45,11 @@ figures_model_permutation_targets <- list(
     command = get_plot_wis_by_horizon_mp(scores_mp,
       strata = "age groups"
     )
+  ),
+  tar_target(
+    name = bar_chart_wis_by_nowcast_week,
+    command = get_plot_wis_by_week_mp(scores_mp,
+      strata = "age groups"
+    )
   )
 )

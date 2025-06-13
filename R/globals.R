@@ -225,5 +225,8 @@ utils::globalVariables(c(
   "observed", # <run_covid_nowcast_pipeline>
   "quantile_level", # <run_covid_nowcast_pipeline>
   "pt_nowcast", # <run_covid_nowcast_pipeline>
+  "n_history_delay", # <derive_model_variation>
+  "n_history_uncertainty", # <derive_model_variation>
+  "model_variation", # <derive_model_variation>
   NULL
 ))

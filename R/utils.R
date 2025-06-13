@@ -18,7 +18,7 @@ quiet <- function(code) {
 #'    variations
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom dplyr case_match
+#' @importFrom dplyr case_when
 #' @returns dataframe with two new columns for model_variation and
 #'    model_variation_string
 derive_model_variation <- function(df) {

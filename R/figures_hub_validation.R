@@ -632,3 +632,67 @@ get_plot_coverage_by_age_group <- function(all_coverage,
 
   return(p)
 }
+
+#' Title
+#'
+#' @param plot_nowcasts_over_time A
+#' @param horiz_bar_chart_sum_scores_ag B
+#' @param plot_wis_comp_over_time_ag C
+#' @param bar_chart_scores_by_age_group D
+#' @param plot_mean_delay_over_time_by_age E
+#' @param plot_mean_cdf_delay_by_age F
+#' @param fig_file_name Character string indicating name of the figure to be
+#'    saved as the file name
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs")`.
+#' @param save Boolean indicating whether or not to save the figure to disk.
+#'    Default is `TRUE`.
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout
+#' @importFrom ggplot ggsave theme
+#' @importFrom fs dir_create
+#' @returns ggplot object as a gridded panel
+make_fig_hub_validation <- function(
+    plot_nowcasts_over_time,
+    horiz_bar_chart_sum_scores_ag,
+    plot_wis_comp_over_time_ag,
+    bar_chart_scores_by_age_group,
+    plot_mean_delay_over_time_by_age,
+    plot_mean_cdf_delay_by_age,
+    fig_file_name,
+    fig_file_dir = file.path("output", "figs"),
+    save = TRUE) {
+  layout <- "
+  AAAABB
+  CCCCDD
+  EEEEFF
+  "
+
+  fig_hub_validation <- plot_nowcasts_over_time +
+    horiz_bar_chart_sum_scores_ag +
+    plot_wis_comp_over_time_ag +
+    bar_chart_scores_by_age_group +
+    plot_mean_delay_over_time_by_age +
+    plot_mean_cdf_delay_by_age +
+    plot_layout(
+      design = layout,
+      axes = "collect"
+    ) & theme(
+    legend.position = "top",
+    legend.justification = "left"
+  )
+
+  dir_create(fig_file_dir)
+
+  ggsave(
+    fig_hub_validation,
+    filename = file.path(
+      fig_file_dir,
+      glue("{fig_filename}.png")
+    ),
+    width = 10,
+    height = 8
+  )
+  return(fig_hub_validation)
+}

@@ -372,7 +372,7 @@ get_plot_rel_wis_by_age_group <- function(
   rel_wis <- scores_by_age_group |>
     filter(model != KIT_comparison_model) |>
     left_join(KIT_comparison, by = "age_group") |>
-    mutate(rel_wis = wis / comparison_wis)
+    mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
 
   plot_comps <- plot_components()
   p <- ggplot(rel_wis) +
@@ -472,7 +472,7 @@ get_plot_rel_wis_by_horizon <- function(
   relative_wis <- scores_sum |>
     filter(model != KIT_comparison_model) |>
     left_join(KIT_comparison, by = "horizon") |>
-    mutate(rel_wis = wis / comparison_wis)
+    mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
   plot_comps <- plot_components()
   p <- ggplot(relative_wis) +
     geom_line(aes(x = horizon, y = rel_wis, color = model)) +

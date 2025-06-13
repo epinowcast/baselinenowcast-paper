@@ -115,6 +115,92 @@ utils::globalVariables(c(
   "empirical_coverage", # <get_plot_coverage_by_age_group>
   "95", # <get_plot_coverage_by_age_group>
   "50", # <get_plot_coverage_by_age_group>
+  "horizon", # <get_plot_nowcasts_over_time_mp>
+  "age_group", # <get_plot_nowcasts_over_time_mp>
+  "model_variation", # <get_plot_nowcasts_over_time_mp>
+  "reference_date", # <get_plot_nowcasts_over_time_mp>
+  "q_0.5", # <get_plot_nowcasts_over_time_mp>
+  "model_variation_string", # <get_plot_nowcasts_over_time_mp>
+  "q_0.25", # <get_plot_nowcasts_over_time_mp>
+  "q_0.75", # <get_plot_nowcasts_over_time_mp>
+  "q_0.025", # <get_plot_nowcasts_over_time_mp>
+  "q_0.975", # <get_plot_nowcasts_over_time_mp>
+  "observed", # <get_plot_nowcasts_over_time_mp>
+  "data_as_of", # <get_plot_nowcasts_over_time_mp>
+  "age_group", # <get_plot_bar_chart_scores_mp>
+  "model_variation", # <get_plot_bar_chart_scores_mp>
+  "model_variation_string", # <get_plot_bar_chart_scores_mp>
+  "overprediction", # <get_plot_bar_chart_scores_mp>
+  "underprediction", # <get_plot_bar_chart_scores_mp>
+  "dispersion", # <get_plot_bar_chart_scores_mp>
+  "name", # <get_plot_bar_chart_scores_mp>
+  "value", # <get_plot_bar_chart_scores_mp>
+  "age_group", # <get_plot_rel_wis_over_time_mp>
+  "wis", # <get_plot_rel_wis_over_time_mp>
+  "model_variation_string", # <get_plot_rel_wis_over_time_mp>
+  "model_variation", # <get_plot_rel_wis_over_time_mp>
+  "nowcast_date", # <get_plot_rel_wis_over_time_mp>
+  "baseline_wis", # <get_plot_rel_wis_over_time_mp>
+  "age_group", # <get_plot_coverage_by_mp>
+  "interval_range", # <get_plot_coverage_by_mp>
+  "model", # <get_plot_coverage_by_mp>
+  "model_variation", # <get_plot_coverage_by_mp>
+  "model_variation_string", # <get_plot_coverage_by_mp>
+  "interval_coverage", # <get_plot_coverage_by_mp>
+  "empirical_coverage", # <get_plot_coverage_by_mp>
+  "95", # <get_plot_coverage_by_mp>
+  "50", # <get_plot_coverage_by_mp>
+  "age_group", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation_string", # <get_plot_rel_wis_by_horizon_mp>
+  "horizon", # <get_plot_rel_wis_by_horizon_mp>
+  "wis", # <get_plot_rel_wis_by_horizon_mp>
+  "baseline_wis", # <get_plot_rel_wis_by_horizon_mp>
+  "relative_wis", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation", # <get_plot_rel_decomposed_wis>
+  "model_variation_string", # <get_plot_rel_decomposed_wis>
+  "age_group", # <get_plot_rel_decomposed_wis>
+  "wis", # <get_plot_rel_decomposed_wis>
+  "underprediction", # <get_plot_rel_decomposed_wis>
+  "overprediction", # <get_plot_rel_decomposed_wis>
+  "dispersion", # <get_plot_rel_decomposed_wis>
+  "baseline_wis", # <get_plot_rel_decomposed_wis>
+  "baseline_underprediction", # <get_plot_rel_decomposed_wis>
+  "baseline_overprediction", # <get_plot_rel_decomposed_wis>
+  "baseline_dispersion", # <get_plot_rel_decomposed_wis>
+  "relative_underprediction", # <get_plot_rel_decomposed_wis>
+  "relative_overprediction", # <get_plot_rel_decomposed_wis>
+  "relative_dispersion", # <get_plot_rel_decomposed_wis>
+  "rel_score", # <get_plot_rel_decomposed_wis>
+  "component", # <get_plot_rel_decomposed_wis>
+  "model_variation", # <get_plot_wis_by_age_group_mp>
+  "model_variation_string", # <get_plot_wis_by_age_group_mp>
+  "age_group", # <get_plot_wis_by_age_group_mp>
+  "overprediction", # <get_plot_wis_by_age_group_mp>
+  "underprediction", # <get_plot_wis_by_age_group_mp>
+  "dispersion", # <get_plot_wis_by_age_group_mp>
+  "name", # <get_plot_wis_by_age_group_mp>
+  "value", # <get_plot_wis_by_age_group_mp>
+  "age_group", # <get_plot_wis_by_horizon_mp>
+  "model_variation", # <get_plot_wis_by_horizon_mp>
+  "model_variation_string", # <get_plot_wis_by_horizon_mp>
+  "horizon", # <get_plot_wis_by_horizon_mp>
+  "overprediction", # <get_plot_wis_by_horizon_mp>
+  "underprediction", # <get_plot_wis_by_horizon_mp>
+  "dispersion", # <get_plot_wis_by_horizon_mp>
+  "name", # <get_plot_wis_by_horizon_mp>
+  "value", # <get_plot_wis_by_horizon_mp>
+  "age_group", # <get_plot_wis_by_week_mp>
+  "nowcast_date", # <get_plot_wis_by_week_mp>
+  "week", # <get_plot_wis_by_week_mp>
+  "model_variation", # <get_plot_wis_by_week_mp>
+  "model_variation_string", # <get_plot_wis_by_week_mp>
+  "week_end_date", # <get_plot_wis_by_week_mp>
+  "overprediction", # <get_plot_wis_by_week_mp>
+  "underprediction", # <get_plot_wis_by_week_mp>
+  "dispersion", # <get_plot_wis_by_week_mp>
+  "name", # <get_plot_wis_by_week_mp>
+  "value", # <get_plot_wis_by_week_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>
@@ -139,5 +225,8 @@ utils::globalVariables(c(
   "observed", # <run_covid_nowcast_pipeline>
   "quantile_level", # <run_covid_nowcast_pipeline>
   "pt_nowcast", # <run_covid_nowcast_pipeline>
+  "n_history_delay", # <derive_model_variation>
+  "n_history_uncertainty", # <derive_model_variation>
+  "model_variation", # <derive_model_variation>
   NULL
 ))

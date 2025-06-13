@@ -181,6 +181,15 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_age_group_mp>
   "name", # <get_plot_wis_by_age_group_mp>
   "value", # <get_plot_wis_by_age_group_mp>
+  "age_group", # <get_plot_wis_by_horizon_mp>
+  "model_variation", # <get_plot_wis_by_horizon_mp>
+  "model_variation_string", # <get_plot_wis_by_horizon_mp>
+  "horizon", # <get_plot_wis_by_horizon_mp>
+  "overprediction", # <get_plot_wis_by_horizon_mp>
+  "underprediction", # <get_plot_wis_by_horizon_mp>
+  "dispersion", # <get_plot_wis_by_horizon_mp>
+  "name", # <get_plot_wis_by_horizon_mp>
+  "value", # <get_plot_wis_by_horizon_mp>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

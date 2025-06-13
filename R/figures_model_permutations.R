@@ -482,3 +482,60 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
     ggtitle("WIS by age group for all model permutations")
   return(p)
 }
+
+#' Get a plot of decomposed WIS by horizon for each model permutation
+#'
+#' @param scores Dataframe of the scores by age group, horizon, and model
+#' @param strata Character string indicating whether to summarise across the
+#'    different age strata (`"age groups"`) or across the nation as a whole
+#'    (`"national"`). Default is `"age groups"`.
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
+#'    geom_hline scale_y_continuous
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_wis_by_horizon_mp <- function(scores,
+                                       strata) {
+  if (strata == "age groups") {
+    scores_filtered <- filter(scores, age_group != "00+")
+  } else if (strata == "national") {
+    scores_filtered <- filter(scores, age_group == "00+")
+  }
+  scores_sum <- scores_filtered |>
+    scoringutils::summarise_scores(by = c(
+      "model_variation",
+      "model_variation_string",
+      "horizon"
+    )) |>
+    select(
+      model_variation, model_variation_string,
+      horizon, overprediction, underprediction, dispersion
+    ) |>
+    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    mutate(name = factor(name, levels = c(
+      "overprediction",
+      "dispersion",
+      "underprediction"
+    )))
+
+  plot_comps <- plot_components()
+  p <- ggplot(
+    scores_sum,
+    aes(
+      x = horizon, y = value,
+      fill = model_variation_string
+    )
+  ) +
+    geom_bar(stat = "identity", position = "dodge") +
+    scale_fill_manual(
+      name = "Model permutation",
+      values = plot_comps$permutation_colors
+    ) +
+    get_plot_theme() +
+    facet_wrap(~name, nrow = 3) +
+    labs(x = "Horizon (days)", y = "WIS breakdown") +
+    ggtitle(glue::glue("WIS breakdown by horizon for all model permutations:{strata}"))
+  return(p)
+}

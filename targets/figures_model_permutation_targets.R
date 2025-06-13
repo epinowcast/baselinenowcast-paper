@@ -39,5 +39,11 @@ figures_model_permutation_targets <- list(
     name = bar_chart_wis_by_age_group_mp,
     command = get_plot_wis_by_age_group_mp(scores_mp |>
       filter(age_group != "00+"))
+  ),
+  tar_target(
+    name = bar_chart_wis_by_nowcast_horizon,
+    command = get_plot_wis_by_horizon_mp(scores_mp,
+      strata = "age groups"
+    )
   )
 )

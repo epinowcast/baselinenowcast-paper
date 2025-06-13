@@ -381,7 +381,7 @@ get_plot_rel_decomposed_wis <- function(scores,
         baseline_overprediction, .Machine$double.eps
       ),
       relative_dispersion = dispersion / pmax(
-        baseline_wis, .Machine$double.eps
+        baseline_dispersion, .Machine$double.eps
       )
     ) |>
     select(

@@ -79,12 +79,10 @@ utils::globalVariables(c(
   "empirical_coverage", # <get_plot_bar_chart_coverage>
   "95", # <get_plot_bar_chart_coverage>
   "50", # <get_plot_bar_chart_coverage>
-  "wis", # <get_plot_rel_wis_by_age_group>
   "model", # <get_plot_rel_wis_by_age_group>
+  "wis", # <get_plot_rel_wis_by_age_group>
+  "comparison_wis", # <get_plot_rel_wis_by_age_group>
   "age_group", # <get_plot_rel_wis_by_age_group>
-  "baselinenowcast", # <get_plot_rel_wis_by_age_group>
-  "KIT simple nowcast", # <get_plot_rel_wis_by_age_group>
-  "relative_wis", # <get_plot_rel_wis_by_age_group>
   "age_group", # <get_plot_mean_wis_by_horizon>
   "reference_date", # <get_plot_mean_wis_by_horizon>
   "nowcast_date", # <get_plot_mean_wis_by_horizon>
@@ -97,9 +95,8 @@ utils::globalVariables(c(
   "model", # <get_plot_rel_wis_by_horizon>
   "horizon", # <get_plot_rel_wis_by_horizon>
   "wis", # <get_plot_rel_wis_by_horizon>
-  "baselinenowcast", # <get_plot_rel_wis_by_horizon>
-  "KIT simple nowcast", # <get_plot_rel_wis_by_horizon>
-  "relative_wis", # <get_plot_rel_wis_by_horizon>
+  "comparison_wis", # <get_plot_rel_wis_by_horizon>
+  "rel_wis", # <get_plot_rel_wis_by_horizon>
   "age_group", # <get_plot_coverage_by_horizon>
   "interval_range", # <get_plot_coverage_by_horizon>
   "reference_date", # <get_plot_coverage_by_horizon>
@@ -174,6 +171,7 @@ utils::globalVariables(c(
   "location", # <get_covid_data>
   "report_date", # <get_eval_data_from_long_df>
   "reference_date", # <get_eval_data_from_long_df>
+  "delay", # <get_eval_data_from_long_df>
   "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
   "reference_date", # <get_nowcast_quantiles>
@@ -183,5 +181,13 @@ utils::globalVariables(c(
   "reference_date", # <get_rep_tri_from_long_df>
   "delay", # <get_rep_tri_from_long_df>
   "count", # <get_rep_tri_from_long_df>
+  "age_group", # <run_covid_nowcast_pipeline>
+  "reference_date", # <run_covid_nowcast_pipeline>
+  "report_date", # <run_covid_nowcast_pipeline>
+  "count", # <run_covid_nowcast_pipeline>
+  "data_as_of", # <run_covid_nowcast_pipeline>
+  "observed", # <run_covid_nowcast_pipeline>
+  "quantile_level", # <run_covid_nowcast_pipeline>
+  "pt_nowcast", # <run_covid_nowcast_pipeline>
   NULL
 ))

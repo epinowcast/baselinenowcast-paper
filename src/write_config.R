@@ -11,7 +11,10 @@ write_config <- function(noro_nowcast_dates = NULL,
   # covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/main/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv" # nolint
   # Use the august 8th data, as is in the paper
   covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
-  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/refs/heads/main/data-processed/KIT-simple_nowcast"
+  # Lock to specific commit for KIT nowcasts
+  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/7314dc60985981fdd144453e4fcf820e95a32b99/data-processed/KIT-simple_nowcast"
+  # point to the bug fixed quantiles, locking in on specific commit
+  KIT_nowcast_revised_url_prefix <- "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/ad9500d08ca5da87724dcd0d8a4568da0a7fcec7/data-processed_retrospective/KIT-simple_nowcast_revised"
   if (is.null(noro_nowcast_dates)) {
     noro_nowcast_dates <- as.character(
       seq(
@@ -119,6 +122,7 @@ write_config <- function(noro_nowcast_dates = NULL,
     covid = list(
       url = covid_url,
       KIT_nowcast_url_prefix = KIT_nowcast_url_prefix,
+      KIT_nowcast_revised_url_prefix = KIT_nowcast_revised_url_prefix,
       nowcast_dates = result_df |> pull(nowcast_dates) |> as.vector(),
       age_groups = result_df |> pull(age_groups) |> as.vector(),
       n_history_delay = result_df |> pull(n_history_delay) |> as.vector(),

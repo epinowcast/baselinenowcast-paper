@@ -26,6 +26,7 @@ plot_components <- function() {
   # nolint start
   model_colors <- c(
     "KIT simple nowcast" = "darkgreen",
+    "KIT simple nowcast revised" = "darkorange",
     "baselinenowcast" = "purple4"
   )
   age_colors <- c(

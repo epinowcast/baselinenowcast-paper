@@ -691,7 +691,7 @@ make_fig_model_perms <- function(
     fig_file_name,
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
-  layout <- "
+  fig_layout <- "
   AAAABB
   AAAADD
   AAAAEE
@@ -705,7 +705,7 @@ make_fig_model_perms <- function(
     rel_wis_by_horizon_mp +
     rel_decomposed_wis_by_age_group +
     plot_layout(
-      design = layout,
+      design = fig_layout,
       axes = "collect"
     ) & theme(
     legend.position = "top",
@@ -715,7 +715,7 @@ make_fig_model_perms <- function(
   dir_create(fig_file_dir)
 
   ggsave(
-    fig_hub_validation,
+    fig_model_perm,
     filename = file.path(
       fig_file_dir,
       glue("{fig_filename}.png")
@@ -723,4 +723,5 @@ make_fig_model_perms <- function(
     width = 10,
     height = 8
   )
+  return(fig_model_perm)
 }

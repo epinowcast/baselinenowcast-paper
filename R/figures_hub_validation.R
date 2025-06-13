@@ -658,12 +658,12 @@ make_fig_hub_validation <- function(
     horiz_bar_chart_sum_scores_ag,
     plot_wis_comp_over_time_ag,
     bar_chart_scores_by_age_group,
-    plot_mean_delay_over_time_by_age,
+    plot_mean_delay_over_time_by_age, # nolint
     plot_mean_cdf_delay_by_age,
     fig_file_name,
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
-  layout <- "
+  fig_layout <- "
   AAAABB
   CCCCDD
   EEEEFF
@@ -676,7 +676,7 @@ make_fig_hub_validation <- function(
     plot_mean_delay_over_time_by_age +
     plot_mean_cdf_delay_by_age +
     plot_layout(
-      design = layout,
+      design = fig_layout,
       axes = "collect"
     ) & theme(
     legend.position = "top",

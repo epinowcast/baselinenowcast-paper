@@ -660,3 +660,67 @@ get_plot_wis_by_week_mp <- function(scores,
     ggtitle(glue::glue("WIS breakdown by nowcast date for all model permutations: {strata}")) # nolint
   return(p)
 }
+
+#' Title
+#'
+#' @param plot_nowcasts_over_time_mp A
+#' @param bar_chart_wis_by_mp B
+#' @param rel_wis_over_time_mp C
+#' @param bar_chart_coverage_mp D
+#' @param rel_wis_by_horizon_mp E
+#' @param rel_decomposed_wis_by_age_group F
+#' @param fig_file_name Character string indicating name of the figure to be
+#'    saved as the file name
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs")`.
+#' @param save Boolean indicating whether or not to save the figure to disk.
+#'    Default is `TRUE`.
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout
+#' @importFrom ggplot2 ggsave theme
+#' @importFrom fs dir_create
+#' @returns ggplot object as a gridded panel
+make_fig_model_perms <- function(
+    plot_nowcasts_over_time_mp,
+    bar_chart_wis_by_mp,
+    rel_wis_over_time_mp,
+    bar_chart_coverage_mp,
+    rel_wis_by_horizon_mp,
+    rel_decomposed_wis_by_age_group,
+    fig_file_name,
+    fig_file_dir = file.path("output", "figs"),
+    save = TRUE) {
+  layout <- "
+  AAAABB
+  AAAADD
+  AAAAEE
+  CCCCFF
+  "
+
+  fig_model_perm <- plot_nowcasts_over_time_mp +
+    bar_chart_wis_by_mp +
+    rel_wis_over_time_mp +
+    bar_chart_coverage_mp +
+    rel_wis_by_horizon_mp +
+    rel_decomposed_wis_by_age_group +
+    plot_layout(
+      design = layout,
+      axes = "collect"
+    ) & theme(
+    legend.position = "top",
+    legend.justification = "left"
+  )
+
+  dir_create(fig_file_dir)
+
+  ggsave(
+    fig_hub_validation,
+    filename = file.path(
+      fig_file_dir,
+      glue("{fig_filename}.png")
+    ),
+    width = 10,
+    height = 8
+  )
+}

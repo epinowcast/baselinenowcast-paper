@@ -650,7 +650,7 @@ get_plot_coverage_by_age_group <- function(all_coverage,
 #' @autoglobal
 #' @importFrom glue glue
 #' @importFrom patchwork plot_layout
-#' @importFrom ggplot ggsave theme
+#' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel
 make_fig_hub_validation <- function(

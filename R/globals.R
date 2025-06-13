@@ -201,6 +201,7 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_week_mp>
   "name", # <get_plot_wis_by_week_mp>
   "value", # <get_plot_wis_by_week_mp>
+  "fig_hub_validation", # <make_fig_model_perms>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

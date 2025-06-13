@@ -51,5 +51,21 @@ figures_model_permutation_targets <- list(
     command = get_plot_wis_by_week_mp(scores_mp,
       strata = "age groups"
     )
+  ),
+
+  # Make panels-------------------------------------------------------------
+  tar_target(
+    name = fig_model_permutations,
+    command = make_fig_model_perms(
+      plot_nowcasts_over_time_mp,
+      bar_chart_wis_by_mp,
+      rel_wis_over_time_mp,
+      bar_chart_coverage_mp,
+      rel_wis_by_horizon_mp,
+      rel_decomposed_wis_by_age_group,
+      fig_file_name = "fig_model_permutations",
+      fig_file_dir = file.path("output", "figs"),
+      save = TRUE
+    )
   )
 )

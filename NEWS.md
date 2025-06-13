@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Add the necessary intermediate targets and figure targets for the model permutation case study.
 -   Add the necessary intermediate targets and figure targets for the Hub validation case study.
 -   Set up estimating and applying dispersion to 7 day rolling sum of hospital admissions for Covid case study and compare nowcasts.
 -   Generate a configuration file to generate the model permuations applied to the Covid case study.

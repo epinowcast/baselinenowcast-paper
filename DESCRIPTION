@@ -42,7 +42,9 @@ Imports:
   tidyr,
   tibble,
   cowplot,
-  RColorBrewer
+  RColorBrewer,
+  patchwork,
+  fs
 Suggests:
     bookdown,
     targets,

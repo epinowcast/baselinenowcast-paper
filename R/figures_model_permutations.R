@@ -410,7 +410,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     scale_y_continuous(trans = "log10") +
     labs(
       x = "",
-      y = "Relative WIS compared\nto baseline validation approach",
+      y = "Relative WIS compared\nto baseline validation approach"
     ) +
     ggtitle(glue::glue("Relative WIS components by age group for all model permutations")) # nolint
 
@@ -591,13 +591,15 @@ get_plot_wis_by_week_mp <- function(scores,
     group_by(week) |>
     mutate(week_end_date = max(nowcast_date)) |>
     ungroup() |>
+    # nolint start
     # Restore the metrics attribute before summarising
     {
       \(x) {
         attr(x, "metrics") <- metrics_attr
-        x
+        return(x)
       }
     }() |>
+    # nolint end
     scoringutils::summarise_scores(by = c(
       "model_variation",
       "model_variation_string",

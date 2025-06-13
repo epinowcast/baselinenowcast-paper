@@ -9,7 +9,8 @@ get_plot_pt_nowcasts(
   final_summed_data,
   nowcast_dates_to_plot = NULL,
   pathogen = "",
-  title = ""
+  title = "",
+  facet = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ wish to plot, default is \code{NULL} which will plot all of them}
 \item{pathogen}{Character sting of the pathogen being plotted}
 
 \item{title}{Character string indicating the title}
+
+\item{facet}{Boolean indicating whether or not to make separate facets
+of each model}
 }
 \value{
 ggplot object

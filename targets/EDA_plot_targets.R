@@ -17,6 +17,7 @@ EDA_plot_targets <- list(
     name = final_eval_data_covid_daily,
     command = get_eval_data_from_long_df(
       long_df = covid_long_all_strata |> filter(age_group == "00+"),
+      max_delay = config$covid$max_delay,
       as_of_date = ymd(max(config$covid$nowcast_dates)) + days(config$covid$eval_timeframe)
     )
   ),
@@ -84,7 +85,8 @@ EDA_plot_targets <- list(
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid 7 day",
-      title = "KIT vs baselinenowcast nowcasts"
+      title = "KIT vs baselinenowcast nowcasts",
+      facet = FALSE
     )
   ),
   tar_target(
@@ -109,7 +111,8 @@ EDA_plot_targets <- list(
       final_summed_data = final_eval_data_covid_7d,
       nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
       pathogen = "Covid 7 day",
-      title = "Point nowcast comparison"
+      title = "Point nowcast comparison",
+      facet = FALSE
     )
   ),
   tar_target(

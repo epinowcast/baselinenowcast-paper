@@ -352,23 +352,34 @@ get_plot_bar_chart_coverage <- function(all_coverage,
 #'
 #' @param scores_by_age_group Dataframe of the summarised scores by age group
 #'    and model
+#' @param KIT_comparison_model Character string indicating which of the KIT
+#'     models to compare to. Default is `"KIT simple nowcast"`.
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
+#' @importFrom glue glue
 #' @returns ggplot object
-get_plot_rel_wis_by_age_group <- function(scores_by_age_group) {
-  scores_wide <- scores_by_age_group |>
-    select(wis, model, age_group) |>
-    pivot_wider(
-      names_from = model,
-      values_from = wis
-    ) |>
-    mutate(relative_wis = baselinenowcast / `KIT simple nowcast`)
+get_plot_rel_wis_by_age_group <- function(
+    scores_by_age_group,
+    KIT_comparison_model = "KIT simple nowcast") {
+  KIT_comparison <- scores_by_age_group |>
+    filter(model == KIT_comparison_model) |>
+    rename(comparison_wis = wis) |>
+    select(comparison_wis, age_group)
+
+  rel_wis <- scores_by_age_group |>
+    filter(model != KIT_comparison_model) |>
+    left_join(KIT_comparison, by = "age_group") |>
+    mutate(rel_wis = wis / comparison_wis)
+
   plot_comps <- plot_components()
-  p <- ggplot(scores_wide) +
-    geom_point(aes(x = age_group, y = relative_wis)) +
+  p <- ggplot(rel_wis) +
+    geom_point(aes(
+      x = age_group, y = rel_wis,
+      fill = model
+    )) +
     scale_fill_manual(
       name = "",
       values = plot_comps$model_colors
@@ -378,7 +389,7 @@ get_plot_rel_wis_by_age_group <- function(scores_by_age_group) {
     coord_flip() +
     get_plot_theme() +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS by age group")
+    ggtitle(glue::glue("Relative WIS by age group relative to {KIT_comparison_model}")) # nolint
   return(p)
 }
 #' Get a plot of mean WIS by horizon
@@ -425,6 +436,8 @@ get_plot_mean_wis_by_horizon <- function(scores,
 #'
 #' @param scores Dataframe of all the scores by individual reference and
 #'    nowcast dates and model and age groups
+#' @param KIT_comparison_model Character string indicating which model to
+#'   compare to.
 #' @inheritParams get_plot_bar_chart_sum_scores
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
@@ -432,8 +445,10 @@ get_plot_mean_wis_by_horizon <- function(scores,
 #' @importFrom scoringutils summarise_scores
 #' @importFrom glue glue
 #' @returns ggplot object
-get_plot_rel_wis_by_horizon <- function(scores,
-                                        strata) {
+get_plot_rel_wis_by_horizon <- function(
+    scores,
+    strata,
+    KIT_comparison_model = "KIT simple nowcast") {
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -447,20 +462,29 @@ get_plot_rel_wis_by_horizon <- function(scores,
   scores_sum <- scores_filtered |>
     mutate(horizon = as.integer(reference_date - nowcast_date)) |>
     scoringutils::summarise_scores(by = c("model", "horizon")) |>
-    select(model, horizon, wis) |>
-    pivot_wider(
-      names_from = model,
-      values_from = wis
-    ) |>
-    mutate(relative_wis = baselinenowcast / `KIT simple nowcast`)
+    select(model, horizon, wis)
 
-  p <- ggplot(scores_sum, aes(x = horizon, y = relative_wis)) +
-    geom_line() +
+  KIT_comparison <- scores_sum |>
+    filter(model == KIT_comparison_model) |>
+    rename(comparison_wis = wis) |>
+    select(comparison_wis, horizon)
+
+  relative_wis <- scores_sum |>
+    filter(model != KIT_comparison_model) |>
+    left_join(KIT_comparison, by = "horizon") |>
+    mutate(rel_wis = wis / comparison_wis)
+  plot_comps <- plot_components()
+  p <- ggplot(relative_wis) +
+    geom_line(aes(x = horizon, y = rel_wis, color = model)) +
     get_plot_theme() +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
-    scale_y_continuous(trans = "log", limits = c(0.6, 2.5)) +
+    scale_y_continuous(trans = "log") +
+    scale_color_manual(
+      name = "",
+      values = plot_comps$model_colors
+    ) +
     labs(x = "Horizon (days)", y = "Relative WIS") +
-    ggtitle(glue::glue("Relative WIS by horizon: {strata}"))
+    ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}")) # nolint
 
   return(p)
 }

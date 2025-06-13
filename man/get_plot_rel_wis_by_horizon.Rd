@@ -4,7 +4,11 @@
 \alias{get_plot_rel_wis_by_horizon}
 \title{Get a plot of relative WIS by horizon}
 \usage{
-get_plot_rel_wis_by_horizon(scores, strata)
+get_plot_rel_wis_by_horizon(
+  scores,
+  strata,
+  KIT_comparison_model = "KIT simple nowcast"
+)
 }
 \arguments{
 \item{scores}{Dataframe of all the scores by individual reference and
@@ -13,6 +17,9 @@ nowcast dates and model and age groups}
 \item{strata}{Character string indicating whether to summarise across the
 different age strata (\code{"age groups"}) or across the nation as a whole
 (\code{"national"}). Default is \code{"age groups"}.}
+
+\item{KIT_comparison_model}{Character string indicating which model to
+compare to.}
 }
 \value{
 ggplot object

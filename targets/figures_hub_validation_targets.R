@@ -67,6 +67,13 @@ figures_hub_validation_targets <- list(
     command = get_plot_rel_wis_by_age_group(scores_by_age_group)
   ),
   tar_target(
+    name = plot_rel_wis_by_age_group_revised,
+    command = get_plot_rel_wis_by_age_group(
+      scores_by_age_group,
+      KIT_comparison_model = "KIT simple nowcast revised"
+    )
+  ),
+  tar_target(
     name = plot_mean_wis_by_horizon_ntl,
     command = get_plot_mean_wis_by_horizon(validation_scores,
       strata = "national"
@@ -88,6 +95,21 @@ figures_hub_validation_targets <- list(
     name = plot_rel_wis_by_horizon_ag,
     command = get_plot_rel_wis_by_horizon(validation_scores,
       strata = "age groups"
+    )
+  ),
+  tar_target(
+    name = plot_rel_wis_by_horizon_ag_revised,
+    command = get_plot_rel_wis_by_horizon(validation_scores,
+      strata = "age groups",
+      KIT_comparison_model = "KIT simple nowcast revised"
+    )
+  ),
+  tar_target(
+    name = plot_rel_wis_by_horizon_ntl_revised,
+    command = get_plot_rel_wis_by_horizon(
+      validation_scores,
+      strata = "national",
+      KIT_comparison_model = "KIT simple nowcast revised"
     )
   ),
   tar_target(

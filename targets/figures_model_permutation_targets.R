@@ -29,6 +29,13 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
+    name = rel_decomposed_wis_by_age_group,
+    command = get_plot_rel_decomposed_wis(scores_mp,
+      facet = TRUE
+    )
+  ),
+  # Supplement-----------------------------------------------------------------
+  tar_target(
     name = bar_chart_wis_by_age_group_mp,
     command = get_plot_wis_by_age_group_mp(scores_mp |>
       filter(age_group != "00+"))

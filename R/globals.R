@@ -157,6 +157,22 @@ utils::globalVariables(c(
   "wis", # <get_plot_rel_wis_by_horizon_mp>
   "baseline_wis", # <get_plot_rel_wis_by_horizon_mp>
   "relative_wis", # <get_plot_rel_wis_by_horizon_mp>
+  "model_variation", # <get_plot_rel_decomposed_wis>
+  "model_variation_string", # <get_plot_rel_decomposed_wis>
+  "age_group", # <get_plot_rel_decomposed_wis>
+  "wis", # <get_plot_rel_decomposed_wis>
+  "underprediction", # <get_plot_rel_decomposed_wis>
+  "overprediction", # <get_plot_rel_decomposed_wis>
+  "dispersion", # <get_plot_rel_decomposed_wis>
+  "baseline_wis", # <get_plot_rel_decomposed_wis>
+  "baseline_underprediction", # <get_plot_rel_decomposed_wis>
+  "baseline_overprediction", # <get_plot_rel_decomposed_wis>
+  "baseline_dispersion", # <get_plot_rel_decomposed_wis>
+  "relative_underprediction", # <get_plot_rel_decomposed_wis>
+  "relative_overprediction", # <get_plot_rel_decomposed_wis>
+  "relative_dispersion", # <get_plot_rel_decomposed_wis>
+  "rel_score", # <get_plot_rel_decomposed_wis>
+  "component", # <get_plot_rel_decomposed_wis>
   "model_variation", # <get_plot_wis_by_age_group_mp>
   "model_variation_string", # <get_plot_wis_by_age_group_mp>
   "age_group", # <get_plot_wis_by_age_group_mp>

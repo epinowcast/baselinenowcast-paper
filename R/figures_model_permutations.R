@@ -333,6 +333,97 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
   return(p)
 }
 
+#' Get a plot of relative decomposed WIS by age group
+#'
+#' @param scores Dataframe of all the scores by individual reference and
+#'    nowcast dates and model permutation
+#' @param facet Boolean indicating whether or not to create separate facets for
+#'    each WIS component. Default is `FALSE`
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#' @importFrom dplyr select filter
+#' @importFrom scoringutils summarise_scores
+#' @importFrom glue glue
+#' @returns ggplot object
+get_plot_rel_decomposed_wis <- function(scores,
+                                        facet = FALSE) {
+  scores_sum <- scores |>
+    scoringutils::summarise_scores(by = c(
+      "model_variation",
+      "model_variation_string",
+      "age_group"
+    )) |>
+    select(
+      model_variation, model_variation_string, age_group, wis,
+      underprediction, overprediction, dispersion
+    )
+  baseline_scores <- scores_sum |>
+    filter(model_variation_string == "Baseline validation approach") |>
+    rename(
+      baseline_wis = wis,
+      baseline_underprediction = underprediction,
+      baseline_overprediction = overprediction,
+      baseline_dispersion = dispersion
+    ) |>
+    select(
+      age_group, baseline_wis, baseline_underprediction,
+      baseline_overprediction, baseline_dispersion
+    )
+  rel_wis <- scores_sum |>
+    filter(model_variation_string != "Baseline validation approach") |>
+    left_join(baseline_scores, by = "age_group") |>
+    mutate(
+      relative_wis = wis / baseline_wis,
+      relative_underprediction = underprediction / baseline_underprediction,
+      relative_overprediction = overprediction / baseline_overprediction,
+      relative_dispersion = dispersion / baseline_dispersion
+    ) |>
+    select(
+      age_group, model_variation_string,
+      relative_underprediction, relative_overprediction,
+      relative_dispersion
+    ) |>
+    pivot_longer(
+      cols = starts_with("relative_"),
+      names_prefix = "relative_",
+      names_to = "component",
+      values_to = "rel_score"
+    )
+
+  plot_comps <- plot_components()
+  p <- ggplot(rel_wis, aes(
+    x = age_group, y = rel_score,
+    fill = model_variation_string,
+    alpha = component
+  )) +
+    geom_bar(stat = "identity", position = "dodge") +
+    get_plot_theme() +
+    scale_fill_manual(
+      name = "Model permutation",
+      values = plot_comps$permutation_colors
+    ) +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_comps$score_alpha
+    ) +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    scale_y_continuous(trans = "log10") +
+    labs(
+      x = "",
+      y = "Relative WIS compared\nto baseline validation approach",
+    ) +
+    ggtitle(glue::glue("Relative WIS components by age group for all model permutations")) # nolint
+
+  if (isTRUE(facet)) {
+    p <- p + facet_wrap(~component, nrow = 3)
+  }
+
+  return(p)
+}
+
+
+
+
 #' Get a plot of decomposed WIS by age group for each model permutation
 #'
 #' @param scores_by_age_group Dataframe of the scores by age group

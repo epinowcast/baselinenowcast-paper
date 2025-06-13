@@ -171,6 +171,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "yaml",
+      "name": "yaml",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=yaml"
     }
   ],
   "softwareRequirements": {
@@ -206,6 +218,18 @@
     },
     "4": {
       "@type": "SoftwareApplication",
+      "identifier": "zoo",
+      "name": "zoo",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=zoo"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
       "provider": {
@@ -216,12 +240,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "epinowcast",
       "name": "epinowcast"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "glue",
       "name": "glue",
@@ -233,7 +257,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=glue"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "lubridate",
       "name": "lubridate",
@@ -245,7 +269,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=lubridate"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "scoringutils",
       "name": "scoringutils",
@@ -257,13 +281,13 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=scoringutils"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "baselinenowcast",
       "name": "baselinenowcast",
       "sameAs": "https://github.com/baselinenowcast=epinowcast/baselinenowcast"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -275,7 +299,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -287,7 +311,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "cowplot",
       "name": "cowplot",
@@ -299,7 +323,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=cowplot"
     },
-    "13": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "RColorBrewer",
       "name": "RColorBrewer",
@@ -313,7 +337,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1405.021KB",
+  "fileSize": "1417.802KB",
   "releaseNotes": "https://github.com/epinowcast/baselinenowcast-paper/blob/master/NEWS.md",
   "readme": "https://github.com/epinowcast/baselinenowcast-paper/blob/main/README.md"
 }

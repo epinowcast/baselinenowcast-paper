@@ -10,7 +10,7 @@ make_fig_model_perms(
   rel_wis_over_time_mp,
   bar_chart_coverage_mp,
   rel_wis_by_horizon_mp,
-  rel_decomposed_wis_by_age_group,
+  rel_decomp_wis_by_age_group,
   fig_file_name,
   fig_file_dir = file.path("output", "figs"),
   save = TRUE
@@ -27,8 +27,6 @@ make_fig_model_perms(
 
 \item{rel_wis_by_horizon_mp}{E}
 
-\item{rel_decomposed_wis_by_age_group}{F}
-
 \item{fig_file_name}{Character string indicating name of the figure to be
 saved as the file name}
 
@@ -37,6 +35,8 @@ saved as the file name}
 
 \item{save}{Boolean indicating whether or not to save the figure to disk.
 Default is \code{TRUE}.}
+
+\item{rel_decomposed_wis_by_age_group}{F}
 }
 \value{
 ggplot object as a gridded panel

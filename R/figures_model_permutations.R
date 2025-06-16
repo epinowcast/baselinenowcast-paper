@@ -322,7 +322,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
       values = plot_comps$permutation_colors
     ) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
-    scale_y_continuous(trans = "log", limits = c(0.6, 2.5)) +
+    scale_y_continuous(trans = "log10", limits = c(0.6, 2.5)) +
     labs(
       x = "Horizon (days)",
       y = "Relative WIS compared\nto baseline validation approach",
@@ -692,10 +692,10 @@ make_fig_model_perms <- function(
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
   fig_layout <- "
-  AAAABB
-  AAAADD
-  AAAAEE
-  CCCCFF
+  AAABB
+  AAADD
+  AAAEE
+  CCCFF
   "
 
   fig_model_perm <- plot_nowcasts_over_time_mp +
@@ -706,7 +706,8 @@ make_fig_model_perms <- function(
     rel_decomposed_wis_by_age_group +
     plot_layout(
       design = fig_layout,
-      axes = "collect"
+      axes = "collect",
+      guides = "collect"
     ) & theme(
     legend.position = "top",
     legend.justification = "left"
@@ -718,10 +719,10 @@ make_fig_model_perms <- function(
     fig_model_perm,
     filename = file.path(
       fig_file_dir,
-      glue("{fig_filename}.png")
+      glue("{fig_file_name}.png")
     ),
-    width = 10,
-    height = 8
+    width = 24,
+    height = 16
   )
   return(fig_model_perm)
 }

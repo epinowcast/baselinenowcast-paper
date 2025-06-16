@@ -689,10 +689,10 @@ make_fig_hub_validation <- function(
     fig_hub_validation,
     filename = file.path(
       fig_file_dir,
-      glue("{fig_filename}.png")
+      glue("{fig_file_name}.png")
     ),
-    width = 10,
-    height = 8
+    width = 24,
+    height = 16
   )
   return(fig_hub_validation)
 }

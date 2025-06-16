@@ -296,7 +296,7 @@ get_plot_bar_chart_coverage <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call.. = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   if (strata == "age groups") {
     coverage <- filter(

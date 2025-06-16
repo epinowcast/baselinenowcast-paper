@@ -322,7 +322,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
       values = plot_comps$permutation_colors
     ) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
-    scale_y_continuous(trans = "log", limits = c(0.6, 2.5)) +
+    scale_y_continuous(trans = "log10", limits = c(0.6, 2.5)) +
     labs(
       x = "Horizon (days)",
       y = "Relative WIS compared\nto baseline validation approach",
@@ -434,13 +434,22 @@ get_plot_rel_decomposed_wis <- function(scores,
 #'
 #' @param scores_by_age_group Dataframe of the scores by age group
 #'    and model
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
+#' @importFrom fs dir_create
 #' @returns ggplot object
-get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
+get_plot_wis_by_age_group_mp <- function(
+    scores_by_age_group,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   scores_sum <- scores_by_age_group |>
     scoringutils::summarise_scores(by = c(
       "model_variation",
@@ -481,7 +490,8 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     ) +
     facet_grid(. ~ age_group, switch = "x") +
     scale_alpha_manual(
@@ -490,6 +500,18 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
     ) +
     labs(x = "", y = "WIS") +
     ggtitle("WIS by age group for all model permutations")
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
   return(p)
 }
 
@@ -499,15 +521,24 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
 #' @param strata Character string indicating whether to summarise across the
 #'    different age strata (`"age groups"`) or across the nation as a whole
 #'    (`"national"`). Default is `"age groups"`.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
 #' @importFrom glue glue
+#' @importFrom fs dir_create
 #' @returns ggplot object
-get_plot_wis_by_horizon_mp <- function(scores,
-                                       strata = "age groups") {
+get_plot_wis_by_horizon_mp <- function(
+    scores,
+    strata = "age groups",
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
@@ -557,7 +588,8 @@ get_plot_wis_by_horizon_mp <- function(scores,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     ) +
     scale_alpha_manual(
       name = "WIS breakdown",
@@ -566,6 +598,18 @@ get_plot_wis_by_horizon_mp <- function(scores,
     facet_grid(. ~ horizon, switch = "x") +
     labs(x = "Horizon (days)", y = "WIS breakdown") +
     ggtitle(glue::glue("WIS breakdown by horizon for all model permutations: {strata}")) # nolint
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
   return(p)
 }
 
@@ -576,6 +620,7 @@ get_plot_wis_by_horizon_mp <- function(scores,
 #' @param strata Character string indicating whether to summarise across the
 #'    different age strata (`"age groups"`) or across the nation as a whole
 #'    (`"national"`). Default is `"age groups"`.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
@@ -583,9 +628,17 @@ get_plot_wis_by_horizon_mp <- function(scores,
 #' @importFrom tidyr pivot_wider
 #' @importFrom lubridate isoweek
 #' @importFrom glue glue
+#' @importFrom fs dir_create
 #' @returns ggplot object
-get_plot_wis_by_week_mp <- function(scores,
-                                    strata = "age groups") {
+get_plot_wis_by_week_mp <- function(
+    scores,
+    strata = "age groups",
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
@@ -649,7 +702,9 @@ get_plot_wis_by_week_mp <- function(scores,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.text.x = element_text(angle = 45),
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     ) +
     scale_alpha_manual(
       name = "WIS breakdown",
@@ -658,5 +713,89 @@ get_plot_wis_by_week_mp <- function(scores,
     facet_grid(. ~ week_end_date, switch = "x") +
     labs(x = "Nowcast date", y = "WIS breakdown") +
     ggtitle(glue::glue("WIS breakdown by nowcast date for all model permutations: {strata}")) # nolint
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
   return(p)
+}
+
+#' Title
+#'
+#' @param plot_nowcasts_over_time_mp A
+#' @param bar_chart_wis_by_mp B
+#' @param rel_wis_over_time_mp C
+#' @param bar_chart_coverage_mp D
+#' @param rel_wis_by_horizon_mp E
+#' @param rel_decomp_wis_by_age_group F
+#' @param fig_file_name Character string indicating name of the figure to be
+#'    saved as the file name
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs")`.
+#' @param save Boolean indicating whether or not to save the figure to disk.
+#'    Default is `TRUE`.
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout
+#' @importFrom ggplot2 ggsave theme
+#' @importFrom fs dir_create
+#' @returns ggplot object as a gridded panel
+make_fig_model_perms <- function(
+    plot_nowcasts_over_time_mp,
+    bar_chart_wis_by_mp,
+    rel_wis_over_time_mp,
+    bar_chart_coverage_mp,
+    rel_wis_by_horizon_mp,
+    rel_decomp_wis_by_age_group,
+    fig_file_name,
+    fig_file_dir = file.path("output", "figs"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+  fig_layout <- "
+  AAABB
+  AAADD
+  AAAEE
+  CCCFF
+  "
+
+  fig_model_perm <- plot_nowcasts_over_time_mp +
+    bar_chart_wis_by_mp +
+    rel_wis_over_time_mp +
+    bar_chart_coverage_mp +
+    rel_wis_by_horizon_mp +
+    rel_decomp_wis_by_age_group +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect",
+      guides = "collect"
+    ) & theme(
+    legend.position = "top",
+    legend.justification = "left"
+  )
+
+  dir_create(fig_file_dir)
+
+  if (isTRUE(save)) {
+    ggsave(
+      plot = fig_model_perm,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 24,
+      height = 16
+    )
+  }
+
+  return(fig_model_perm)
 }

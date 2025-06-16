@@ -281,15 +281,23 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
 #'    days and intervals.
 #' @param strata Character string indicating which strata to summarize over.
 #' @param intervals Vector of integers to plot coverage of.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @autoglobal
 #' @returns bar chart
-get_plot_bar_chart_coverage <- function(all_coverage,
-                                        strata,
-                                        intervals = c(50, 95)) {
+get_plot_bar_chart_coverage <- function(
+    all_coverage,
+    strata,
+    intervals = c(50, 95),
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   if (strata == "age groups") {
     coverage <- filter(
       all_coverage, age_group != "00+",
@@ -344,6 +352,18 @@ get_plot_bar_chart_coverage <- function(all_coverage,
     ggtitle(glue::glue("Empirical coverage: {strata}")) +
     coord_flip() +
     get_plot_theme()
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 20,
+      height = 8
+    )
+  }
 
   return(p)
 }
@@ -354,16 +374,26 @@ get_plot_bar_chart_coverage <- function(all_coverage,
 #'    and model
 #' @param KIT_comparison_model Character string indicating which of the KIT
 #'     models to compare to. Default is `"KIT simple nowcast"`.
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs", "supp")`.
+#' @inheritParams make_fig_hub_validation
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
+#' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_rel_wis_by_age_group <- function(
     scores_by_age_group,
-    KIT_comparison_model = "KIT simple nowcast") {
+    KIT_comparison_model = "KIT simple nowcast",
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   KIT_comparison <- scores_by_age_group |>
     filter(model == KIT_comparison_model) |>
     rename(comparison_wis = wis) |>
@@ -390,6 +420,21 @@ get_plot_rel_wis_by_age_group <- function(
     get_plot_theme() +
     labs(x = "", y = "Relative WIS") +
     ggtitle(glue::glue("Relative WIS by age group relative to {KIT_comparison_model}")) # nolint
+
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 10,
+      height = 8
+    )
+  }
+
+
   return(p)
 }
 #' Get a plot of mean WIS by horizon
@@ -397,14 +442,23 @@ get_plot_rel_wis_by_age_group <- function(
 #' @param scores Dataframe of all the scores by individual reference and
 #'    nowcast dates and model and age groups
 #' @inheritParams get_plot_bar_chart_sum_scores
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
+#' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
-get_plot_mean_wis_by_horizon <- function(scores,
-                                         strata) {
+get_plot_mean_wis_by_horizon <- function(
+    scores,
+    strata,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -429,6 +483,19 @@ get_plot_mean_wis_by_horizon <- function(scores,
     labs(x = "Horizon (days)", y = "Mean WIS") +
     ggtitle(glue::glue("Mean WIS by horizon: {strata}"))
 
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 10,
+      height = 8
+    )
+  }
+
   return(p)
 }
 
@@ -439,16 +506,24 @@ get_plot_mean_wis_by_horizon <- function(scores,
 #' @param KIT_comparison_model Character string indicating which model to
 #'   compare to.
 #' @inheritParams get_plot_bar_chart_sum_scores
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
+#' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_rel_wis_by_horizon <- function(
     scores,
     strata,
-    KIT_comparison_model = "KIT simple nowcast") {
+    KIT_comparison_model = "KIT simple nowcast",
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -486,6 +561,20 @@ get_plot_rel_wis_by_horizon <- function(
     labs(x = "Horizon (days)", y = "Relative WIS") +
     ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}")) # nolint
 
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 10,
+      height = 8
+    )
+  }
+
+
   return(p)
 }
 
@@ -495,15 +584,25 @@ get_plot_rel_wis_by_horizon <- function(
 #'    days and intervals.
 #' @param strata Character string indicating which strata to summarize over.
 #' @param intervals Vector of integers to plot coverage of.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom fs dir_create
 #' @autoglobal
 #' @returns bar chart
-get_plot_coverage_by_horizon <- function(all_coverage,
-                                         strata,
-                                         intervals = c(50, 95)) {
+get_plot_coverage_by_horizon <- function(
+    all_coverage,
+    strata,
+    intervals = c(50, 95),
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
   if (strata == "age groups") {
     coverage <- filter(
       all_coverage, age_group != "00+",
@@ -548,13 +647,27 @@ get_plot_coverage_by_horizon <- function(all_coverage,
       name = "",
       values = plot_comps$model_colors
     ) +
-    facet_wrap(~interval_range) +
+    facet_wrap(~interval_range, scales = "free_y") +
     labs(
       x = "Horizon(days)", y = "Empirical coverage",
       color = "Model"
     ) +
     ggtitle(glue::glue("Empirical coverage by horizon: {strata}")) +
-    get_plot_theme()
+    get_plot_theme() +
+    theme(legend.position = "bottom")
+
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 10,
+      height = 8
+    )
+  }
 
   return(p)
 }
@@ -564,14 +677,24 @@ get_plot_coverage_by_horizon <- function(all_coverage,
 #' @param all_coverage Dataframe of the combined individual level coverage for
 #'    days and intervals.
 #' @param intervals Vector of integers to plot coverage of.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom fs dir_create
 #' @autoglobal
 #' @returns bar chart
-get_plot_coverage_by_age_group <- function(all_coverage,
-                                           intervals = c(50, 95)) {
+get_plot_coverage_by_age_group <- function(
+    all_coverage,
+    intervals = c(50, 95),
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
   coverage <- filter(
     all_coverage, age_group != "00+",
     interval_range %in% c(intervals)
@@ -628,7 +751,88 @@ get_plot_coverage_by_age_group <- function(all_coverage,
     ggtitle("Empirical coverage by age group") +
     coord_flip() +
     get_plot_theme()
-
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
 
   return(p)
+}
+
+#' Title
+#'
+#' @param plot_nowcasts_over_time A
+#' @param horiz_bar_chart_sum_scores_ag B
+#' @param plot_wis_comp_over_time_ag C
+#' @param bar_chart_scores_by_age_group D
+#' @param plot_mean_delay_over_time_by_age E
+#' @param plot_mean_cdf_delay_by_age F
+#' @param fig_file_name Character string indicating name of the figure to be
+#'    saved as the file name. Default is `NULL`.
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs")`.
+#' @param save Boolean indicating whether or not to save the figure to disk.
+#'    Default is `TRUE`.
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout
+#' @importFrom ggplot2 ggsave theme
+#' @importFrom fs dir_create
+#' @returns ggplot object as a gridded panel
+make_fig_hub_validation <- function(
+    plot_nowcasts_over_time,
+    horiz_bar_chart_sum_scores_ag,
+    plot_wis_comp_over_time_ag,
+    bar_chart_scores_by_age_group,
+    plot_mean_delay_over_time_by_age, # nolint
+    plot_mean_cdf_delay_by_age,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
+  fig_layout <- "
+  AAAABB
+  CCCCDD
+  EEEEFF
+  "
+
+  fig_hub_validation <- plot_nowcasts_over_time +
+    horiz_bar_chart_sum_scores_ag +
+    plot_wis_comp_over_time_ag +
+    bar_chart_scores_by_age_group +
+    plot_mean_delay_over_time_by_age +
+    plot_mean_cdf_delay_by_age +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect"
+    ) & theme(
+    legend.position = "top",
+    legend.justification = "left"
+  )
+
+  dir_create(fig_file_dir)
+  if (isTRUE(save)) {
+    ggsave(
+      plot = fig_hub_validation,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 24,
+      height = 16
+    )
+  }
+
+  return(fig_hub_validation)
 }

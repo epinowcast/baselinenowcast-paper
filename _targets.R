@@ -16,6 +16,8 @@ library(epinowcast)
 library(baselinenowcast)
 library(scoringutils)
 library(RColorBrewer)
+library(patchwork)
+library(fs)
 
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
@@ -37,7 +39,9 @@ tar_option_set(
     "zoo",
     "epinowcast",
     "scoringutils",
-    "RColorBrewer"
+    "RColorBrewer",
+    "patchwork",
+    "fs"
   ),
   workspace_on_error = TRUE,
   storage = "worker",

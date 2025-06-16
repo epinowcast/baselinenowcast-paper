@@ -29,7 +29,7 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = rel_decomposed_wis_by_age_group,
+    name = rel_decomp_wis_by_age_group,
     command = get_plot_rel_decomposed_wis(scores_mp,
       facet = TRUE
     )
@@ -37,19 +37,40 @@ figures_model_permutation_targets <- list(
   # Supplement-----------------------------------------------------------------
   tar_target(
     name = bar_chart_wis_by_age_group_mp,
-    command = get_plot_wis_by_age_group_mp(scores_mp |>
-      filter(age_group != "00+"))
+    command = get_plot_wis_by_age_group_mp(
+      scores_mp |>
+        filter(age_group != "00+"),
+      fig_file_name = "mp_wis_by_age_group"
+    )
   ),
   tar_target(
     name = bar_chart_wis_by_nowcast_horizon,
     command = get_plot_wis_by_horizon_mp(scores_mp,
-      strata = "age groups"
+      strata = "age groups",
+      fig_file_name = "mp_wis_by_horizon"
     )
   ),
   tar_target(
     name = bar_chart_wis_by_nowcast_week,
     command = get_plot_wis_by_week_mp(scores_mp,
-      strata = "age groups"
+      strata = "age groups",
+      fig_file_name = "mp_wis_by_nowcast_week"
+    )
+  ),
+
+  # Make panels-------------------------------------------------------------
+  tar_target(
+    name = fig_model_permutations,
+    command = make_fig_model_perms(
+      plot_nowcasts_over_time_mp,
+      bar_chart_wis_by_mp,
+      rel_wis_over_time_mp,
+      bar_chart_coverage_mp,
+      rel_wis_by_horizon_mp,
+      rel_decomp_wis_by_age_group,
+      fig_file_name = "fig_model_permutations",
+      fig_file_dir = file.path("output", "figs"),
+      save = TRUE
     )
   )
 )

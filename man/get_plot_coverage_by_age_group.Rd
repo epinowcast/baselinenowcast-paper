@@ -4,13 +4,28 @@
 \alias{get_plot_coverage_by_age_group}
 \title{Get a plot of coverage by age_group for each model}
 \usage{
-get_plot_coverage_by_age_group(all_coverage, intervals = c(50, 95))
+get_plot_coverage_by_age_group(
+  all_coverage,
+  intervals = c(50, 95),
+  fig_file_name = NULL,
+  fig_file_dir = file.path("output", "figs", "supp"),
+  save = TRUE
+)
 }
 \arguments{
 \item{all_coverage}{Dataframe of the combined individual level coverage for
 days and intervals.}
 
 \item{intervals}{Vector of integers to plot coverage of.}
+
+\item{fig_file_name}{Character string indicating name of the figure to be
+saved as the file name. Default is \code{NULL}.}
+
+\item{fig_file_dir}{Path to save figure. Default is
+\code{file.path("output", "figs", "supp")}.}
+
+\item{save}{Boolean indicating whether or not to save the figure to disk.
+Default is \code{TRUE}.}
 }
 \value{
 bar chart

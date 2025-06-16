@@ -296,7 +296,7 @@ get_plot_bar_chart_coverage <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call.. = FALSE)
   }
   if (strata == "age groups") {
     coverage <- filter(
@@ -392,7 +392,7 @@ get_plot_rel_wis_by_age_group <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   KIT_comparison <- scores_by_age_group |>
     filter(model == KIT_comparison_model) |>
@@ -457,7 +457,7 @@ get_plot_mean_wis_by_horizon <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   if (strata == "age groups") {
     scores_filtered <- filter(
@@ -522,7 +522,7 @@ get_plot_rel_wis_by_horizon <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   if (strata == "age groups") {
     scores_filtered <- filter(
@@ -600,7 +600,7 @@ get_plot_coverage_by_horizon <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
 
   if (strata == "age groups") {
@@ -692,7 +692,7 @@ get_plot_coverage_by_age_group <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
 
   coverage <- filter(
@@ -798,7 +798,7 @@ make_fig_hub_validation <- function(
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
 
   fig_layout <- "

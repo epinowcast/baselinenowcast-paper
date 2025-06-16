@@ -448,7 +448,7 @@ get_plot_wis_by_age_group_mp <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call.. = FALSE)
   }
   scores_sum <- scores_by_age_group |>
     scoringutils::summarise_scores(by = c(
@@ -537,7 +537,7 @@ get_plot_wis_by_horizon_mp <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call.. = FALSE)
   }
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
@@ -637,7 +637,7 @@ get_plot_wis_by_week_mp <- function(
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
@@ -759,7 +759,7 @@ make_fig_model_perms <- function(
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   fig_layout <- "
   AAABB

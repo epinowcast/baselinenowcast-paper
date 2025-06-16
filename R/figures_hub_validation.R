@@ -288,12 +288,13 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @autoglobal
 #' @returns bar chart
-get_plot_bar_chart_coverage <- function(all_coverage,
-                                        strata,
-                                        intervals = c(50, 95),
-                                        fig_file_name = NULL,
-                                        fig_file_dir = file.path("output", "figs", "supp"),
-                                        save = TRUE) {
+get_plot_bar_chart_coverage <- function(
+    all_coverage,
+    strata,
+    intervals = c(50, 95),
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   if (strata == "age groups") {
     coverage <- filter(
       all_coverage, age_group != "00+",
@@ -348,9 +349,6 @@ get_plot_bar_chart_coverage <- function(all_coverage,
     ggtitle(glue::glue("Empirical coverage: {strata}")) +
     coord_flip() +
     get_plot_theme()
-
-  return(p)
-
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -363,6 +361,8 @@ get_plot_bar_chart_coverage <- function(all_coverage,
       height = 8
     )
   }
+
+  return(p)
 }
 
 #' Get a plot of relative WIS by age group
@@ -444,11 +444,12 @@ get_plot_rel_wis_by_age_group <- function(
 #' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
-get_plot_mean_wis_by_horizon <- function(scores,
-                                         strata,
-                                         fig_file_name = NULL,
-                                         fig_file_dir = file.path("output", "figs", "supp"),
-                                         save = TRUE) {
+get_plot_mean_wis_by_horizon <- function(
+    scores,
+    strata,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -579,12 +580,13 @@ get_plot_rel_wis_by_horizon <- function(
 #' @importFrom fs dir_create
 #' @autoglobal
 #' @returns bar chart
-get_plot_coverage_by_horizon <- function(all_coverage,
-                                         strata,
-                                         intervals = c(50, 95),
-                                         fig_file_name = NULL,
-                                         fig_file_dir = file.path("output", "figs", "supp"),
-                                         save = TRUE) {
+get_plot_coverage_by_horizon <- function(
+    all_coverage,
+    strata,
+    intervals = c(50, 95),
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   if (strata == "age groups") {
     coverage <- filter(
       all_coverage, age_group != "00+",
@@ -667,11 +669,12 @@ get_plot_coverage_by_horizon <- function(all_coverage,
 #' @importFrom fs dir_create
 #' @autoglobal
 #' @returns bar chart
-get_plot_coverage_by_age_group <- function(all_coverage,
-                                           intervals = c(50, 95),
-                                           fig_file_name = NULL,
-                                           fig_file_dir = file.path("output", "figs", "supp"),
-                                           save = TRUE) {
+get_plot_coverage_by_age_group <- function(
+    all_coverage,
+    intervals = c(50, 95),
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   coverage <- filter(
     all_coverage, age_group != "00+",
     interval_range %in% c(intervals)

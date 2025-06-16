@@ -745,7 +745,7 @@ make_fig_model_perms <- function(
     rel_wis_over_time_mp,
     bar_chart_coverage_mp,
     rel_wis_by_horizon_mp,
-    rel_decomposed_wis_by_age_group,
+    rel_decomp_wis_by_age_group,
     fig_file_name,
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
@@ -761,7 +761,7 @@ make_fig_model_perms <- function(
     rel_wis_over_time_mp +
     bar_chart_coverage_mp +
     rel_wis_by_horizon_mp +
-    rel_decomposed_wis_by_age_group +
+    rel_decomp_wis_by_age_group +
     plot_layout(
       design = fig_layout,
       axes = "collect",

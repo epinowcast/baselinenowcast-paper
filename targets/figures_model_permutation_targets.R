@@ -29,7 +29,7 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = rel_decomposed_wis_by_age_group,
+    name = rel_decomp_wis_by_age_group,
     command = get_plot_rel_decomposed_wis(scores_mp,
       facet = TRUE
     )
@@ -67,7 +67,7 @@ figures_model_permutation_targets <- list(
       rel_wis_over_time_mp,
       bar_chart_coverage_mp,
       rel_wis_by_horizon_mp,
-      rel_decomposed_wis_by_age_group,
+      rel_decomp_wis_by_age_group,
       fig_file_name = "fig_model_permutations",
       fig_file_dir = file.path("output", "figs"),
       save = TRUE

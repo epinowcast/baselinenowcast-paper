@@ -726,7 +726,7 @@ get_plot_wis_by_week_mp <- function(
 #' @param rel_wis_over_time_mp C
 #' @param bar_chart_coverage_mp D
 #' @param rel_wis_by_horizon_mp E
-#' @param rel_decomposed_wis_by_age_group F
+#' @param rel_decomp_wis_by_age_group F
 #' @param fig_file_name Character string indicating name of the figure to be
 #'    saved as the file name
 #' @param fig_file_dir Path to save figure. Default is

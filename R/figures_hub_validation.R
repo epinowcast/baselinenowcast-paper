@@ -295,6 +295,9 @@ get_plot_bar_chart_coverage <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
   if (strata == "age groups") {
     coverage <- filter(
       all_coverage, age_group != "00+",
@@ -352,7 +355,7 @@ get_plot_bar_chart_coverage <- function(
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      p,
+      plot = p,
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")
@@ -388,6 +391,9 @@ get_plot_rel_wis_by_age_group <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
   KIT_comparison <- scores_by_age_group |>
     filter(model == KIT_comparison_model) |>
     rename(comparison_wis = wis) |>
@@ -418,7 +424,7 @@ get_plot_rel_wis_by_age_group <- function(
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      p,
+      plot = p,
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")
@@ -450,6 +456,9 @@ get_plot_mean_wis_by_horizon <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -477,7 +486,7 @@ get_plot_mean_wis_by_horizon <- function(
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      p,
+      plot = p,
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")
@@ -512,6 +521,9 @@ get_plot_rel_wis_by_horizon <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
   if (strata == "age groups") {
     scores_filtered <- filter(
       scores, age_group != "00+"
@@ -552,7 +564,7 @@ get_plot_rel_wis_by_horizon <- function(
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      p,
+      plot = p,
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")
@@ -587,6 +599,10 @@ get_plot_coverage_by_horizon <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
+
   if (strata == "age groups") {
     coverage <- filter(
       all_coverage, age_group != "00+",
@@ -643,7 +659,7 @@ get_plot_coverage_by_horizon <- function(
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      p,
+      plot = p,
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")
@@ -675,6 +691,10 @@ get_plot_coverage_by_age_group <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
+
   coverage <- filter(
     all_coverage, age_group != "00+",
     interval_range %in% c(intervals)
@@ -734,7 +754,7 @@ get_plot_coverage_by_age_group <- function(
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      p,
+      plot = p,
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")
@@ -777,6 +797,10 @@ make_fig_hub_validation <- function(
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call = FALSE)
+  }
+
   fig_layout <- "
   AAAABB
   CCCCDD
@@ -798,15 +822,17 @@ make_fig_hub_validation <- function(
   )
 
   dir_create(fig_file_dir)
+  if (isTRUE(save)) {
+    ggsave(
+      plot = fig_hub_validation,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 24,
+      height = 16
+    )
+  }
 
-  ggsave(
-    fig_hub_validation,
-    filename = file.path(
-      fig_file_dir,
-      glue("{fig_file_name}.png")
-    ),
-    width = 24,
-    height = 16
-  )
   return(fig_hub_validation)
 }

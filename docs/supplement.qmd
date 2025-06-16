@@ -133,7 +133,11 @@ We can then used the probabilistic draws to compute any desired quantiles to sum
 
 ![Fig.S2 Relative WIS by age group.](../output/figs/supp/rel_wis_by_age_group.png){#figs2}
 
-![Fig.S3 Mean WIS by nowcast horizon for each model—same panel relative WIS by nowcast horizon.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs3} ![Fig.S3B. Relative WIS by nowcast horizon](../output/figs/supp/rel_wis_by_horizon_ag.png){#figs3b} ![Fig.S4 Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/cov_by_horizon_ag.png){#figs4}
+![Fig.S3 Mean WIS by nowcast horizon for each model—same panel relative WIS by nowcast horizon.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs3}
+
+![Fig.S3B. Relative WIS by nowcast horizon](../output/figs/supp/rel_wis_by_horizon_ag.png){#figs3b}
+
+![Fig.S4 Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/cov_by_horizon_ag.png){#figs4}
 
 ![Fig S5. Empirical coverage at 50% and 90% prediction intervals by age group for each model configuration.](../output/figs/supp/cov_by_age_group.png)
 

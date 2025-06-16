@@ -8,6 +8,7 @@
 #' @param horizon_to_plot Integer indicating which horizon to plot
 #' @param age_group_to_plot Character string indicating which age group to
 #'    show in the plot. Default is `"00+"`for all age groups.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
 #'    facet_wrap scale_color_manual scale_fill_manual
@@ -16,7 +17,10 @@
 #' @autoglobal
 get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
                                            horizon_to_plot,
-                                           age_group_to_plot = "00+") {
+                                           age_group_to_plot = "00+",
+                                           fig_file_name = NULL,
+                                           fig_file_dir = file.path("output", "figs", "supp"),
+                                           save = TRUE) {
   nc <- filter(
     combined_nowcasts,
     horizon == horizon_to_plot,
@@ -71,6 +75,20 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence")
+
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 20,
+      height = 8
+    )
+  }
+
   return(p)
 }
 #' Get horizontal bar chart of summarised scores by model permutation and score

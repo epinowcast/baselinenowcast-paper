@@ -8,7 +8,10 @@ by the type of permutation}
 get_plot_nowcasts_over_time_mp(
   combined_nowcasts,
   horizon_to_plot,
-  age_group_to_plot = "00+"
+  age_group_to_plot = "00+",
+  fig_file_name = NULL,
+  fig_file_dir = file.path("output", "figs", "supp"),
+  save = TRUE
 )
 }
 \arguments{
@@ -19,6 +22,15 @@ horizons and nowcast dates for all the model permutations.}
 
 \item{age_group_to_plot}{Character string indicating which age group to
 show in the plot. Default is \code{"00+"}for all age groups.}
+
+\item{fig_file_name}{Character string indicating name of the figure to be
+saved as the file name. Default is \code{NULL}.}
+
+\item{fig_file_dir}{Path to save figure. Default is
+\code{file.path("output", "figs", "supp")}.}
+
+\item{save}{Boolean indicating whether or not to save the figure to disk.
+Default is \code{TRUE}.}
 }
 \value{
 ggplot object

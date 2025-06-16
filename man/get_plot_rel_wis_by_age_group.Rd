@@ -6,7 +6,10 @@
 \usage{
 get_plot_rel_wis_by_age_group(
   scores_by_age_group,
-  KIT_comparison_model = "KIT simple nowcast"
+  KIT_comparison_model = "KIT simple nowcast",
+  fig_file_name = NULL,
+  fig_file_dir = file.path("output", "figs", "supp"),
+  save = TRUE
 )
 }
 \arguments{
@@ -15,6 +18,15 @@ and model}
 
 \item{KIT_comparison_model}{Character string indicating which of the KIT
 models to compare to. Default is \code{"KIT simple nowcast"}.}
+
+\item{fig_file_name}{Character string indicating name of the figure to be
+saved as the file name. Default is \code{NULL}.}
+
+\item{fig_file_dir}{Path to save figure. Default is
+\code{file.path("output", "figs", "supp")}.}
+
+\item{save}{Boolean indicating whether or not to save the figure to disk.
+Default is \code{TRUE}.}
 }
 \value{
 ggplot object

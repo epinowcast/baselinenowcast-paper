@@ -4,7 +4,13 @@
 \alias{get_plot_wis_by_week_mp}
 \title{Get a plot of decomposed WIS by week for each model permutation}
 \usage{
-get_plot_wis_by_week_mp(scores, strata = "age groups")
+get_plot_wis_by_week_mp(
+  scores,
+  strata = "age groups",
+  fig_file_name = NULL,
+  fig_file_dir = file.path("output", "figs", "supp"),
+  save = TRUE
+)
 }
 \arguments{
 \item{scores}{Dataframe of the scores by age group, horizon, and model}
@@ -12,6 +18,15 @@ get_plot_wis_by_week_mp(scores, strata = "age groups")
 \item{strata}{Character string indicating whether to summarise across the
 different age strata (\code{"age groups"}) or across the nation as a whole
 (\code{"national"}). Default is \code{"age groups"}.}
+
+\item{fig_file_name}{Character string indicating name of the figure to be
+saved as the file name. Default is \code{NULL}.}
+
+\item{fig_file_dir}{Path to save figure. Default is
+\code{file.path("output", "figs", "supp")}.}
+
+\item{save}{Boolean indicating whether or not to save the figure to disk.
+Default is \code{TRUE}.}
 }
 \value{
 ggplot object

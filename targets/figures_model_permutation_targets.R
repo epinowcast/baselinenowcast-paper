@@ -37,19 +37,24 @@ figures_model_permutation_targets <- list(
   # Supplement-----------------------------------------------------------------
   tar_target(
     name = bar_chart_wis_by_age_group_mp,
-    command = get_plot_wis_by_age_group_mp(scores_mp |>
-      filter(age_group != "00+"))
+    command = get_plot_wis_by_age_group_mp(
+      scores_mp |>
+        filter(age_group != "00+"),
+      fig_file_name = "mp_wis_by_age_group"
+    )
   ),
   tar_target(
     name = bar_chart_wis_by_nowcast_horizon,
     command = get_plot_wis_by_horizon_mp(scores_mp,
-      strata = "age groups"
+      strata = "age groups",
+      fig_file_name = "mp_wis_by_horizon"
     )
   ),
   tar_target(
     name = bar_chart_wis_by_nowcast_week,
     command = get_plot_wis_by_week_mp(scores_mp,
-      strata = "age groups"
+      strata = "age groups",
+      fig_file_name = "mp_wis_by_nowcast_week"
     )
   ),
 

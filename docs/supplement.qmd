@@ -129,19 +129,19 @@ We can then used the probabilistic draws to compute any desired quantiles to sum
 
 ### German nowcast Hub validation
 
-![Fig.S2 Relative WIS by age group. ](../output/figs/supp/rel_wis_by_age_group.png){#figs2}
+![Fig.S2 Relative WIS by age group.](../output/figs/supp/rel_wis_by_age_group.png){#figs2}
 
-![Fig.S3 Mean WIS by nowcast horizon for each model—same panel relative WIS by nowcast horizon.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs3}
-![Fig.S3B. Relative WIS by nowcast horizon](../output/figs/supp/rel_wis_by_horizon_ag.png){#figs3b}
-![Fig.S4 Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/cov_by_horizon_ag.png){#figs4}
+![Fig.S3 Mean WIS by nowcast horizon for each model—same panel relative WIS by nowcast horizon.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs3} ![Fig.S3B. Relative WIS by nowcast horizon](../output/figs/supp/rel_wis_by_horizon_ag.png){#figs3b} ![Fig.S4 Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/cov_by_horizon_ag.png){#figs4}
 
-![FigS5. Empirical coverage at 50% and 90% prediction intervals by age group for each model configuration.](../output/figs/supp/cov_by_age_group.png)
+![Fig S5. Empirical coverage at 50% and 90% prediction intervals by age group for each model configuration.](../output/figs/supp/cov_by_age_group.png)
 
 ### Model permutation study
 
-1.  Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
-2.  Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
-3.  Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.
+![Fig S5. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs5}
+
+![Fig S6. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs6}
+
+![Fig S7. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs7}
 
 ### Case study: UKHSA norovirus surveillance
 

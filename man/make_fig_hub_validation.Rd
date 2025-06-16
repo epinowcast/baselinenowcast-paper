@@ -11,7 +11,7 @@ make_fig_hub_validation(
   bar_chart_scores_by_age_group,
   plot_mean_delay_over_time_by_age,
   plot_mean_cdf_delay_by_age,
-  fig_file_name,
+  fig_file_name = NULL,
   fig_file_dir = file.path("output", "figs"),
   save = TRUE
 )
@@ -30,7 +30,7 @@ make_fig_hub_validation(
 \item{plot_mean_cdf_delay_by_age}{F}
 
 \item{fig_file_name}{Character string indicating name of the figure to be
-saved as the file name}
+saved as the file name. Default is \code{NULL}.}
 
 \item{fig_file_dir}{Path to save figure. Default is
 \code{file.path("output", "figs")}.}

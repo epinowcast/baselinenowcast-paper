@@ -4,7 +4,13 @@
 \alias{get_plot_mean_wis_by_horizon}
 \title{Get a plot of mean WIS by horizon}
 \usage{
-get_plot_mean_wis_by_horizon(scores, strata)
+get_plot_mean_wis_by_horizon(
+  scores,
+  strata,
+  fig_file_name = NULL,
+  fig_file_dir = file.path("output", "figs", "supp"),
+  save = TRUE
+)
 }
 \arguments{
 \item{scores}{Dataframe of all the scores by individual reference and
@@ -13,6 +19,15 @@ nowcast dates and model and age groups}
 \item{strata}{Character string indicating whether to summarise across the
 different age strata (\code{"age groups"}) or across the nation as a whole
 (\code{"national"}). Default is \code{"age groups"}.}
+
+\item{fig_file_name}{Character string indicating name of the figure to be
+saved as the file name. Default is \code{NULL}.}
+
+\item{fig_file_dir}{Path to save figure. Default is
+\code{file.path("output", "figs", "supp")}.}
+
+\item{save}{Boolean indicating whether or not to save the figure to disk.
+Default is \code{TRUE}.}
 }
 \value{
 ggplot object

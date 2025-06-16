@@ -4,11 +4,25 @@
 \alias{get_plot_wis_by_age_group_mp}
 \title{Get a plot of decomposed WIS by age group for each model permutation}
 \usage{
-get_plot_wis_by_age_group_mp(scores_by_age_group)
+get_plot_wis_by_age_group_mp(
+  scores_by_age_group,
+  fig_file_name = NULL,
+  fig_file_dir = file.path("output", "figs", "supp"),
+  save = TRUE
+)
 }
 \arguments{
 \item{scores_by_age_group}{Dataframe of the scores by age group
 and model}
+
+\item{fig_file_name}{Character string indicating name of the figure to be
+saved as the file name. Default is \code{NULL}.}
+
+\item{fig_file_dir}{Path to save figure. Default is
+\code{file.path("output", "figs", "supp")}.}
+
+\item{save}{Boolean indicating whether or not to save the figure to disk.
+Default is \code{TRUE}.}
 }
 \value{
 ggplot object

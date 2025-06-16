@@ -434,13 +434,19 @@ get_plot_rel_decomposed_wis <- function(scores,
 #'
 #' @param scores_by_age_group Dataframe of the scores by age group
 #'    and model
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
+#' @importFrom fs dir_create
 #' @returns ggplot object
-get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
+get_plot_wis_by_age_group_mp <- function(
+    scores_by_age_group,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   scores_sum <- scores_by_age_group |>
     scoringutils::summarise_scores(by = c(
       "model_variation",
@@ -481,7 +487,8 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     ) +
     facet_grid(. ~ age_group, switch = "x") +
     scale_alpha_manual(
@@ -490,6 +497,18 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
     ) +
     labs(x = "", y = "WIS") +
     ggtitle("WIS by age group for all model permutations")
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
   return(p)
 }
 
@@ -499,15 +518,21 @@ get_plot_wis_by_age_group_mp <- function(scores_by_age_group) {
 #' @param strata Character string indicating whether to summarise across the
 #'    different age strata (`"age groups"`) or across the nation as a whole
 #'    (`"national"`). Default is `"age groups"`.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
 #' @importFrom glue glue
+#' @importFrom fs dir_create
 #' @returns ggplot object
-get_plot_wis_by_horizon_mp <- function(scores,
-                                       strata = "age groups") {
+get_plot_wis_by_horizon_mp <- function(
+    scores,
+    strata = "age groups",
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
@@ -557,7 +582,8 @@ get_plot_wis_by_horizon_mp <- function(scores,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     ) +
     scale_alpha_manual(
       name = "WIS breakdown",
@@ -566,6 +592,18 @@ get_plot_wis_by_horizon_mp <- function(scores,
     facet_grid(. ~ horizon, switch = "x") +
     labs(x = "Horizon (days)", y = "WIS breakdown") +
     ggtitle(glue::glue("WIS breakdown by horizon for all model permutations: {strata}")) # nolint
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
   return(p)
 }
 
@@ -576,6 +614,7 @@ get_plot_wis_by_horizon_mp <- function(scores,
 #' @param strata Character string indicating whether to summarise across the
 #'    different age strata (`"age groups"`) or across the nation as a whole
 #'    (`"national"`). Default is `"age groups"`.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
 #'    geom_hline scale_y_continuous
@@ -583,9 +622,14 @@ get_plot_wis_by_horizon_mp <- function(scores,
 #' @importFrom tidyr pivot_wider
 #' @importFrom lubridate isoweek
 #' @importFrom glue glue
+#' @importFrom fs dir_create
 #' @returns ggplot object
-get_plot_wis_by_week_mp <- function(scores,
-                                    strata = "age groups") {
+get_plot_wis_by_week_mp <- function(
+    scores,
+    strata = "age groups",
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
   if (strata == "age groups") {
     scores_filtered <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
@@ -649,7 +693,9 @@ get_plot_wis_by_week_mp <- function(scores,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.text.x = element_text(angle = 45),
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     ) +
     scale_alpha_manual(
       name = "WIS breakdown",
@@ -658,6 +704,18 @@ get_plot_wis_by_week_mp <- function(scores,
     facet_grid(. ~ week_end_date, switch = "x") +
     labs(x = "Nowcast date", y = "WIS breakdown") +
     ggtitle(glue::glue("WIS breakdown by nowcast date for all model permutations: {strata}")) # nolint
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
   return(p)
 }
 

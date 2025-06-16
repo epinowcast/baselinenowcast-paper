@@ -379,6 +379,7 @@ get_plot_bar_chart_coverage <- function(all_coverage,
 #'    geom_hline scale_y_continuous
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
+#' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_rel_wis_by_age_group <- function(
@@ -440,6 +441,7 @@ get_plot_rel_wis_by_age_group <- function(
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
+#' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_mean_wis_by_horizon <- function(scores,
@@ -499,6 +501,7 @@ get_plot_mean_wis_by_horizon <- function(scores,
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
+#' @importFrom fs dir_create
 #' @importFrom glue glue
 #' @returns ggplot object
 get_plot_rel_wis_by_horizon <- function(
@@ -573,6 +576,7 @@ get_plot_rel_wis_by_horizon <- function(
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom fs dir_create
 #' @autoglobal
 #' @returns bar chart
 get_plot_coverage_by_horizon <- function(all_coverage,
@@ -660,6 +664,7 @@ get_plot_coverage_by_horizon <- function(all_coverage,
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom fs dir_create
 #' @autoglobal
 #' @returns bar chart
 get_plot_coverage_by_age_group <- function(all_coverage,

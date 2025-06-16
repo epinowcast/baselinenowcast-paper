@@ -19,7 +19,11 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
                                            horizon_to_plot,
                                            age_group_to_plot = "00+",
                                            fig_file_name = NULL,
-                                           fig_file_dir = file.path("output", "figs", "supp"),
+                                           fig_file_dir = file.path(
+                                             "output",
+                                             "figs",
+                                             "supp"
+                                           ),
                                            save = TRUE) {
   nc <- filter(
     combined_nowcasts,

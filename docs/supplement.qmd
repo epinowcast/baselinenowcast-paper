@@ -145,11 +145,11 @@ We can then used the probabilistic draws to compute any desired quantiles to sum
 
 ### Model permutation study
 
-![Fig S7. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs7}
+![Fig S8. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs8}
 
-![Fig S8. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs8}
+![Fig S9. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs9}
 
-![Fig S9. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs9}
+![Fig S10. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs10}
 
 ### Case study: UKHSA norovirus surveillance
 

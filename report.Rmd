@@ -191,9 +191,9 @@ default_scores <- sum_scores |>
   filter(model_variation_string == "Baseline validation approach") |>
   mutate(default_wis = wis) |>
   select(default_wis)
+default_wis <- default_scores$default_wis[1]
 
 sum_scores |>
-  bind_cols(default_scores) |>
   mutate(rel_wis = wis / default_wis) |>
   select(model_variation_string, rel_wis) |>
   kable(caption = "Model permutations: relative scores")

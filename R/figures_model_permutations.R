@@ -25,6 +25,9 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
                                              "supp"
                                            ),
                                            save = TRUE) {
+  if (isTRUE(save) && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   nc <- filter(
     combined_nowcasts,
     horizon == horizon_to_plot,

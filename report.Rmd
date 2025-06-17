@@ -1,0 +1,352 @@
+---
+title: "Summary metrics for paper"
+author: "Kaitlyn Johnson"
+date: "2025-06-16"
+output: html_document
+---
+
+```{r, echo = FALSE}
+library(targets)
+library(dplyr)
+library(kableExtra)
+library(scoringutils)
+library(tidyr)
+
+validation_scores <- tar_read(validation_scores)
+validation_coverage <- tar_read(validation_coverage)
+mean_delay_validation <- tar_read(mean_delay_validation)
+
+scores_mp <- tar_read(scores_mp)
+coverage_mp <- tar_read(coverage_mp)
+```
+
+Overall relative WIS: age groups
+```{r, echo = FALSE}
+scores_sum <- validation_scores |>
+  filter(age_group != "00+") |>
+  summarise_scores(by = "model")
+
+comparison_score_rt <- scores_sum |>
+  filter(model == "KIT simple nowcast") |>
+  rename(KIT_rt_wis = wis) |>
+  select(KIT_rt_wis)
+
+comparison_score_rev <- scores_sum |>
+  filter(model == "KIT simple nowcast revised") |>
+  rename(KIT_rev_wis = wis) |>
+  select(KIT_rev_wis)
+
+rel_wis <- scores_sum |>
+  filter(model == "baselinenowcast") |>
+  bind_cols(comparison_score_rt) |>
+  mutate(
+    relative_wis = wis / pmax(KIT_rt_wis, .Machine$double.eps),
+    strata = "age groups",
+    relative_to = "KIT simple nowcast"
+  ) |>
+  select(relative_wis, relative_to, model)
+
+rel_wis_rev <- scores_sum |>
+  filter(model == "baselinenowcast") |>
+  bind_cols(comparison_score_rev) |>
+  mutate(
+    relative_wis = wis / pmax(KIT_rev_wis, .Machine$double.eps),
+    strata = "age groups",
+    relative_to = "KIT simple nowcast revised"
+  ) |>
+  select(relative_wis, relative_to, model)
+```
+Overall relative WIS: national
+```{r, echo = FALSE}
+scores_sum <- validation_scores |>
+  filter(age_group == "00+") |>
+  summarise_scores(by = "model")
+
+comparison_score_rt <- scores_sum |>
+  filter(model == "KIT simple nowcast") |>
+  rename(KIT_rt_wis = wis) |>
+  select(KIT_rt_wis)
+
+comparison_score_rev <- scores_sum |>
+  filter(model == "KIT simple nowcast revised") |>
+  rename(KIT_rev_wis = wis) |>
+  select(KIT_rev_wis)
+
+rel_wis_ntl <- scores_sum |>
+  filter(model == "baselinenowcast") |>
+  bind_cols(comparison_score_rt) |>
+  mutate(
+    relative_wis = wis / pmax(KIT_rt_wis, .Machine$double.eps),
+    strata = "national",
+    relative_to = "KIT simple nowcast"
+  ) |>
+  select(relative_wis, relative_to, model)
+
+rel_wis_rev_ntl <- scores_sum |>
+  filter(model == "baselinenowcast") |>
+  bind_cols(comparison_score_rev) |>
+  mutate(
+    relative_wis = wis / pmax(KIT_rev_wis, .Machine$double.eps),
+    strata = "national",
+    relative_to = "KIT simple nowcast revised"
+  ) |>
+  select(relative_wis, relative_to, model)
+```
+
+Join together results and print
+```{r, echo = FALSE}
+bind_rows(rel_wis, rel_wis_rev) |>
+  kable(caption = "Overall relative WIS by age group")
+bind_rows(rel_wis_ntl, rel_wis_rev_ntl) |>
+  kable(caption = "Overall relative WIS national")
+```
+
+Overall score breakdown
+```{r, echo = FALSE}
+validation_scores |>
+  filter(age_group != "00+") |>
+  group_by(model) |>
+  summarise(
+    pct_under = sum(underprediction) / sum(wis),
+    pct_over = sum(overprediction) / sum(wis),
+    pct_disp = sum(dispersion) / sum(wis)
+  ) |>
+  kable(caption = "WIS percent breakdown by model for age groups")
+```
+
+Score summary by age group
+```{r, echo = FALSE}
+validation_scores |>
+  filter(age_group != "00+") |>
+  summarise_scores(by = c("model", "age_group")) |>
+  group_by(model) |>
+  summarise(
+    min_wis = min(wis),
+    age_group_min_wis = age_group[which.min(wis)],
+    max_wis = max(wis),
+    age_group_max_wis = age_group[which.max(wis)]
+  ) |>
+  kable(caption = "Min and max WIS by age group and model")
+```
+
+Mean delay by age
+```{r, echo = FALSE}
+mean_delay_validation |>
+  group_by(age_group) |>
+  summarise(mean_delay = sum(delay_time * mean_delay)) |>
+  ungroup() |>
+  summarise(
+    min_delay = min(mean_delay),
+    min_delay_age_group = age_group[which.min(mean_delay)],
+    max_delay = max(mean_delay),
+    max_delay_age_group = age_group[which.max(mean_delay)]
+  ) |>
+  kable(caption = "Min and max mean delay by age group")
+```
+
+Relative WIS by age group
+```{r, echo = FALSE}
+scores_sum <- validation_scores |>
+  filter(age_group != "00+") |>
+  summarise_scores(by = c("model", "age_group"))
+
+comparison_score_rt <- scores_sum |>
+  filter(model == "KIT simple nowcast") |>
+  rename(KIT_rt_wis = wis) |>
+  select(KIT_rt_wis, age_group)
+
+rel_wis <- scores_sum |>
+  filter(model == "baselinenowcast") |>
+  left_join(comparison_score_rt, by = "age_group") |>
+  mutate(
+    relative_wis = wis / pmax(KIT_rt_wis, .Machine$double.eps),
+    strata = "age groups",
+    relative_to = "KIT simple nowcast"
+  ) |>
+  select(relative_wis, relative_to, age_group, model)
+
+rel_wis |>
+  summarise(
+    min_rel_wis = min(relative_wis),
+    min_rel_wis_age_group = age_group[which.min(relative_wis)],
+    max_rel_wis = max(relative_wis),
+    max_rel_wis_age_group = age_group[which.max(relative_wis)]
+  ) |>
+  kable(caption = "Min and max relative WIS by age group")
+```
+
+Model permutation results
+```{r, echo = FALSE}
+scores_mp |>
+  summarise_scores(by = "model_variation_string") |>
+  kable(caption = "Model permutations: overall scores")
+```
+Model permutation relative WIS:
+```{r, echo = FALSE}
+sum_scores <- scores_mp |>
+  filter(age_group != "00+") |>
+  summarise_scores(by = "model_variation_string")
+
+default_scores <- sum_scores |>
+  filter(model_variation_string == "Baseline validation approach") |>
+  mutate(default_wis = wis) |>
+  select(default_wis)
+default_wis <- default_scores$default_wis[1]
+
+sum_scores |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis) |>
+  kable(caption = "Model permutations: relative scores")
+```
+Model permutation relative WIS by age group:
+```{r, echo = FALSE}
+sum_scores <- scores_mp |>
+  filter(age_group != "00+") |>
+  summarise_scores(by = c("model_variation_string", "age_group"))
+
+default_scores <- sum_scores |>
+  filter(model_variation_string == "Baseline validation approach") |>
+  mutate(default_wis = wis) |>
+  select(default_wis, age_group)
+
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Borrowed estimates from all age groups") |>
+  kable(caption = "Model permutation Borrowing: relative scores by age group")
+
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(!model_variation_string %in% c(
+    "Borrowed estimates from all age groups",
+    "Complete reporting triangle",
+    "Baseline validation approach"
+  )) |>
+  kable(caption = "Model permutations training volume: relative scores by age group")
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(!model_variation_string %in% c(
+    "Borrowed estimates from all age groups",
+    "Complete reporting triangle",
+    "Baseline validation approach"
+  )) |>
+  summarise(
+    min_rel_wis = min(rel_wis),
+    age_group_min = age_group[which.min(rel_wis)],
+    model_var_rel_min = model_variation_string[which.min(rel_wis)],
+    max_rel_wis = max(rel_wis),
+    age_group_max = age_group[which.max(rel_wis)],
+    model_var_rel_max = model_variation_string[which.max(rel_wis)]
+  ) |>
+  kable(caption = "Model permutations: training volumes min and max scores by age group")
+
+
+
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Complete reporting triangle") |>
+  kable(caption = "Model permutations complete rep tri: relative scores by age group")
+
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Complete reporting triangle") |>
+  summarise(
+    min_rel_wis = min(rel_wis),
+    age_group_min = age_group[which.min(rel_wis)],
+    model_var_rel_min = model_variation_string[which.min(rel_wis)],
+    max_rel_wis = max(rel_wis),
+    age_group_max = age_group[which.max(rel_wis)],
+    model_var_rel_max = model_variation_string[which.max(rel_wis)]
+  ) |>
+  kable(caption = "Model permutations: complete reporting triangle min and max scores by age group")
+# Borrowing
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Borrowed estimates from all age groups") |>
+  kable(caption = "Model permutations Borrowing: relative scores by age group")
+
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Complete reporting triangle") |>
+  summarise(
+    min_rel_wis = min(rel_wis),
+    age_group_min = age_group[which.min(rel_wis)],
+    model_var_rel_min = model_variation_string[which.min(rel_wis)],
+    max_rel_wis = max(rel_wis),
+    age_group_max = age_group[which.max(rel_wis)],
+    model_var_rel_max = model_variation_string[which.max(rel_wis)]
+  ) |>
+  kable(caption = "Model permutations: complete reporting triangle min and max scores by age group")
+```
+
+Model permutations horizon
+```{r, echo = FALSE}
+sum_scores <- scores_mp |>
+  filter(age_group != "00+") |>
+  summarise_scores(by = c("model_variation_string", "horizon"))
+
+default_scores <- sum_scores |>
+  filter(model_variation_string == "Baseline validation approach") |>
+  mutate(default_wis = wis) |>
+  select(default_wis, horizon)
+
+sum_scores |>
+  left_join(default_scores, by = "horizon") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, horizon) |>
+  filter(model_variation_string == "Borrowed estimates from all age groups") |>
+  kable(caption = "Model permutation Borrowing: relative scores by horizon")
+
+sum_scores |>
+  left_join(default_scores, by = "horizon") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, horizon) |>
+  filter(!model_variation_string %in% c(
+    "Borrowed estimates from all age groups",
+    "Complete reporting triangle",
+    "Baseline validation approach"
+  )) |>
+  kable(caption = "Model permutations training volume: relative scores by horizon")
+sum_scores |>
+  left_join(default_scores, by = "horizon") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, horizon) |>
+  filter(!model_variation_string %in% c(
+    "Borrowed estimates from all age groups",
+    "Complete reporting triangle",
+    "Baseline validation approach"
+  )) |>
+  summarise(
+    min_rel_wis = min(rel_wis),
+    horizon_min = horizon[which.min(rel_wis)],
+    model_var_rel_min = model_variation_string[which.min(rel_wis)],
+    max_rel_wis = max(rel_wis),
+    horizon_max = horizon[which.max(rel_wis)],
+    model_var_rel_max = model_variation_string[which.max(rel_wis)]
+  ) |>
+  kable(caption = "Model permutations: training volumes min and max scores by horizon")
+```
+Coverage summary
+```{r, echo = FALSE}
+coverage_mp |>
+  group_by(model, interval_range, model_variation_string) |>
+  summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+  pivot_wider(
+    names_from = interval_range,
+    values_from = empirical_coverage
+  ) |>
+  kable(caption = "Model permutations: coverage summary")
+```

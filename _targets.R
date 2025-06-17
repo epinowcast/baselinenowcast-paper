@@ -212,9 +212,15 @@ plot_targets <- list(
   figures_hub_validation_targets,
 
   ### Figures for comparing baselinenowcast model specificaitons
-  figures_model_permutation_targets
+  figures_model_permutation_targets,
 
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
+
+  ### Summary report with all metrics reported in paper
+  tar_render(
+    report,
+    "report.Rmd"
+  )
 ) # end plot targets
 
 

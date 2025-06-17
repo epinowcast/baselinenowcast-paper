@@ -127,7 +127,9 @@ get_plot_mult_nowcasts <- function(all_nowcasts,
       data = final_df,
       aes(x = reference_date, y = observed), color = "black"
     ) +
-    geom_vline(aes(xintercept = ymd(nowcast_date)), linetype = "dashed") +
+    geom_vline(aes(xintercept = lubridate::ymd(nowcast_date)),
+      linetype = "dashed"
+    ) +
     theme_bw() +
     scale_x_date(
       date_breaks = "1 week",

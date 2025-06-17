@@ -236,13 +236,16 @@ utils::globalVariables(c(
   "observed", # <run_covid_nowcast_pipeline>
   "quantile_level", # <run_covid_nowcast_pipeline>
   "pt_nowcast", # <run_covid_nowcast_pipeline>
-  "noro_long", # <run_noro_nowcast_pipeline>
-  "samples_nowcast_one_wday", # <run_noro_nowcast_pipeline>
   "report_date", # <run_noro_nowcast_pipeline>
   "reference_date", # <run_noro_nowcast_pipeline>
   "count", # <run_noro_nowcast_pipeline>
   "draw", # <run_noro_nowcast_pipeline>
   "pred_count", # <run_noro_nowcast_pipeline>
+  "reference_date", # <get_noro_nowcast>
+  "report_date", # <get_noro_nowcast>
+  "count", # <get_noro_nowcast>
+  "draw", # <get_noro_nowcast>
+  "pred_count", # <get_noro_nowcast>
   "n_history_delay", # <derive_model_variation>
   "n_history_uncertainty", # <derive_model_variation>
   "model_variation", # <derive_model_variation>

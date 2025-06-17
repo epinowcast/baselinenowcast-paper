@@ -44,7 +44,9 @@ run_noro_nowcast_pipeline <- function(
 
     samples_nowcast <- data.frame()
     for (i in seq_along(weekday_nums)) {
-      noro_df_one_weekday <- noro_df[wday(noro_df$reference_date) == weekday_nums[i], ]
+      noro_df_one_weekday <- noro_df[wday(
+        noro_df$reference_date
+      ) == weekday_nums[i], ]
 
       samples_nowcast_one_wday <- get_noro_nowcast(
         long_df = noro_df_one_weekday,
@@ -83,11 +85,11 @@ run_noro_nowcast_pipeline <- function(
     summarise(
       data_as_of = sum(count, na.rm = TRUE)
     )
-  n_history_training_volume <- n_history_delay + n_history_uncertainty
   comb_nc_noro <- samples_nowcast |>
     select(reference_date, draw, pred_count, nowcast_date) |>
     mutate(
       total_count = pred_count,
+      n_history_training_volume = n_history_delay + n_history_uncertainty,
       model = case_when(
         isTRUE(filter_ref_dates) & n_history_training_volume > 8 ~
           "filter weekday large training volume",
@@ -110,6 +112,7 @@ run_noro_nowcast_pipeline <- function(
 #' @inheritParams run_noro_nowcast_pipeline
 #' @param long_df Dataframe of the latest data by reference and
 #'    report date, may or may not contain days for every referene date
+#' @autoglobal
 #' @returns Data.frame of nowcast draws joined to training data.
 get_noro_nowcast <- function(
     long_df,

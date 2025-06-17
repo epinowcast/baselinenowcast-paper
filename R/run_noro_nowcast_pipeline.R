@@ -21,6 +21,7 @@
 #' @importFrom dplyr filter mutate left_join select rename pull row_number
 #'    arrange
 #' @importFrom zoo rollsum rollapply
+#' @importFrom lubridate wday
 #' @importFrom tibble tibble
 #' @importFrom baselinenowcast get_nowcast_draws get_delay_estimate apply_delay
 #' @importFrom lubridate ymd days
@@ -39,15 +40,13 @@ run_noro_nowcast_pipeline <- function(
     n_draws,
     quantiles) {
   if (isTRUE(filter_ref_dates)) {
-    weekdays <- 1:7
+    weekday_nums <- 1:7
 
     samples_nowcast <- data.frame()
-    for (i in seq_along(weekdays)) {
-      noro_df_one_weekday <- noro_df[wday(
-        noro_long$reference_date
-      ) == weekdays[i]]
+    for (i in seq_along(weekday_nums)) {
+      noro_df_one_weekday <- noro_df[wday(noro_df$reference_date) == weekday_nums[i], ]
 
-      sample_nowcast_one_wday <- get_noro_nowcast(
+      samples_nowcast_one_wday <- get_noro_nowcast(
         long_df = noro_df_one_weekday,
         nowcast_date = nowcast_date,
         max_delay = max_delay,
@@ -90,8 +89,10 @@ run_noro_nowcast_pipeline <- function(
     mutate(
       total_count = pred_count,
       model = case_when(
-        isTRUE(filter_ref_dates) & n_history_training_volume > 8 ~ "filter weekday large training volume",
-        isTRUE(filter_ref_dates) & n_history_training_volume <= 8 ~ "filter weekday",
+        isTRUE(filter_ref_dates) & n_history_training_volume > 8 ~
+          "filter weekday large training volume",
+        isTRUE(filter_ref_dates) & n_history_training_volume <= 8 ~
+          "filter weekday",
         TRUE ~ "base"
       ),
       # These will all vary

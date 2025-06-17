@@ -201,6 +201,17 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_week_mp>
   "name", # <get_plot_wis_by_week_mp>
   "value", # <get_plot_wis_by_week_mp>
+  "nowcast_date", # <get_plot_mult_nowcasts_noro>
+  "reference_date", # <get_plot_mult_nowcasts_noro>
+  "q_0.05", # <get_plot_mult_nowcasts_noro>
+  "q_0.95", # <get_plot_mult_nowcasts_noro>
+  "nowcast_date_model", # <get_plot_mult_nowcasts_noro>
+  "model", # <get_plot_mult_nowcasts_noro>
+  "q_0.25", # <get_plot_mult_nowcasts_noro>
+  "q_0.75", # <get_plot_mult_nowcasts_noro>
+  "q_0.5", # <get_plot_mult_nowcasts_noro>
+  "data_as_of", # <get_plot_mult_nowcasts_noro>
+  "observed", # <get_plot_mult_nowcasts_noro>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>
@@ -225,6 +236,13 @@ utils::globalVariables(c(
   "observed", # <run_covid_nowcast_pipeline>
   "quantile_level", # <run_covid_nowcast_pipeline>
   "pt_nowcast", # <run_covid_nowcast_pipeline>
+  "noro_long", # <run_noro_nowcast_pipeline>
+  "samples_nowcast_one_wday", # <run_noro_nowcast_pipeline>
+  "report_date", # <run_noro_nowcast_pipeline>
+  "reference_date", # <run_noro_nowcast_pipeline>
+  "count", # <run_noro_nowcast_pipeline>
+  "draw", # <run_noro_nowcast_pipeline>
+  "pred_count", # <run_noro_nowcast_pipeline>
   "n_history_delay", # <derive_model_variation>
   "n_history_uncertainty", # <derive_model_variation>
   "model_variation", # <derive_model_variation>

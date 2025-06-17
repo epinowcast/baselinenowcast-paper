@@ -163,16 +163,5 @@ EDA_plot_targets <- list(
       long_df = noro_long,
       as_of_date = ymd(max(config$norovirus$nowcast_dates)) + days(config$norovirus$eval_timeframe)
     )
-  ),
-  # Make sure quantiled nowcasts are performing reasonably.
-  tar_target(
-    name = plot_noro_nowcasts,
-    command = get_plot_mult_nowcasts(
-      all_nowcasts = all_nowcasts_noro |>
-        filter(model == "base", n_history_delay == 28),
-      final_summed_data = final_eval_data_noro,
-      nowcast_dates_to_plot = c("2023-12-10", "2024-01-21", "2024-02-25"),
-      pathogen = "Norovirus"
-    )
   )
 )

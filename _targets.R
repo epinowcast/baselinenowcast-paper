@@ -242,11 +242,11 @@ list(
   # model_permutation_targets,
 
   # Norovirus targets
-  mapped_noro,
-  combined_noro_nowcasts,
-  combined_noro_scores,
-  combined_noro_coverage,
+  mapped_noro
+  # combined_noro_nowcasts,
+  # combined_noro_scores,
+  # combined_noro_coverage,
   # noro_comparison_targets,
   # Plotting
-  plot_targets
+  # plot_targets
 )

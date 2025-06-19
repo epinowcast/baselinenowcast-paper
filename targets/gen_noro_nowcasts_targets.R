@@ -157,7 +157,7 @@ gen_noro_nowcasts_targets <- list(
   #       ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1)) |>
   #     left_join(eval_data, by = "reference_date")
   # ),
-  ## Forecast objects ---------------------------------------------------------
+  # Forecast objects ---------------------------------------------------------
   tar_target(
     name = su_sample_noro,
     command = scoringutils::as_forecast_sample(

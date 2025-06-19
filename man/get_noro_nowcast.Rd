@@ -10,12 +10,13 @@ get_noro_nowcast(
   max_delay,
   n_draws,
   n_history_delay,
-  n_history_uncertainty
+  n_history_uncertainty,
+  structure = 1
 )
 }
 \arguments{
 \item{long_df}{Dataframe of the latest data by reference and
-report date, may or may not contain days for every referene date}
+report date, may or may not contain days for every reference date}
 
 \item{nowcast_date}{Character string in YYYY-MM-DD format indicating the
 date of the nowcast.}
@@ -29,6 +30,11 @@ delay estimate.}
 
 \item{n_history_uncertainty}{Integer indicating number of retrospective
 nowcast datasets to use for uncertainty estimation}
+
+\item{structure}{Integer or vector specifying the reporting structure.
+If integer, divides columns evenly by that integer (with last possibly
+truncated).  If vector, the sum must not be greater than or equal to the
+number of columns. Default is 1 (standard triangular structure).}
 }
 \value{
 Data.frame of nowcast draws joined to training data.

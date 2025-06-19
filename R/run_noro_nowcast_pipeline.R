@@ -54,7 +54,8 @@ run_noro_nowcast_pipeline <- function(
         max_delay = max_delay,
         n_draws = n_draws,
         n_history_delay = n_history_delay,
-        n_history_uncertainty = n_history_uncertainty
+        n_history_uncertainty = n_history_uncertainty,
+        structure = c(1, 7)
       )
       # Bind together the nowcasts from each weekday
       samples_nowcast <- bind_rows(
@@ -69,7 +70,8 @@ run_noro_nowcast_pipeline <- function(
       max_delay = max_delay,
       n_draws = n_draws,
       n_history_delay = n_history_delay,
-      n_history_uncertainty = n_history_uncertainty
+      n_history_uncertainty = n_history_uncertainty,
+      structure = 1
     )
   }
 
@@ -111,7 +113,11 @@ run_noro_nowcast_pipeline <- function(
 #' Get norovirus nowcast
 #' @inheritParams run_noro_nowcast_pipeline
 #' @param long_df Dataframe of the latest data by reference and
-#'    report date, may or may not contain days for every referene date
+#'    report date, may or may not contain days for every reference date
+#' @param structure Integer or vector specifying the reporting structure.
+#'   If integer, divides columns evenly by that integer (with last possibly
+#'   truncated).  If vector, the sum must not be greater than or equal to the
+#'   number of columns. Default is 1 (standard triangular structure).
 #' @autoglobal
 #' @returns Data.frame of nowcast draws joined to training data.
 get_noro_nowcast <- function(
@@ -120,7 +126,8 @@ get_noro_nowcast <- function(
     max_delay,
     n_draws,
     n_history_delay,
-    n_history_uncertainty) {
+    n_history_uncertainty,
+    structure = 1) {
   triangle <- get_rep_tri_from_long_df(
     long_df = long_df,
     nowcast_date = nowcast_date,
@@ -143,7 +150,8 @@ get_noro_nowcast <- function(
   disp_params <- estimate_uncertainty(
     triangle_for_uncertainty = triangle,
     n_history_uncertainty = n_history_uncertainty,
-    n_history_delay = n_history_delay
+    n_history_delay = n_history_delay,
+    structure = structure
   )
 
   nowcast_draws_df <- get_nowcast_draws(

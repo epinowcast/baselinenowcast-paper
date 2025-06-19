@@ -8,6 +8,7 @@ estimate_uncertainty(
   triangle_for_uncertainty,
   n_history_uncertainty,
   n_history_delay,
+  structure = 1,
   fun_to_aggregate = sum,
   k = 7
 )
@@ -20,7 +21,12 @@ uncertainty estimation.}
 nowcast dates to use for uncertainty estimation}
 
 \item{n_history_delay}{Integer indicating number of reference times to use
-for delay estimation}
+for delay estimation.}
+
+\item{structure}{Integer or vector specifying the reporting structure.
+If integer, divides columns evenly by that integer (with last possibly
+truncated).  If vector, the sum must not be greater than or equal to the
+number of columns. Default is 1 (standard triangular structure).}
 
 \item{fun_to_aggregate}{Function for aggregating the target data, default
 is \code{sum}.}

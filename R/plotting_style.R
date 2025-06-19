@@ -27,7 +27,10 @@ plot_components <- function() {
   model_colors <- c(
     "KIT simple nowcast" = "darkgreen",
     "KIT simple nowcast revised" = "darkorange",
-    "baselinenowcast" = "purple4"
+    "baselinenowcast" = "purple4",
+    "base" = "navyblue",
+    "filter weekday" = "magenta4",
+    "filter weekday large training volume" = "brown4"
   )
   age_colors <- c(
     "00+" = "black",

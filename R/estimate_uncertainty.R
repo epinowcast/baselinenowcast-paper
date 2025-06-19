@@ -5,7 +5,11 @@
 #' @param n_history_uncertainty Integer indicating number of retrospective
 #'   nowcast dates to use for uncertainty estimation
 #' @param n_history_delay Integer indicating number of reference times to use
-#'   for delay estimation
+#'   for delay estimation.
+#' @param structure Integer or vector specifying the reporting structure.
+#'   If integer, divides columns evenly by that integer (with last possibly
+#'   truncated).  If vector, the sum must not be greater than or equal to the
+#'   number of columns. Default is 1 (standard triangular structure).
 #' @param fun_to_aggregate Function for aggregating the target data, default
 #'    is `sum`.
 #' @param k Integer indicating window size for the aggregate function to
@@ -16,6 +20,7 @@
 estimate_uncertainty <- function(triangle_for_uncertainty,
                                  n_history_uncertainty,
                                  n_history_delay,
+                                 structure = 1,
                                  fun_to_aggregate = sum,
                                  k = 7) {
   # Input validation
@@ -41,7 +46,8 @@ estimate_uncertainty <- function(triangle_for_uncertainty,
   )
 
   retro_rts <- generate_triangles(
-    trunc_rep_tri_list = truncated_rts
+    trunc_rep_tri_list = truncated_rts,
+    structure = structure
   )
 
   retro_nowcasts <- generate_pt_nowcast_mat_list(

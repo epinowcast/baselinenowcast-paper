@@ -57,9 +57,7 @@ The multiplicative model works by iteratively "filling in" the reporting triangl
 
 ![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1}
 
-The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above.
-The method assumes that the values at each delay $d$ for the recent times, $t$, will consist of the same proportion of the values previously reported for earlier times $t$.
-To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.
+The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above. The method assumes that the values at each delay $d$ for the recent times, $t$, will consist of the same proportion of the values previously reported for earlier times $t$. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.
 
 The delay distribution is then estimated from the filled in reporting matrix, using the same algorithm as described above for the case of the complete reporting matrix.
 
@@ -81,15 +79,13 @@ Where the number of reports at timepoint $t$ with delay $d$ is the product of th
 
 ### Uncertainty estimation
 
-To estimate the uncertainty in the nowcasts, we use past nowcast errors.
-In this analysis, we assume a negative binomial observation model.
+To estimate the uncertainty in the nowcasts, we use past nowcast errors. In this analysis, we assume a negative binomial observation model.
 
 #### Generation of retrospective reporting triangles
 
 We describe a method which generates retrospective reporting triangles to replicate what would have been available as of time $t^*=s^*$, where $s^* = t^*-m$ for $m = 1, 2, ... M$ to generate $M$ retrospective reporting triangles.
 
-To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the existing reporting triangle, to generate $M$ truncated reporting triangles.
-We then replace the bottom right of the triangle with NAs, assuming these would not have been observed as of $s^*$, to generare $M$ retrospective reporting triangles.
+To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the existing reporting triangle, to generate $M$ truncated reporting triangles. We then replace the bottom right of the triangle with NAs, assuming these would not have been observed as of $s^*$, to generare $M$ retrospective reporting triangles.
 
 The method uses each retrospective reporting triangle to re-estimate a delay distribution using the $N$ preceding reference times of the retrospective reporting triangle before $s^*$, and recomputes a retrospective point nowcast matrix, for $M$ realizations of the retrospective reporting triangle (so $M$ different $s^*$ values).
 
@@ -103,24 +99,19 @@ From the $M$ reporting triangles, we apply the method described above to estimat
 
 We quantify the uncertainty at the target quantity level, which is assumed, by default, to be the final count at each reference time, summed across reporting delays.
 
-At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function. We define the predicted nowcast for forecast horizon $j$ at retrospective nowcast time $s^*$
-$$
+At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function. We define the predicted nowcast for forecast horizon $j$ at retrospective nowcast time $s^*$ $$
 \hat{X}_{t-j}(s^*) = \sum_{d=0}^{D} \hat{X}_{t-j,d}(s^*) \times I(t-j+d \leq t^*)
-$$
-and likewise the observed nowcast for forecast horizon $j$ at retrospective nowcast time $s^*$
-$$
+$$ and likewise the observed nowcast for forecast horizon $j$ at retrospective nowcast time $s^*$ $$
 X_{t-j}(s^*) = \sum_{d=0}^{D} X_{t-j,d}(s^*) \times I(t-j+d \leq t^*)
 $$
 
 This generates $M$ pairs of predicted nowcasts and observed nowcasts for each forecast horizon $j = 1, ..., D$. We assume that the observed nowcasts $X_{t-j}$ follow a negative binomial observation model with a mean of $\hat{X}_{t-j}(t^*-j)$
 
 $$
-X_{t-j} | \hat{X}_{t-j}(t^* - j) \sim NegBin(\mu = \hat{X}_{t-j}(t^*-j) + 0.1, \phi = \phi_{t^*-t})
+X_{t-j} | \hat{X}_{t-j}(t^* - j) \sim \text{NegBin}(\mu = \hat{X}_{t-j}(t^*-j) + 0.1, \phi = \phi_{j})
 $$ for all $s^* = 1, ..., M$.
 
-We add a small number (0.1) to the mean to avoid an ill-defined negative binomial.
-This generates a vector of negative binomial dispersion parameters indexed starting at forecast horizon $j=1$.
-
+We add a small number (0.1) to the mean to avoid an ill-defined negative binomial. This generates a vector of negative binomial dispersion parameters indexed starting at forecast horizon $j=1$.
 
 ### Probabilistic nowcast generation
 

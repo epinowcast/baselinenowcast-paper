@@ -151,7 +151,9 @@ get_noro_nowcast <- function(
     triangle_for_uncertainty = triangle,
     n_history_uncertainty = n_history_uncertainty,
     n_history_delay = n_history_delay,
-    structure = structure
+    structure = structure,
+    fun_to_aggregate = sum,
+    k = 1
   )
 
   nowcast_draws_df <- get_nowcast_draws(

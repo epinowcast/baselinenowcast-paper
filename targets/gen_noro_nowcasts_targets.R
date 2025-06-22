@@ -3,11 +3,11 @@ gen_noro_nowcasts_targets <- list(
   # then split in half for the delay and uncertainty.
   tar_target(
     name = n_history_delay,
-    command = floor(n_history_training_volume / 2)
+    command = max(n_history_training_volume, config$noro$max_delay + 1)
   ),
   tar_target(
     name = n_history_uncertainty,
-    command = floor(n_history_training_volume / 2)
+    command = floor(n_history_training_volume)
   ),
   tar_target(
     name = comb_nc_noro,
@@ -26,137 +26,41 @@ gen_noro_nowcasts_targets <- list(
       mutate(n_history_training_volume = n_history_training_volume)
   ),
 
-
-  # Run baselinenowcast pipeline------------------------------------------------
-  # Generate reporting triangle
-  # tar_target(
-  #   name = triangle,
-  #   command = get_rep_tri_from_long_df(
-  #     long_df = noro_df,
-  #     nowcast_date = nowcast_dates_noro,
-  #     max_delay = config$noro$max_delay
-  #   ) |> select(
-  #     -reference_date, -nowcast_date
-  #   ) |> as.matrix()
-  # ),
-  # # Estimate delay
-  # tar_target(
-  #   name = delay_pmf,
-  #   command = get_delay_estimate(
-  #     reporting_triangle = triangle,
-  #     max_delay = config$noro$max_delay,
-  #     n = n_history_delay
-  #   )
-  # ),
-  # # Get point nowcast matrix
-  # tar_target(
-  #   name = point_nowcast_mat,
-  #   command = apply_delay(
-  #     rep_tri_to_nowcast = triangle,
-  #     delay_pmf = delay_pmf
-  #   )
-  # ),
-  # # Estimate uncertainty
-  # # Get a list of truncated reporting triangles
-  # tar_target(
-  #   name = truncated_rts,
-  #   command = truncate_triangles(
-  #     reporting_triangle = triangle,
-  #     n = n_history_uncertainty
-  #   ),
-  #   format = "rds"
-  # ),
-  # # Generate retrospective reporting triangles (what would have been available
-  # # as of the last reference time)
-  # tar_target(
-  #   name = retro_rts,
-  #   command = generate_triangles(
-  #     trunc_rep_tri_list = truncated_rts
-  #   ),
-  #   format = "rds"
-  # ),
-  # # Generate retrospective nowcasts
-  # tar_target(
-  #   name = retro_nowcasts,
-  #   command = generate_pt_nowcast_mat_list(
-  #     reporting_triangle_list = retro_rts,
-  #     n = n_history_delay
-  #   ),
-  #   format = "rds"
-  # ),
-  # # Use retrospective nowcasts and the observations to estimate dispersion
-  # tar_target(
-  #   name = disp_params,
-  #   command = estimate_dispersion(
-  #     pt_nowcast_mat_list = retro_nowcasts,
-  #     trunc_rep_tri_list = truncated_rts,
-  #     reporting_triangle_list = retro_rts
-  #   )
-  # ),
-  # # Aggregate predictions by reference time
-  # tar_target(
-  #   name = nowcast_draws_df,
-  #   command = get_nowcast_draws(
-  #     point_nowcast_matrix = point_nowcast_mat,
-  #     reporting_triangle = triangle,
-  #     dispersion = disp_params,
-  #     draws = config$n_draws
-  #   )
-  # ),
-  # # Generate summaries and scores with evaluation data-----------------------
-  # # Join predictions and observations
-  # tar_target(
-  #   name = reference_dates,
-  #   command = noro_df |>
-  #     filter(reference_date <= nowcast_dates_noro) |>
-  #     distinct(reference_date) |>
-  #     arrange(reference_date) |>
-  #     pull()
-  # ),
-  # tar_target(
-  #   name = date_df,
-  #   command = tibble(reference_date = reference_dates) |>
-  #     mutate(
-  #       time = row_number()
-  #     )
-  # ),
-  # # Get evaluation data to join
-  # tar_target(
-  #   name = eval_data,
-  #   command = get_eval_data_from_long_df(
-  #     long_df = noro_df,
-  #     as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
-  #   )
-  # ),
-  # # Get as of data we want to join
-  # tar_target(
-  #   name = data_as_of_df,
-  #   command = noro_df |>
-  #     filter(report_date <= nowcast_dates_noro) |>
-  #     group_by(reference_date) |>
-  #     summarise(
-  #       data_as_of = sum(count, na.rm = TRUE)
-  #     )
-  # ),
-  # # Join eval data to the subset of the nowcast that we are evaluating
-  # tar_target(
-  #   name = comb_nc_noro,
-  #   command = nowcast_draws_df |>
-  #     left_join(date_df, by = "time") |>
-  #     select(reference_date, draw, pred_count) |>
-  #     mutate(nowcast_date = nowcast_dates_noro) |>
-  #     left_join(data_as_of_df, by = "reference_date") |>
-  #     mutate(
-  #       total_count = pred_count,
-  #       model = ifelse(filter_ref_dates, "filter_weekday", "base"),
-  #       # These will all vary
-  #       n_history_delay = n_history_delay,
-  #       n_history_uncertainty = n_history_uncertainty
-  #     ) |>
-  #     filter(reference_date >=
-  #       ymd(nowcast_dates_noro) - days(config$norovirus$days_to_eval - 1)) |>
-  #     left_join(eval_data, by = "reference_date")
-  # ),
+  # Generate summaries and scores with evaluation data-----------------------
+  # Join predictions and observations
+  tar_target(
+    name = reference_dates,
+    command = noro_long |>
+      filter(reference_date <= nowcast_dates_noro) |>
+      distinct(reference_date) |>
+      arrange(reference_date) |>
+      pull()
+  ),
+  tar_target(
+    name = date_df,
+    command = tibble(reference_date = reference_dates) |>
+      mutate(
+        time = row_number()
+      )
+  ),
+  # Get evaluation data to join
+  tar_target(
+    name = eval_data,
+    command = get_eval_data_from_long_df(
+      long_df = noro_long,
+      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
+    )
+  ),
+  # Get as of data we want to join
+  tar_target(
+    name = data_as_of_df,
+    command = noro_long |>
+      filter(report_date <= nowcast_dates_noro) |>
+      group_by(reference_date) |>
+      summarise(
+        data_as_of = sum(count, na.rm = TRUE)
+      )
+  ),
   # Forecast objects ---------------------------------------------------------
   tar_target(
     name = su_sample_noro,
@@ -188,18 +92,6 @@ gen_noro_nowcasts_targets <- list(
       data = su_sample_noro,
       probs = config$norovirus$quantiles
     )
-  ),
-  tar_target(
-    name = data_as_of_df,
-    command = noro_long |>
-      filter(
-        report_date <= nowcast_dates_noro
-      ) |>
-      group_by(reference_date) |>
-      summarise(
-        data_as_of = sum(count, na.rm = TRUE)
-      ) |>
-      ungroup()
   ),
   # Get a wide dataframe with only 50th and 90th for plotting
   tar_target(

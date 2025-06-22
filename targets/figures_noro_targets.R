@@ -6,5 +6,5 @@ figures_noro_targets <- list(
       pathogen = "Norovirus",
       title = "Model comparison across different baselinenowcast implementations" # nolint
     )
-  ),
+  )
 )

@@ -106,7 +106,7 @@ combined_kit_pt_nowcast <- tar_combine(
   command = dplyr::bind_rows(!!!.x)
 )
 
-# ### Loop over each nowcast date and strata ----------------------------------
+### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
   unlist = FALSE,
   # Loop over each nowcast date, strata, data scenario, and model spec\
@@ -199,26 +199,25 @@ combined_noro_coverage <- tar_combine(
 #### Generate outputs for each model run joined to corresponding metadata
 
 # Figures for real-world case study German Nowcast Hub
-plot_targets <- list(
+# plot_targets <- list(
+# ### EDA figures for norovirus and covid
+# EDA_plot_targets,
+#
+# ### Figures for German Nowcast Hub validation
+# figures_hub_validation_targets,
+#
+# ### Figures for comparing baselinenowcast model specificaitons
+# figures_model_permutation_targets,
 
-  # ### EDA figures for norovirus and covid
-  # EDA_plot_targets,
-  #
-  # ### Figures for German Nowcast Hub validation
-  # figures_hub_validation_targets,
-  #
-  # ### Figures for comparing baselinenowcast model specificaitons
-  # figures_model_permutation_targets,
+### Figure comparing baselinenowcast performance to other norovirus nowcasts
+# figures_noro_targets
 
-  ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-  figures_noro_targets
-
-  ### Summary report with all metrics reported in paper
-  # tar_render(
-  #   report,
-  #   "report.Rmd"
-  # )
-) # end plot targets
+### Summary report with all metrics reported in paper
+# tar_render(
+#   report,
+#   "report.Rmd"
+# )
+# ) # end plot targets
 
 
 list(

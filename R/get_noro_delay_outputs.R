@@ -48,7 +48,7 @@ get_noro_delay_outputs <- function(noro_df,
       ) |>
         left_join(
           date_df,
-          by = c("delay_time" = "time")
+          by = c("delay_time" = "time") # nolint
         ) |>
         mutate(
           nowcast_date = nowcast_date,

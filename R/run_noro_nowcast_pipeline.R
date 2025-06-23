@@ -93,7 +93,6 @@ run_noro_nowcast_pipeline <- function(
       total_count = pred_count,
       n_history_training_volume = n_history_delay + n_history_uncertainty,
       model = case_when(
-        # Somewhat arbitrarily divinding at 20, really we have 8 with a min of 15
         isTRUE(filter_ref_dates) & n_history_training_volume > 20 ~
           "filter weekday large training volume",
         isTRUE(filter_ref_dates) & n_history_training_volume <= 20 ~
@@ -106,7 +105,8 @@ run_noro_nowcast_pipeline <- function(
     ) |>
     filter(reference_date >=
       ymd(nowcast_date) - days(days_to_eval - 1)) |>
-    left_join(eval_data, by = "reference_date")
+    left_join(eval_data, by = "reference_date") |>
+    left_join(data_as_of_df, by = "reference_date")
 
   return(comb_nc_noro)
 }

@@ -32,41 +32,7 @@ gen_noro_nowcasts_targets <- list(
       mutate(n_history_training_volume = n_history_training_volume)
   ),
 
-  # Generate summaries and scores with evaluation data-----------------------
-  # Join predictions and observations
-  tar_target(
-    name = reference_dates,
-    command = noro_long |>
-      filter(reference_date <= nowcast_dates_noro) |>
-      distinct(reference_date) |>
-      arrange(reference_date) |>
-      pull()
-  ),
-  tar_target(
-    name = date_df,
-    command = tibble(reference_date = reference_dates) |>
-      mutate(
-        time = row_number()
-      )
-  ),
-  # Get evaluation data to join
-  tar_target(
-    name = eval_data,
-    command = get_eval_data_from_long_df(
-      long_df = noro_long,
-      as_of_date = ymd(nowcast_dates_noro) + days(config$norovirus$eval_timeframe)
-    )
-  ),
-  # Get as of data we want to join
-  tar_target(
-    name = data_as_of_df,
-    command = noro_long |>
-      filter(report_date <= nowcast_dates_noro) |>
-      group_by(reference_date) |>
-      summarise(
-        data_as_of = sum(count, na.rm = TRUE)
-      )
-  ),
+
   # Forecast objects ---------------------------------------------------------
   tar_target(
     name = su_sample_noro,

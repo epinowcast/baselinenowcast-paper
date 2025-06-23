@@ -66,7 +66,8 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
         vjust = 1,
         hjust = 1,
         angle = 45
-      )
+      ),
+      legend.position = "bottom"
     ) +
     # nolint start
     scale_color_manual(

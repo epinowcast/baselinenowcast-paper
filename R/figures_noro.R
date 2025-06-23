@@ -253,7 +253,7 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #'    ggtitle element_blank scale_alpha_manual geom_bar
 #' @autoglobal
 #' @importFrom dplyr select filter rename mutate
-get_plot_mean_delay_over_t_by_wday <- function(delay_dfs) {
+get_plot_mean_delay_t_by_wday <- function(delay_dfs) {
   mean_delay_by_weekday_and_date <- delay_dfs |>
     filter(
       n_history_delay == 28,
@@ -310,7 +310,7 @@ get_plot_mean_delay_over_t_by_wday <- function(delay_dfs) {
 
 #' Get a plot of the cdf colored by weekday
 #'
-#' @inheritParams get_plot_mean_delay_over_time_by_weekday
+#' @inheritParams get_plot_mean_delay_t_by_wday
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar

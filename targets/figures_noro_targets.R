@@ -20,8 +20,8 @@ figures_noro_targets <- list(
     command = get_plot_rel_wis_by_weekday(noro_scores)
   ),
   tar_target(
-    name = plot_mean_delay_over_t_by_wday,
-    command = get_plot_mean_delay_over_time_by_weekday(
+    name = plot_mean_delay_t_by_wday,
+    command = get_plot_mean_delay_t_by_wday(
       delay_dfs = all_delay_dfs_noro
     )
   ),

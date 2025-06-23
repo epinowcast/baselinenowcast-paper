@@ -6,6 +6,10 @@
 \usage{
 get_plot_cdf_by_weekday(delay_dfs)
 }
+\arguments{
+\item{delay_dfs}{Data.frame of delay estimates both separately by weekday
+and jointly, indexed by the weekday of the reference date.}
+}
 \value{
 ggplot object
 }

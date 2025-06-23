@@ -193,6 +193,11 @@ combined_noro_coverage <- tar_combine(
   mapped_noro$coverage_noro,
   command = dplyr::bind_rows(!!!.x)
 )
+combined_noro_delay_df <- tar_combine(
+  name = all_delay_dfs_noro,
+  mapped_noro$delay_outputs,
+  command = dplyr::bind_rows(!!!.x)
+)
 
 
 
@@ -245,7 +250,8 @@ list(
   combined_noro_nowcasts,
   combined_noro_scores,
   combined_noro_coverage,
-  # noro_comparison_targets,
+  combined_noro_delay_df,
+  noro_comparison_targets,
   # Plotting
   plot_targets
 )

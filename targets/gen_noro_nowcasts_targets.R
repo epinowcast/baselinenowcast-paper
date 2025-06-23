@@ -31,6 +31,16 @@ gen_noro_nowcasts_targets <- list(
     ) |>
       mutate(n_history_training_volume = n_history_training_volume)
   ),
+  tar_target(
+    name = delay_outputs,
+    command = get_noro_delay_outputs(
+      noro_df = noro_long,
+      nowcast_date = nowcast_dates_noro,
+      max_delay = config$noro$max_delay,
+      filter_ref_dates = filter_ref_dates,
+      n_history_delay = n_history_delay
+    )
+  ),
 
 
   # Forecast objects ---------------------------------------------------------
@@ -65,6 +75,15 @@ gen_noro_nowcasts_targets <- list(
       probs = config$norovirus$quantiles
     )
   ),
+  tar_target(
+    name = data_as_of_df,
+    command = noro_long |>
+      filter(report_date <= nowcast_dates_noro) |>
+      group_by(reference_date) |>
+      summarise(
+        data_as_of = sum(count, na.rm = TRUE)
+      )
+  ),
   # Get a wide dataframe with only 50th and 90th for plotting
   tar_target(
     name = summary_nowcast_noro,
@@ -95,4 +114,6 @@ gen_noro_nowcasts_targets <- list(
       )
     )
   )
+
+  ## Delays-----------------------------------------------------------
 )

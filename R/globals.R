@@ -212,6 +212,13 @@ utils::globalVariables(c(
   "q_0.5", # <get_plot_mult_nowcasts_noro>
   "data_as_of", # <get_plot_mult_nowcasts_noro>
   "observed", # <get_plot_mult_nowcasts_noro>
+  "model", # <get_bar_chart_sum_scores_noro>
+  "model_type", # <get_bar_chart_sum_scores_noro>
+  "overprediction", # <get_bar_chart_sum_scores_noro>
+  "underprediction", # <get_bar_chart_sum_scores_noro>
+  "dispersion", # <get_bar_chart_sum_scores_noro>
+  "name", # <get_bar_chart_sum_scores_noro>
+  "value", # <get_bar_chart_sum_scores_noro>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

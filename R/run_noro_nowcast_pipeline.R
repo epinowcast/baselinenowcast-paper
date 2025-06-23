@@ -108,6 +108,7 @@ run_noro_nowcast_pipeline <- function(
     left_join(eval_data, by = "reference_date") |>
     left_join(data_as_of_df, by = "reference_date")
 
+
   return(comb_nc_noro)
 }
 
@@ -140,7 +141,7 @@ get_noro_nowcast <- function(
   delay_pmf <- get_delay_estimate(
     reporting_triangle = triangle,
     max_delay = max_delay,
-    n = n_history_delay
+    n = min(nrow(triangle), n_history_delay)
   )
 
   point_nowcast_mat <- apply_delay(

@@ -93,10 +93,11 @@ run_noro_nowcast_pipeline <- function(
       total_count = pred_count,
       n_history_training_volume = n_history_delay + n_history_uncertainty,
       model = case_when(
-        isTRUE(filter_ref_dates) & n_history_training_volume > 8 ~
+        # Somewhat arbitrarily divinding at 20, really we have 8 with a min of 15
+        isTRUE(filter_ref_dates) & n_history_training_volume > 20 ~
           "filter weekday large training volume",
-        isTRUE(filter_ref_dates) & n_history_training_volume <= 8 ~
-          "filter weekday",
+        isTRUE(filter_ref_dates) & n_history_training_volume <= 20 ~
+          "filter weekday small training volume",
         TRUE ~ "base"
       ),
       # These will all vary

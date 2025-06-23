@@ -199,25 +199,25 @@ combined_noro_coverage <- tar_combine(
 #### Generate outputs for each model run joined to corresponding metadata
 
 # Figures for real-world case study German Nowcast Hub
-# plot_targets <- list(
-# ### EDA figures for norovirus and covid
-# EDA_plot_targets,
-#
-# ### Figures for German Nowcast Hub validation
-# figures_hub_validation_targets,
-#
-# ### Figures for comparing baselinenowcast model specificaitons
-# figures_model_permutation_targets,
+plot_targets <- list(
+  # ### EDA figures for norovirus and covid
+  # EDA_plot_targets,
+  #
+  # ### Figures for German Nowcast Hub validation
+  # figures_hub_validation_targets,
+  #
+  # ### Figures for comparing baselinenowcast model specificaitons
+  # figures_model_permutation_targets,
 
-### Figure comparing baselinenowcast performance to other norovirus nowcasts
-# figures_noro_targets
+  ### Figure comparing baselinenowcast performance to other norovirus nowcasts
+  figures_noro_targets
 
-### Summary report with all metrics reported in paper
-# tar_render(
-#   report,
-#   "report.Rmd"
-# )
-# ) # end plot targets
+  ### Summary report with all metrics reported in paper
+  # tar_render(
+  #   report,
+  #   "report.Rmd"
+  # )
+) # end plot targets
 
 
 list(
@@ -241,11 +241,11 @@ list(
   # model_permutation_targets,
 
   # Norovirus targets
-  mapped_noro
-  # combined_noro_nowcasts,
-  # combined_noro_scores,
-  # combined_noro_coverage,
+  mapped_noro,
+  combined_noro_nowcasts,
+  combined_noro_scores,
+  combined_noro_coverage,
   # noro_comparison_targets,
   # Plotting
-  # plot_targets
+  plot_targets
 )

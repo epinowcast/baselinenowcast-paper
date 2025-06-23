@@ -1,6 +1,5 @@
 write_config <- function(noro_nowcast_dates = NULL,
                          covid_nowcast_dates = NULL,
-                         n_training_volume_noro = NULL,
                          filter_ref_dates_noro = NULL,
                          age_groups_covid = NULL,
                          n_history_uncertainty_covid = NULL,
@@ -36,31 +35,28 @@ write_config <- function(noro_nowcast_dates = NULL,
   }
 
   # Norovirus vectors of permutations------------------------------------------
-
+  n_training_volume_noro <- 56 # used by Mellor for their GAM
   df_base <- data.frame(
     nowcast_dates = noro_nowcast_dates
   ) |>
     mutate(
       n_history_training_volume = n_training_volume_noro,
-      filter_ref_dates = FALSE,
-      weekdays_noro = NA
+      filter_ref_dates = FALSE
     )
 
   # Set up the variations for filtering by wday
-  if (is.null(filter_ref_dates_noro) & is.null(n_training_volume_noro)) {
-    n_history_training_volume_orig <- 56 # used by Mellor for their GAM *dbl check*
+  if (is.null(filter_ref_dates_noro)) {
+    n_history_training_volume_orig <- n_training_volume_noro
     n_training_volume_noro <- c(
       n_history_training_volume_orig,
       floor(n_history_training_volume_orig / 7)
     )
     filter_ref_dates_noro <- TRUE
-    weekdays_noro <- c(1:7)
 
     df_filter <- expand.grid(
       nowcast_dates = noro_nowcast_dates,
       n_history_training_volume = n_training_volume_noro,
-      filter_ref_dates = TRUE,
-      weekdays_noro = weekdays_noro
+      filter_ref_dates = TRUE
     )
 
     df_noro <- bind_rows(
@@ -116,8 +112,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       # Variables to map over
       nowcast_dates = df_noro |> pull(nowcast_dates) |> as.vector(),
       n_history_training_volume = df_noro |> pull(n_history_training_volume) |> as.vector(),
-      filter_ref_dates = df_noro |> pull(filter_ref_dates) |> as.vector(),
-      weekdays_noro = df_noro |> pull(weekdays_noro) |> as.vector()
+      filter_ref_dates = df_noro |> pull(filter_ref_dates) |> as.vector()
     ),
     covid = list(
       url = covid_url,

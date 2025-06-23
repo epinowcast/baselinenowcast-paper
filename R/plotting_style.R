@@ -29,7 +29,7 @@ plot_components <- function() {
     "KIT simple nowcast revised" = "darkorange",
     "baselinenowcast" = "purple4",
     "base" = "navyblue",
-    "filter weekday" = "magenta4",
+    "filter weekday small training volume" = "magenta4",
     "filter weekday large training volume" = "brown4"
   )
   age_colors <- c(

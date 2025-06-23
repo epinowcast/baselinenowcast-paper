@@ -51,7 +51,7 @@ get_noro_delay_outputs <- function(noro_df,
           by = c("delay_time" = "time")
         ) |>
         mutate(
-          nowcast_date = !!nowcast_date,
+          nowcast_date = nowcast_date,
           weekday = wday(reference_date),
           weekday_name = wday(reference_date, label = TRUE),
           n_history_delay = n_history_delay,
@@ -99,7 +99,7 @@ get_noro_delay_outputs <- function(noro_df,
         by = c("delay_time" = "time")
       ) |>
       mutate(
-        nowcast_date = !!nowcast_date,
+        nowcast_date = nowcast_date,
         weekday = wday(reference_date),
         weekday_name = wday(reference_date, label = TRUE),
         n_history_delay = n_history_delay,

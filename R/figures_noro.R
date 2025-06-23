@@ -147,6 +147,7 @@ get_bar_chart_sum_scores_noro <- function(scores) {
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar
+#' @autoglobal
 #' @importFrom dplyr select filter rename mutate
 get_plot_rel_wis_over_time <- function(scores) {
   scores_sum <- scores |>
@@ -195,6 +196,7 @@ get_plot_rel_wis_over_time <- function(scores) {
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar
+#' @autoglobal
 #' @importFrom dplyr select filter rename mutate
 get_plot_rel_wis_by_weekday <- function(scores) {
   scores_sum <- scores |>
@@ -202,7 +204,11 @@ get_plot_rel_wis_by_weekday <- function(scores) {
       weekday_name = wday(reference_date, label = TRUE),
       weekday = wday(reference_date, label = FALSE)
     ) |>
-    scoringutils::summarise_scores(by = c("model", "weekday", "weekday_name")) |>
+    scoringutils::summarise_scores(by = c(
+      "model",
+      "weekday",
+      "weekday_name"
+    )) |>
     select(model, weekday, weekday_name, wis)
 
   baseline_comparison <- scores_sum |>
@@ -212,7 +218,7 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 
   relative_wis <- scores_sum |>
     filter(model != "base") |>
-    left_join(baseline_comparison, by = c("weekday")) |>
+    left_join(baseline_comparison, by = "weekday") |>
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
   plot_comps <- plot_components()
   p <- ggplot(relative_wis) +
@@ -245,12 +251,13 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar
+#' @autoglobal
 #' @importFrom dplyr select filter rename mutate
-get_plot_mean_delay_over_time_by_weekday <- function(delay_dfs) {
+get_plot_mean_delay_over_t_by_wday <- function(delay_dfs) {
   mean_delay_by_weekday_and_date <- delay_dfs |>
     filter(
       n_history_delay == 28,
-      filter_ref_dates == TRUE
+      filter_ref_dates
     ) |>
     group_by(nowcast_date, weekday, weekday_name) |>
     summarise(
@@ -260,7 +267,7 @@ get_plot_mean_delay_over_time_by_weekday <- function(delay_dfs) {
   mean_delay_all_weekdays <- delay_dfs |>
     filter(
       n_history_delay == 28,
-      filter_ref_dates == FALSE
+      !filter_ref_dates
     ) |>
     group_by(nowcast_date) |>
     summarise(
@@ -298,6 +305,7 @@ get_plot_mean_delay_over_time_by_weekday <- function(delay_dfs) {
     ) +
     xlab("") +
     ylab("Mean delay over time")
+  return(p)
 }
 
 #' Get a plot of the cdf colored by weekday
@@ -307,12 +315,13 @@ get_plot_mean_delay_over_time_by_weekday <- function(delay_dfs) {
 #'    facet_grid theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar
 #' @importFrom dplyr select filter rename mutate
+#' @autoglobal
 #' @returns ggplot object
 get_plot_cdf_by_weekday <- function(delay_dfs) {
   avg_cdf_by_weekday <- delay_dfs |>
     filter(
       n_history_delay == 28,
-      filter_ref_dates == TRUE
+      filter_ref_dates
     ) |>
     group_by(weekday_name, delay_time) |>
     summarise(mean_delay = mean(delay)) |>
@@ -321,7 +330,7 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
   avg_cdf_overall <- delay_dfs |>
     filter(
       n_history_delay == 28,
-      filter_ref_dates == FALSE
+      !filter_ref_dates
     ) |>
     group_by(delay_time) |>
     summarise(mean_delay = mean(delay)) |>
@@ -339,7 +348,10 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
   plot_comps <- plot_components()
   p <- ggplot(cdf_df) +
     geom_line(
-      aes(x = delay_time, y = cdf, color = weekday_name, linewidth = weekday_name)
+      aes(
+        x = delay_time, y = cdf, color = weekday_name,
+        linewidth = weekday_name
+      )
     ) +
     guides(linewidth = "none") +
     scale_color_manual(

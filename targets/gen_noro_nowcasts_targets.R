@@ -3,17 +3,11 @@ gen_noro_nowcasts_targets <- list(
   # then split in half for the delay and uncertainty.
   tar_target(
     name = n_history_delay,
-    command = max(
-      floor(n_history_training_volume / 2),
-      config$noro$max_delay + 1
-    )
+    command = max(15, floor(n_history_training_volume / 2))
   ),
   tar_target(
     name = n_history_uncertainty,
-    command = max(
-      floor(n_history_training_volume / 2),
-      n_history_training_volume - n_history_delay
-    )
+    command = floor(n_history_training_volume / 2)
   ),
   tar_target(
     name = comb_nc_noro,

@@ -219,6 +219,33 @@ utils::globalVariables(c(
   "dispersion", # <get_bar_chart_sum_scores_noro>
   "name", # <get_bar_chart_sum_scores_noro>
   "value", # <get_bar_chart_sum_scores_noro>
+  "model", # <get_plot_rel_wis_over_time>
+  "nowcast_date", # <get_plot_rel_wis_over_time>
+  "wis", # <get_plot_rel_wis_over_time>
+  "comparison_wis", # <get_plot_rel_wis_over_time>
+  "rel_wis", # <get_plot_rel_wis_over_time>
+  "reference_date", # <get_plot_rel_wis_by_weekday>
+  "model", # <get_plot_rel_wis_by_weekday>
+  "weekday", # <get_plot_rel_wis_by_weekday>
+  "weekday_name", # <get_plot_rel_wis_by_weekday>
+  "wis", # <get_plot_rel_wis_by_weekday>
+  "comparison_wis", # <get_plot_rel_wis_by_weekday>
+  "rel_wis", # <get_plot_rel_wis_by_weekday>
+  "n_history_delay", # <get_plot_mean_delay_over_t_by_wday>
+  "filter_ref_dates", # <get_plot_mean_delay_over_t_by_wday>
+  "nowcast_date", # <get_plot_mean_delay_over_t_by_wday>
+  "weekday", # <get_plot_mean_delay_over_t_by_wday>
+  "weekday_name", # <get_plot_mean_delay_over_t_by_wday>
+  "delay", # <get_plot_mean_delay_over_t_by_wday>
+  "delay_time", # <get_plot_mean_delay_over_t_by_wday>
+  "mean_delay", # <get_plot_mean_delay_over_t_by_wday>
+  "n_history_delay", # <get_plot_cdf_by_weekday>
+  "filter_ref_dates", # <get_plot_cdf_by_weekday>
+  "weekday_name", # <get_plot_cdf_by_weekday>
+  "delay_time", # <get_plot_cdf_by_weekday>
+  "delay", # <get_plot_cdf_by_weekday>
+  "mean_delay", # <get_plot_cdf_by_weekday>
+  "cdf", # <get_plot_cdf_by_weekday>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

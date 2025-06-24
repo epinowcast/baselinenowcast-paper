@@ -266,12 +266,12 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_weekday>
   "name", # <get_plot_wis_by_weekday>
   "value", # <get_plot_wis_by_weekday>
-  "interval_range", # <get_plot_coverage_by_model_noro>
-  "model", # <get_plot_coverage_by_model_noro>
-  "interval_coverage", # <get_plot_coverage_by_model_noro>
-  "empirical_coverage", # <get_plot_coverage_by_model_noro>
-  "90", # <get_plot_coverage_by_model_noro>
-  "50", # <get_plot_coverage_by_model_noro>
+  "interval_range", # <get_plot_cov_by_model_noro>
+  "model", # <get_plot_cov_by_model_noro>
+  "interval_coverage", # <get_plot_cov_by_model_noro>
+  "empirical_coverage", # <get_plot_cov_by_model_noro>
+  "90", # <get_plot_cov_by_model_noro>
+  "50", # <get_plot_cov_by_model_noro>
   "interval_range", # <get_plot_cov_by_mod_wday_noro>
   "reference_date", # <get_plot_cov_by_mod_wday_noro>
   "model", # <get_plot_cov_by_mod_wday_noro>

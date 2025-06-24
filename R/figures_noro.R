@@ -668,11 +668,15 @@ get_plot_wis_by_weekday <- function(
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @autoglobal
 #' @returns bar chart
-get_plot_coverage_by_model_noro <- function(all_coverage,
-                                            intervals = c(50, 90),
-                                            fig_file_name = NULL,
-                                            fig_file_dir = file.path("output", "figs", "supp"),
-                                            save = TRUE) {
+get_plot_cov_by_model_noro <- function(all_coverage,
+                                       intervals = c(50, 90),
+                                       fig_file_name = NULL,
+                                       fig_file_dir = file.path(
+                                         "output",
+                                         "figs",
+                                         "supp"
+                                       ),
+                                       save = TRUE) {
   if (save && is.null(fig_file_name)) {
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
@@ -722,7 +726,7 @@ get_plot_coverage_by_model_noro <- function(all_coverage,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     scale_fill_manual(
       name = "Model",
@@ -769,7 +773,11 @@ get_plot_coverage_by_model_noro <- function(all_coverage,
 get_plot_cov_by_mod_wday_noro <- function(all_coverage,
                                           intervals = c(50, 90),
                                           fig_file_name = NULL,
-                                          fig_file_dir = file.path("output", "figs", "supp"),
+                                          fig_file_dir = file.path(
+                                            "output",
+                                            "figs",
+                                            "supp"
+                                          ),
                                           save = TRUE) {
   if (save && is.null(fig_file_name)) {
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
@@ -825,7 +833,7 @@ get_plot_cov_by_mod_wday_noro <- function(all_coverage,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     scale_fill_manual(
       name = "Model",

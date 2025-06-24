@@ -56,7 +56,7 @@ figures_noro_targets <- list(
   ),
   tar_target(
     name = coverage_by_model_noro,
-    command = get_plot_coverage_by_model_noro(noro_coverage,
+    command = get_plot_cov_by_model_noro(noro_coverage,
       fig_file_name = "noro_coverage"
     )
   ),

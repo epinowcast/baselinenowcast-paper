@@ -22,12 +22,19 @@ get_plot_theme <- function() {
 #' @importFrom RColorBrewer brewer.pal
 plot_components <- function() {
   pal_age_groups <- brewer.pal(6, "Spectral")
+  pal_weekday <- brewer.pal(7, "Set1")
   pal_mps <- brewer.pal(6, "Set2")
   # nolint start
   model_colors <- c(
     "KIT simple nowcast" = "darkgreen",
     "KIT simple nowcast revised" = "darkorange",
-    "baselinenowcast" = "purple4"
+    "baselinenowcast" = "purple4",
+    "base" = "navyblue",
+    "filter weekday small training volume" = "magenta4",
+    "filter weekday large training volume" = "brown4",
+    "GAM" = "orange3",
+    "epinowcast" = "green4",
+    "baseline Mellor et al" = "lightgreen"
   )
   age_colors <- c(
     "00+" = "black",
@@ -37,6 +44,26 @@ plot_components <- function() {
     "35-59" = pal_age_groups[4],
     "60-79" = pal_age_groups[5],
     "80+" = pal_age_groups[6]
+  )
+  weekday_colors <- c(
+    "Mon" = pal_weekday[1],
+    "Tue" = pal_weekday[2],
+    "Wed" = pal_weekday[3],
+    "Thu" = pal_weekday[4],
+    "Fri" = pal_weekday[5],
+    "Sat" = pal_weekday[6],
+    "Sun" = pal_weekday[7],
+    "All" = "black"
+  )
+  weekday_linewidth <- c(
+    "Mon" = 1,
+    "Tue" = 1,
+    "Wed" = 1,
+    "Thu" = 1,
+    "Fri" = 1,
+    "Sat" = 1,
+    "Sun" = 1,
+    "All" = 2
   )
   permutation_colors <- c(
     "Baseline validation approach" = "black",
@@ -65,6 +92,7 @@ plot_components <- function() {
   )
   coverage_alpha <- c(
     "95" = 0.2,
+    "90" = 0.2,
     "50" = 0.8
   )
   score_alpha <- c(
@@ -82,7 +110,9 @@ plot_components <- function() {
       score_alpha = score_alpha,
       coverage_alpha = coverage_alpha,
       permutation_colors = permutation_colors,
-      permutation_linetype = permutation_linetype
+      permutation_linetype = permutation_linetype,
+      weekday_colors = weekday_colors,
+      weekday_linewidth = weekday_linewidth
     )
   return(plot_comp_list)
 }

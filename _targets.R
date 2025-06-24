@@ -106,7 +106,7 @@ combined_kit_pt_nowcast <- tar_combine(
   command = dplyr::bind_rows(!!!.x)
 )
 
-# ### Loop over each nowcast date and strata ----------------------------------
+### Loop over each nowcast date and strata ----------------------------------
 mapped_covid <- tar_map(
   unlist = FALSE,
   # Loop over each nowcast date, strata, data scenario, and model spec\
@@ -168,8 +168,7 @@ mapped_noro <- tar_map(
   values = list(
     nowcast_dates_noro = config$norovirus$nowcast_dates,
     filter_ref_dates = config$norovirus$filter_ref_dates,
-    n_history_training_volume = config$norovirus$n_history_training_volume,
-    weekdays_noro = config$norovirus$weekdays_noro
+    n_history_training_volume = config$norovirus$n_history_training_volume
   ),
   # 1. Generate nowcasts  (baselinenowcast pipeline)
   # 2. Generate evaluation data for that nowcast date
@@ -194,17 +193,18 @@ combined_noro_coverage <- tar_combine(
   mapped_noro$coverage_noro,
   command = dplyr::bind_rows(!!!.x)
 )
-## Gather nowcast scores for other models -------------------------------
-# 1. Combine norovirus model scores by nowcast date and model type
-# 2. Combine German Nowcast Hub model nowcasts and score them by model
-# and strata
+combined_noro_delay_df <- tar_combine(
+  name = all_delay_dfs_noro,
+  mapped_noro$delay_outputs,
+  command = dplyr::bind_rows(!!!.x)
+)
+
 
 
 #### Generate outputs for each model run joined to corresponding metadata
 
 # Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
-
   ### EDA figures for norovirus and covid
   EDA_plot_targets,
 
@@ -215,6 +215,7 @@ plot_targets <- list(
   figures_model_permutation_targets,
 
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
+  figures_noro_targets,
 
   ### Summary report with all metrics reported in paper
   tar_render(
@@ -249,6 +250,8 @@ list(
   combined_noro_nowcasts,
   combined_noro_scores,
   combined_noro_coverage,
+  combined_noro_delay_df,
+  noro_comparison_targets,
   # Plotting
   plot_targets
 )

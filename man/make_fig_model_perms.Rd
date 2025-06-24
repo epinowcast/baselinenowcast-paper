@@ -2,7 +2,7 @@
 % Please edit documentation in R/figures_model_permutations.R
 \name{make_fig_model_perms}
 \alias{make_fig_model_perms}
-\title{Title}
+\title{Make panel for main model permutation figure}
 \usage{
 make_fig_model_perms(
   plot_nowcasts_over_time_mp,
@@ -42,5 +42,5 @@ Default is \code{TRUE}.}
 ggplot object as a gridded panel
 }
 \description{
-Title
+Make panel for main model permutation figure
 }

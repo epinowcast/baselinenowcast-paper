@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Make all subplots and supplementary figures for the norovirus case study using fake data for the Mellor et al outputs.
 -   Make first draft of multi-panel figures.
 -   Add the necessary intermediate targets and figure targets for the model permutation case study.
 -   Add the necessary intermediate targets and figure targets for the Hub validation case study.

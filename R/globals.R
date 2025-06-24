@@ -201,6 +201,86 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_week_mp>
   "name", # <get_plot_wis_by_week_mp>
   "value", # <get_plot_wis_by_week_mp>
+  "nowcast_date", # <get_plot_mult_nowcasts_noro>
+  "reference_date", # <get_plot_mult_nowcasts_noro>
+  "q_0.05", # <get_plot_mult_nowcasts_noro>
+  "q_0.95", # <get_plot_mult_nowcasts_noro>
+  "nowcast_date_model", # <get_plot_mult_nowcasts_noro>
+  "model", # <get_plot_mult_nowcasts_noro>
+  "q_0.25", # <get_plot_mult_nowcasts_noro>
+  "q_0.75", # <get_plot_mult_nowcasts_noro>
+  "q_0.5", # <get_plot_mult_nowcasts_noro>
+  "data_as_of", # <get_plot_mult_nowcasts_noro>
+  "observed", # <get_plot_mult_nowcasts_noro>
+  "model", # <get_bar_chart_sum_scores_noro>
+  "model_type", # <get_bar_chart_sum_scores_noro>
+  "overprediction", # <get_bar_chart_sum_scores_noro>
+  "underprediction", # <get_bar_chart_sum_scores_noro>
+  "dispersion", # <get_bar_chart_sum_scores_noro>
+  "name", # <get_bar_chart_sum_scores_noro>
+  "value", # <get_bar_chart_sum_scores_noro>
+  "model", # <get_plot_rel_wis_over_time>
+  "nowcast_date", # <get_plot_rel_wis_over_time>
+  "wis", # <get_plot_rel_wis_over_time>
+  "comparison_wis", # <get_plot_rel_wis_over_time>
+  "rel_wis", # <get_plot_rel_wis_over_time>
+  "reference_date", # <get_plot_rel_wis_by_weekday>
+  "model", # <get_plot_rel_wis_by_weekday>
+  "weekday", # <get_plot_rel_wis_by_weekday>
+  "weekday_name", # <get_plot_rel_wis_by_weekday>
+  "wis", # <get_plot_rel_wis_by_weekday>
+  "comparison_wis", # <get_plot_rel_wis_by_weekday>
+  "rel_wis", # <get_plot_rel_wis_by_weekday>
+  "n_history_delay", # <get_plot_mean_delay_t_by_wday>
+  "filter_ref_dates", # <get_plot_mean_delay_t_by_wday>
+  "nowcast_date", # <get_plot_mean_delay_t_by_wday>
+  "weekday", # <get_plot_mean_delay_t_by_wday>
+  "weekday_name", # <get_plot_mean_delay_t_by_wday>
+  "delay", # <get_plot_mean_delay_t_by_wday>
+  "delay_time", # <get_plot_mean_delay_t_by_wday>
+  "mean_delay", # <get_plot_mean_delay_t_by_wday>
+  "n_history_delay", # <get_plot_cdf_by_weekday>
+  "filter_ref_dates", # <get_plot_cdf_by_weekday>
+  "weekday_name", # <get_plot_cdf_by_weekday>
+  "delay_time", # <get_plot_cdf_by_weekday>
+  "delay", # <get_plot_cdf_by_weekday>
+  "mean_delay", # <get_plot_cdf_by_weekday>
+  "cdf", # <get_plot_cdf_by_weekday>
+  "nowcast_date", # <get_plot_wis_over_time_noro>
+  "week", # <get_plot_wis_over_time_noro>
+  "model", # <get_plot_wis_over_time_noro>
+  "model_type", # <get_plot_wis_over_time_noro>
+  "week_end_date", # <get_plot_wis_over_time_noro>
+  "overprediction", # <get_plot_wis_over_time_noro>
+  "underprediction", # <get_plot_wis_over_time_noro>
+  "dispersion", # <get_plot_wis_over_time_noro>
+  "name", # <get_plot_wis_over_time_noro>
+  "value", # <get_plot_wis_over_time_noro>
+  "reference_date", # <get_plot_wis_by_weekday>
+  "model", # <get_plot_wis_by_weekday>
+  "model_type", # <get_plot_wis_by_weekday>
+  "weekday", # <get_plot_wis_by_weekday>
+  "weekday_name", # <get_plot_wis_by_weekday>
+  "overprediction", # <get_plot_wis_by_weekday>
+  "underprediction", # <get_plot_wis_by_weekday>
+  "dispersion", # <get_plot_wis_by_weekday>
+  "name", # <get_plot_wis_by_weekday>
+  "value", # <get_plot_wis_by_weekday>
+  "interval_range", # <get_plot_cov_by_model_noro>
+  "model", # <get_plot_cov_by_model_noro>
+  "interval_coverage", # <get_plot_cov_by_model_noro>
+  "empirical_coverage", # <get_plot_cov_by_model_noro>
+  "90", # <get_plot_cov_by_model_noro>
+  "50", # <get_plot_cov_by_model_noro>
+  "interval_range", # <get_plot_cov_by_mod_wday_noro>
+  "reference_date", # <get_plot_cov_by_mod_wday_noro>
+  "model", # <get_plot_cov_by_mod_wday_noro>
+  "weekday", # <get_plot_cov_by_mod_wday_noro>
+  "weekday_name", # <get_plot_cov_by_mod_wday_noro>
+  "interval_coverage", # <get_plot_cov_by_mod_wday_noro>
+  "empirical_coverage", # <get_plot_cov_by_mod_wday_noro>
+  "90", # <get_plot_cov_by_mod_wday_noro>
+  "50", # <get_plot_cov_by_mod_wday_noro>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>
@@ -210,6 +290,7 @@ utils::globalVariables(c(
   "delay", # <get_eval_data_from_long_df>
   "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
+  "model", # <get_mellor_et_al_outputs>
   "reference_date", # <get_nowcast_quantiles>
   "draw", # <get_nowcast_quantiles>
   "pred_count", # <get_nowcast_quantiles>
@@ -225,6 +306,16 @@ utils::globalVariables(c(
   "observed", # <run_covid_nowcast_pipeline>
   "quantile_level", # <run_covid_nowcast_pipeline>
   "pt_nowcast", # <run_covid_nowcast_pipeline>
+  "report_date", # <run_noro_nowcast_pipeline>
+  "reference_date", # <run_noro_nowcast_pipeline>
+  "count", # <run_noro_nowcast_pipeline>
+  "draw", # <run_noro_nowcast_pipeline>
+  "pred_count", # <run_noro_nowcast_pipeline>
+  "reference_date", # <get_noro_nowcast>
+  "report_date", # <get_noro_nowcast>
+  "count", # <get_noro_nowcast>
+  "draw", # <get_noro_nowcast>
+  "pred_count", # <get_noro_nowcast>
   "n_history_delay", # <derive_model_variation>
   "n_history_uncertainty", # <derive_model_variation>
   "model_variation", # <derive_model_variation>

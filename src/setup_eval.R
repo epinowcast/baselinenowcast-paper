@@ -5,6 +5,5 @@ write_config(
   covid_nowcast_dates = NULL,
   age_groups_covid = NULL,
   permutations_covid = TRUE,
-  n_training_volume_noro = 56,
-  filter_ref_dates_noro = FALSE
+  filter_ref_dates_noro = NULL
 )

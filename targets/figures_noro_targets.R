@@ -28,5 +28,42 @@ figures_noro_targets <- list(
   tar_target(
     name = plot_cdf_by_weekday,
     command = get_plot_cdf_by_weekday(delay_dfs = all_delay_dfs_noro)
+  ),
+  tar_target(
+    name = fig_noro,
+    command = make_fig_noro(
+      plot_noro_nowcasts,
+      bar_chart_wis_noro,
+      rel_wis_by_week_noro,
+      rel_wis_by_weekday,
+      plot_mean_delay_t_by_wday,
+      plot_cdf_by_weekday,
+      fig_file_name = "noro"
+    )
+  ),
+  # Supplement ---------------------------------------------------------------
+  tar_target(
+    name = wis_over_time,
+    command = get_plot_wis_over_time_noro(noro_scores,
+      fig_file_name = "wis_over_time_noro"
+    )
+  ),
+  tar_target(
+    name = wis_by_weekday,
+    command = get_plot_wis_by_weekday(noro_scores,
+      fig_file_name = "wis_by_weekday"
+    )
+  ),
+  tar_target(
+    name = coverage_by_model_noro,
+    command = get_plot_coverage_by_model_noro(noro_coverage,
+      fig_file_name = "noro_coverage"
+    )
+  ),
+  tar_target(
+    name = coverage_by_model_wday_noro,
+    command = get_plot_cov_by_mod_wday_noro(noro_coverage,
+      fig_file_name = "noro_cov_wday"
+    )
   )
 )

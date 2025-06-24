@@ -753,7 +753,7 @@ get_plot_wis_by_week_mp <- function(
   return(p)
 }
 
-#' Title
+#' Make panel for main model permutation figure
 #'
 #' @param plot_nowcasts_over_time_mp A
 #' @param bar_chart_wis_by_mp B

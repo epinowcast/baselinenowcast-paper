@@ -92,6 +92,7 @@ plot_components <- function() {
   )
   coverage_alpha <- c(
     "95" = 0.2,
+    "90" = 0.2,
     "50" = 0.8
   )
   score_alpha <- c(

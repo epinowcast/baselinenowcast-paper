@@ -246,6 +246,41 @@ utils::globalVariables(c(
   "delay", # <get_plot_cdf_by_weekday>
   "mean_delay", # <get_plot_cdf_by_weekday>
   "cdf", # <get_plot_cdf_by_weekday>
+  "nowcast_date", # <get_plot_wis_over_time_noro>
+  "week", # <get_plot_wis_over_time_noro>
+  "model", # <get_plot_wis_over_time_noro>
+  "model_type", # <get_plot_wis_over_time_noro>
+  "week_end_date", # <get_plot_wis_over_time_noro>
+  "overprediction", # <get_plot_wis_over_time_noro>
+  "underprediction", # <get_plot_wis_over_time_noro>
+  "dispersion", # <get_plot_wis_over_time_noro>
+  "name", # <get_plot_wis_over_time_noro>
+  "value", # <get_plot_wis_over_time_noro>
+  "reference_date", # <get_plot_wis_by_weekday>
+  "model", # <get_plot_wis_by_weekday>
+  "model_type", # <get_plot_wis_by_weekday>
+  "weekday", # <get_plot_wis_by_weekday>
+  "weekday_name", # <get_plot_wis_by_weekday>
+  "overprediction", # <get_plot_wis_by_weekday>
+  "underprediction", # <get_plot_wis_by_weekday>
+  "dispersion", # <get_plot_wis_by_weekday>
+  "name", # <get_plot_wis_by_weekday>
+  "value", # <get_plot_wis_by_weekday>
+  "interval_range", # <get_plot_coverage_by_model_noro>
+  "model", # <get_plot_coverage_by_model_noro>
+  "interval_coverage", # <get_plot_coverage_by_model_noro>
+  "empirical_coverage", # <get_plot_coverage_by_model_noro>
+  "90", # <get_plot_coverage_by_model_noro>
+  "50", # <get_plot_coverage_by_model_noro>
+  "interval_range", # <get_plot_cov_by_mod_wday_noro>
+  "reference_date", # <get_plot_cov_by_mod_wday_noro>
+  "model", # <get_plot_cov_by_mod_wday_noro>
+  "weekday", # <get_plot_cov_by_mod_wday_noro>
+  "weekday_name", # <get_plot_cov_by_mod_wday_noro>
+  "interval_coverage", # <get_plot_cov_by_mod_wday_noro>
+  "empirical_coverage", # <get_plot_cov_by_mod_wday_noro>
+  "90", # <get_plot_cov_by_mod_wday_noro>
+  "50", # <get_plot_cov_by_mod_wday_noro>
   "config", # <get_covid_data>
   "value_>80d", # <get_covid_data>
   "delay", # <get_covid_data>

@@ -238,7 +238,7 @@ get_plot_rel_wis_by_weekday <- function(scores) {
       legend.position = "bottom"
     ) +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS over timeelative to baselinenowcast default model configuration") # nolint
+    ggtitle("Relative WIS by weekday relative to baselinenowcast default model configuration") # nolint
   return(p)
 }
 
@@ -291,9 +291,12 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs) {
     )) +
     guides(linewidth = "none") +
     get_plot_theme() +
-    scale_x_date(
-      date_breaks = "2 months",
-      date_labels = "%b %Y"
+    scale_x_date( # Jan 2023, Feb 2023, etc.
+      date_breaks = "2 weeks" # Break every month
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom"
     ) +
     scale_color_manual(
       name = "Weekday",
@@ -366,5 +369,489 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
     ylab("Cumulative delay distribution") +
     get_plot_theme()
 
+  return(p)
+}
+
+#' Make panel for main norovirus figure
+#'
+#' @param plot_noro_nowcasts A
+#' @param bar_chart_wis_noro B
+#' @param rel_wis_by_week_noro C
+#' @param rel_wis_by_weekday D
+#' @param plot_mean_delay_t_by_wday E
+#' @param plot_cdf_by_weekday F
+#' @inheritParams  make_fig_model_perms
+#'
+#' @returns ggplot
+make_fig_noro <- function(plot_noro_nowcasts,
+                          bar_chart_wis_noro,
+                          rel_wis_by_week_noro,
+                          rel_wis_by_weekday,
+                          plot_mean_delay_t_by_wday,
+                          plot_cdf_by_weekday,
+                          fig_file_name,
+                          fig_file_dir = file.path("output", "figs"),
+                          save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+  fig_layout <- "
+  AAABB
+  AAABB
+  CCCDD
+  EEEFF
+  "
+
+  fig_noro <- plot_noro_nowcasts +
+    bar_chart_wis_noro +
+    rel_wis_by_week_noro +
+    rel_wis_by_weekday +
+    plot_mean_delay_t_by_wday +
+    plot_cdf_by_weekday +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect",
+      guides = "collect"
+    ) & theme(
+    legend.position = "top",
+    legend.justification = "left"
+  )
+
+  dir_create(fig_file_dir)
+
+  if (isTRUE(save)) {
+    ggsave(
+      plot = fig_noro,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 24,
+      height = 16
+    )
+  }
+  return(fig_noro)
+}
+
+#' Get a plot of decomposed WIS by week for each model
+#'
+#' @param scores Dataframe of the scores by age group, horizon, and model
+#' @inheritParams get_plot_rel_wis_by_age_group
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
+#'    geom_hline scale_y_continuous
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
+#' @importFrom lubridate isoweek
+#' @importFrom glue glue
+#' @importFrom fs dir_create
+#' @returns ggplot object
+get_plot_wis_over_time_noro <- function(
+    scores,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
+  metrics_attr <- attr(scores, "metrics")
+  scores_sum <- scores |>
+    mutate(week = isoweek(nowcast_date)) |>
+    group_by(week) |>
+    mutate(week_end_date = max(nowcast_date)) |>
+    ungroup() |>
+    # nolint start
+    # Restore the metrics attribute before summarising
+    {
+      \(x) {
+        attr(x, "metrics") <- metrics_attr
+        return(x)
+      }
+    }() |>
+    # nolint end
+    scoringutils::summarise_scores(by = c(
+      "model",
+      "model_type",
+      "week_end_date"
+    )) |>
+    select(
+      model, model_type,
+      week_end_date, overprediction, underprediction, dispersion
+    ) |>
+    pivot_longer(cols = c(
+      "overprediction",
+      "underprediction",
+      "dispersion"
+    )) |>
+    mutate(
+      name = factor(name, levels = c(
+        "overprediction",
+        "dispersion",
+        "underprediction"
+      )),
+      model = factor(model, levels = c(
+        "base",
+        "filter weekday small training volume",
+        "filter weekday large training volume",
+        "GAM",
+        "epinowcast",
+        "baseline Mellor et al"
+      ))
+    )
+
+  plot_comps <- plot_components()
+  p <- ggplot(
+    scores_sum,
+    aes(
+      x = model, y = value,
+      fill = model,
+      alpha = name
+    )
+  ) +
+    geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_comps$model_colors
+    ) +
+    get_plot_theme() +
+    cowplot::background_grid(
+      minor = "none",
+      major = "none"
+    ) +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.text.x = element_text(angle = 45),
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
+    ) +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_comps$score_alpha
+    ) +
+    facet_grid(. ~ week_end_date, switch = "x") +
+    labs(x = "Nowcast date", y = "WIS breakdown") +
+    ggtitle(glue::glue("WIS breakdown by nowcast date for all models")) # nolint
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 28,
+      height = 8
+    )
+  }
+  return(p)
+}
+
+#' Get a plot of decomposed WIS by weekday for each model
+#'
+#' @param scores Dataframe of the scores by age group, horizon, and model
+#' @inheritParams get_plot_rel_wis_by_age_group
+#' @autoglobal
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
+#'    geom_hline scale_y_continuous
+#' @importFrom dplyr mutate select
+#' @importFrom tidyr pivot_wider
+#' @importFrom lubridate wday
+#' @importFrom glue glue
+#' @importFrom fs dir_create
+#' @returns ggplot object
+get_plot_wis_by_weekday <- function(
+    scores,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs", "supp"),
+    save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
+  scores_sum <- scores |>
+    mutate(
+      weekday = wday(reference_date),
+      weekday_name = wday(reference_date, label = TRUE)
+    ) |>
+    # nolint end
+    scoringutils::summarise_scores(by = c(
+      "model",
+      "model_type",
+      "weekday",
+      "weekday_name"
+    )) |>
+    select(
+      model, model_type,
+      weekday, weekday_name, overprediction, underprediction, dispersion
+    ) |>
+    pivot_longer(cols = c(
+      "overprediction",
+      "underprediction",
+      "dispersion"
+    )) |>
+    mutate(
+      name = factor(name, levels = c(
+        "overprediction",
+        "dispersion",
+        "underprediction"
+      )),
+      model = factor(model, levels = c(
+        "base",
+        "filter weekday small training volume",
+        "filter weekday large training volume",
+        "GAM",
+        "epinowcast",
+        "baseline Mellor et al"
+      ))
+    )
+
+  plot_comps <- plot_components()
+  p <- ggplot(
+    scores_sum,
+    aes(
+      x = model, y = value,
+      fill = model,
+      alpha = name
+    )
+  ) +
+    geom_bar(stat = "identity", position = "stack") +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_comps$model_colors
+    ) +
+    get_plot_theme() +
+    cowplot::background_grid(
+      minor = "none",
+      major = "none"
+    ) +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.text.x = element_text(angle = 45),
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
+    ) +
+    scale_alpha_manual(
+      name = "WIS breakdown",
+      values = plot_comps$score_alpha
+    ) +
+    facet_grid(. ~ weekday_name, switch = "x") +
+    labs(x = "Weekday", y = "WIS breakdown") +
+    ggtitle(glue::glue("WIS breakdown by weekday for all models")) # nolint
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 8
+    )
+  }
+  return(p)
+}
+
+#' Get a plot of coverage by model
+#'
+#' @param all_coverage Dataframe of the combined individual level coverage for
+#'    days and intervals.
+#' @param intervals Vector of integers to plot coverage of.
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
+#' @returns bar chart
+get_plot_coverage_by_model_noro <- function(all_coverage,
+                                            intervals = c(50, 90),
+                                            fig_file_name = NULL,
+                                            fig_file_dir = file.path("output", "figs", "supp"),
+                                            save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+  coverage <- filter(
+    all_coverage,
+    interval_range %in% c(intervals)
+  )
+
+  coverage_summarised <- coverage |>
+    group_by(model, interval_range) |>
+    summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+    pivot_wider(
+      names_from = interval_range,
+      values_from = empirical_coverage
+    ) |>
+    mutate(`90` = `90` - `50`) |>
+    pivot_longer(
+      cols = c(`50`, `90`),
+      names_to = "interval_range",
+      values_to = "empirical_coverage"
+    ) |>
+    mutate(
+      interval_range = factor(interval_range, levels = c("90", "50")),
+      model = factor(model, levels = c(
+        "base",
+        "filter weekday small training volume",
+        "filter weekday large training volume",
+        "GAM",
+        "epinowcast",
+        "baseline Mellor et al"
+      ))
+    )
+
+
+  plot_comps <- plot_components()
+  p <- ggplot(coverage_summarised) +
+    geom_bar(
+      aes(
+        x = model, y = empirical_coverage,
+        alpha = interval_range,
+        fill = model
+      ),
+      stat = "identity", position = "stack"
+    ) +
+    get_plot_theme() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+    ) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_comps$model_colors
+    ) +
+    scale_alpha_manual(
+      name = "Empirical coverage",
+      values = plot_comps$coverage_alpha
+    ) +
+    geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
+    geom_hline(aes(yintercept = 0.90), linetype = "dashed") +
+    labs(
+      y = "Empirical coverage", x = "",
+      fill = "Model", alpha = "Interval"
+    ) +
+    ggtitle("Empirical coverage by model")
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 12,
+      height = 8
+    )
+  }
+  return(p)
+}
+
+#' Get a plot of coverage by model and weekday
+#'
+#' @param all_coverage Dataframe of the combined individual level coverage for
+#'    days and intervals.
+#' @param intervals Vector of integers to plot coverage of.
+#' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
+#'    scale_fill_manual geom_hline
+#' @importFrom dplyr filter group_by summarise mutate n
+#' @importFrom tidyr pivot_wider pivot_longer
+#' @autoglobal
+#' @returns bar chart
+get_plot_cov_by_mod_wday_noro <- function(all_coverage,
+                                          intervals = c(50, 90),
+                                          fig_file_name = NULL,
+                                          fig_file_dir = file.path("output", "figs", "supp"),
+                                          save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+  coverage <- filter(
+    all_coverage,
+    interval_range %in% c(intervals)
+  )
+
+  coverage_summarised <- coverage |>
+    mutate(
+      weekday = wday(reference_date),
+      weekday_name = wday(reference_date, label = TRUE)
+    ) |>
+    group_by(model, weekday, weekday_name, interval_range) |>
+    summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+    pivot_wider(
+      names_from = interval_range,
+      values_from = empirical_coverage
+    ) |>
+    mutate(`90` = `90` - `50`) |>
+    pivot_longer(
+      cols = c(`50`, `90`),
+      names_to = "interval_range",
+      values_to = "empirical_coverage"
+    ) |>
+    mutate(
+      interval_range = factor(interval_range, levels = c("90", "50")),
+      model = factor(model, levels = c(
+        "base",
+        "filter weekday small training volume",
+        "filter weekday large training volume",
+        "GAM",
+        "epinowcast",
+        "baseline Mellor et al"
+      ))
+    )
+
+
+  plot_comps <- plot_components()
+  p <- ggplot(coverage_summarised) +
+    geom_bar(
+      aes(
+        x = model, y = empirical_coverage,
+        alpha = interval_range,
+        fill = model
+      ),
+      stat = "identity", position = "stack"
+    ) +
+    facet_grid(. ~ weekday_name, switch = "x") +
+    get_plot_theme() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+    ) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_comps$model_colors
+    ) +
+    scale_alpha_manual(
+      name = "Empirical coverage",
+      values = plot_comps$coverage_alpha
+    ) +
+    geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
+    geom_hline(aes(yintercept = 0.90), linetype = "dashed") +
+    labs(
+      y = "Empirical coverage", x = "",
+      fill = "Model", alpha = "Interval"
+    ) +
+    ggtitle("Empirical coverage by model and weekday")
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 12,
+      height = 8
+    )
+  }
   return(p)
 }

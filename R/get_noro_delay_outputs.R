@@ -27,7 +27,8 @@ get_noro_delay_outputs <- function(noro_df,
         warning(
           "No data available for weekday ",
           weekday_nums[i],
-          " on ", nowcast_date
+          " on ", nowcast_date,
+          call. = FALSE
         )
         next
       }

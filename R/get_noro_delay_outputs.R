@@ -23,7 +23,14 @@ get_noro_delay_outputs <- function(noro_df,
       ) |>
         select(-reference_date, -nowcast_date) |>
         as.matrix()
-
+      if (nrow(triangle) == 0) {
+        warning(
+          "No data available for weekday ",
+          weekday_nums[i],
+          " on ", nowcast_date
+        )
+        next
+      }
       delay_pmf <- get_delay_estimate(
         reporting_triangle = triangle,
         max_delay = max_delay,

@@ -4,11 +4,14 @@
 \alias{get_plot_mean_delay_t_by_wday}
 \title{Get plot mean delay over time by weekday}
 \usage{
-get_plot_mean_delay_t_by_wday(delay_dfs)
+get_plot_mean_delay_t_by_wday(delay_dfs, n_history_delay_filter = 28)
 }
 \arguments{
 \item{delay_dfs}{Data.frame of delay estimates both separately by weekday
 and jointly, indexed by the weekday of the reference date.}
+
+\item{n_history_delay_filter}{Integer indicating how much historical data
+to use to estimate the mean delay at each nowcast time. Default is \code{28}.}
 }
 \value{
 ggplot object

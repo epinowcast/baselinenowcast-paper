@@ -290,6 +290,7 @@ utils::globalVariables(c(
   "delay", # <get_eval_data_from_long_df>
   "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
+  "model", # <get_mellor_et_al_outputs>
   "reference_date", # <get_nowcast_quantiles>
   "draw", # <get_nowcast_quantiles>
   "pred_count", # <get_nowcast_quantiles>

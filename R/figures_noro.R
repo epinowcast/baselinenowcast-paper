@@ -82,7 +82,6 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     # nolint end
     xlab("") +
     ylab(glue("{pathogen} cases")) +
-    coord_cartesian(ylim = c(0, 150)) + # nolint
     ggtitle(glue("{title}"))
 
   return(p)
@@ -184,7 +183,7 @@ get_plot_rel_wis_over_time <- function(scores) {
       legend.position = "bottom"
     ) +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS over timeelative to baselinenowcast default model configuration") # nolint
+    ggtitle("Relative WIS over time relative to baselinenowcast default model configuration") # nolint
   return(p)
 }
 
@@ -246,6 +245,8 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #'
 #' @param delay_dfs Data.frame of delay estimates both separately by weekday
 #'    and jointly, indexed by the weekday of the reference date.
+#' @param n_history_delay_filter Integer indicating how much historical data
+#'    to use to estimate the mean delay at each nowcast time. Default is `28`.
 #'
 #' @returns ggplot object
 #' @importFrom ggplot2 ggplot aes labs
@@ -253,10 +254,11 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #'    ggtitle element_blank scale_alpha_manual geom_bar
 #' @autoglobal
 #' @importFrom dplyr select filter rename mutate
-get_plot_mean_delay_t_by_wday <- function(delay_dfs) {
+get_plot_mean_delay_t_by_wday <- function(delay_dfs,
+                                          n_history_delay_filter = 28) {
   mean_delay_by_weekday_and_date <- delay_dfs |>
     filter(
-      n_history_delay == 28,
+      n_history_delay == n_history_delay_filter,
       filter_ref_dates
     ) |>
     group_by(nowcast_date, weekday, weekday_name) |>

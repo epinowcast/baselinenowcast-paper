@@ -153,9 +153,10 @@ We can then used the probabilistic draws to compute any desired quantiles to sum
 
 ### Case study: UKHSA norovirus surveillance
 
-1.  Absolute WIS over time (by week) for each model.
-2.  Absolute WIS by day of week for each model.
-3.  Empirical coverage at 50% and 90% prediction intervals for each model
-4.  Empirical coverage at 50% and 90% prediction intervals by day of week for each model.
+![Fig S11. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs11}
+
+![Fig S12. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png)
+![Fig S13. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs13}
+![Fig S14. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs13}
 
 ## References

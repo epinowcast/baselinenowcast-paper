@@ -576,7 +576,6 @@ get_plot_wis_by_weekday <- function(
       weekday = wday(reference_date),
       weekday_name = wday(reference_date, label = TRUE)
     ) |>
-    # nolint end
     scoringutils::summarise_scores(by = c(
       "model",
       "model_type",
@@ -662,6 +661,7 @@ get_plot_wis_by_weekday <- function(
 #' @param all_coverage Dataframe of the combined individual level coverage for
 #'    days and intervals.
 #' @param intervals Vector of integers to plot coverage of.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n
@@ -759,6 +759,7 @@ get_plot_coverage_by_model_noro <- function(all_coverage,
 #' @param all_coverage Dataframe of the combined individual level coverage for
 #'    days and intervals.
 #' @param intervals Vector of integers to plot coverage of.
+#' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_alpha_manual
 #'    scale_fill_manual geom_hline
 #' @importFrom dplyr filter group_by summarise mutate n

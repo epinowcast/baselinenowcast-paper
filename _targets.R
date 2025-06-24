@@ -205,45 +205,45 @@ combined_noro_delay_df <- tar_combine(
 
 # Figures for real-world case study German Nowcast Hub
 plot_targets <- list(
-  # ### EDA figures for norovirus and covid
-  # EDA_plot_targets,
-  #
-  # ### Figures for German Nowcast Hub validation
-  # figures_hub_validation_targets,
-  #
-  # ### Figures for comparing baselinenowcast model specificaitons
-  # figures_model_permutation_targets,
+  ### EDA figures for norovirus and covid
+  EDA_plot_targets,
+
+  ### Figures for German Nowcast Hub validation
+  figures_hub_validation_targets,
+
+  ### Figures for comparing baselinenowcast model specificaitons
+  figures_model_permutation_targets,
 
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
-  figures_noro_targets
+  figures_noro_targets,
 
   ### Summary report with all metrics reported in paper
-  # tar_render(
-  #   report,
-  #   "report.Rmd"
-  # )
+  tar_render(
+    report,
+    "report.Rmd"
+  )
 ) # end plot targets
 
 
 list(
   data_targets,
   # Covid targets: validation
-  # mapped_kit_nowcasts,
-  # combined_kit_nowcasts,
-  # combined_kit_scores,
-  # combined_kit_coverage,
-  # combined_kit_pt_nowcast,
-  # nowcast_hub_validation_targets,
-  # mapped_covid,
-  # combined_covid_nowcasts,
-  # combined_covid_scores,
-  # combined_covid_coverage,
-  # combined_pt_nowcast,
-  # combined_mean_delay,
-  # combined_delay_df,
-  #
-  # # Covid targets: model permutations
-  # model_permutation_targets,
+  mapped_kit_nowcasts,
+  combined_kit_nowcasts,
+  combined_kit_scores,
+  combined_kit_coverage,
+  combined_kit_pt_nowcast,
+  nowcast_hub_validation_targets,
+  mapped_covid,
+  combined_covid_nowcasts,
+  combined_covid_scores,
+  combined_covid_coverage,
+  combined_pt_nowcast,
+  combined_mean_delay,
+  combined_delay_df,
+
+  # Covid targets: model permutations
+  model_permutation_targets,
 
   # Norovirus targets
   mapped_noro,

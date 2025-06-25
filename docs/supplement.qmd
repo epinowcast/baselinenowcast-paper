@@ -167,7 +167,7 @@ $$
 \mathbb{E}[N | X = x] =  \frac{\sum_{n=x}^{\infty}n \binom{n}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}\pi^x(1-\pi)^{i-x}}
 $$
 
-Both the numerator and the denominator are known convergent series, with solutions available in standard libraries. We then get:
+Both the numerator and the denominator are known convergent series, with solutions available in standard libraries like Mathematica. We then get:
 
 $$
 \mathbb{E}[N | X = x]  = \frac{(x + 1 -\pi)/\pi^2}{1/\pi} = \frac{x + 1 - \pi}{\pi}

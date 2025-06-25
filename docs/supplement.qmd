@@ -135,14 +135,14 @@ The following derivation addresses this practical issue based on assumptions abo
 
 Our problem boils down to the following. If we assume that: $$
 X | N \sim Bin(N, \pi)
-$$ with $\pi$ known and an impropoer discrete unofirm prior on $N$: $$
+$$ with $\pi$ known and an improper discrete uniform prior on $N$: $$
 \text{pr}(N= n) \propto C \text{ for n = 0, 1, 2, ...}
 $$ We are then interested in: $$
 \mathbb{E}[N | X = x]
 $$ This can be written out as: $$
 \mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{P}(N = n | X = x) n
 $$ Applying Bayes Theorem we have: $$
-\text{pr}(N = n | X = x)  = \frac{\text{pr}(X = x | N = n) \text{P}(N=n)}{\sum_{i=0}^{\infty}\text{P}( X = x | N= i) \text{pr}(N = i)}
+\text{P}(N = n | X = x)  = \frac{\text{P}(X = x | N = n) \text{P}(N=n)}{\sum_{i=0}^{\infty}\text{P}( X = x | N= i) \text{P}(N = i)}
 $$ Because $\text{P}(N=n) \propto C$ this simplifies to:
 
 $$
@@ -164,13 +164,13 @@ $$
 Which is equivalent to:
 
 $$
-\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{n}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}\pi^x(1-\pi)^{i-x}}
+\mathbb{E}[N | X = x] =  \frac{\sum_{n=x}^{\infty}n \binom{n}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}\pi^x(1-\pi)^{i-x}}
 $$
 
 Both the numerator and the denominator are known convergent series, with solutions available in standard libraries. We then get:
 
 $$
-\mathbb{E}[N | X = x]  = \frac{(x + 1 -\pi)\pi^2}{\frac{1}{\pi}} = \frac{x + 1 - \pi}{\pi}
+\mathbb{E}[N | X = x]  = \frac{(x + 1 -\pi)/\pi^2}{1/\pi} = \frac{x + 1 - \pi}{\pi}
 $$ This formula allows us to have a defined $\mathbb{E}[N | X = x]$ even when $X = 0$.
 
 ### Description of KIT simple nowcast implementation issue and revised nowcasts {#KIT-bug}

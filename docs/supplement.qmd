@@ -164,7 +164,7 @@ $$
 Which is equivalent to:
 
 $$
-\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{n}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{1}{x}\pi^x(1-\pi)^{i-x}}
+\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{n}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}\pi^x(1-\pi)^{i-x}}
 $$
 
 Both the numerator and the denominator are known convergent series, with solutions available in standard libraries. We then get:

@@ -186,6 +186,7 @@ rel_wis |>
 # Model permutation results
 ```{r, echo = FALSE}
 scores_mp |>
+  filter(age_group != "00+") |>
   summarise_scores(by = "model_variation_string") |>
   kable(caption = "Model permutations: overall scores")
 ```

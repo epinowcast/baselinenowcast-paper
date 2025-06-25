@@ -374,7 +374,7 @@ baseline_comparison <- scores_sum |>
   select(comparison_wis) |>
   pull()
 
-relative_wis <- scores_sum |>
+scores_sum |>
   filter(model != "baseline Mellor et al") |>
   mutate(comparison_wis = baseline_comparison) |>
   mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
@@ -393,7 +393,7 @@ baseline_comparison <- scores_sum |>
   select(comparison_wis) |>
   pull()
 
-relative_wis <- scores_sum |>
+scores_sum |>
   filter(model != "epinowcast") |>
   mutate(comparison_wis = baseline_comparison) |>
   mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
@@ -412,7 +412,7 @@ baseline_comparison <- scores_sum |>
   select(comparison_wis) |>
   pull()
 
-relative_wis <- scores_sum |>
+scores_sum |>
   filter(model != "GAM") |>
   mutate(comparison_wis = baseline_comparison) |>
   mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>

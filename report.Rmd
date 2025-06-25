@@ -12,13 +12,21 @@ library(kableExtra)
 library(scoringutils)
 library(tidyr)
 
+# Hub validation outputs
 validation_scores <- tar_read(validation_scores)
 validation_coverage <- tar_read(validation_coverage)
 mean_delay_validation <- tar_read(mean_delay_validation)
 
+# Model permutation outputs
 scores_mp <- tar_read(scores_mp)
 coverage_mp <- tar_read(coverage_mp)
+
+# Norovirus outputs
+scores_noro <- tar_read(noro_scores)
+coverage_noro <- tar_read(noro_coverage)
 ```
+
+# Hub validation results
 
 Overall relative WIS: age groups
 ```{r, echo = FALSE}
@@ -175,7 +183,7 @@ rel_wis |>
   kable(caption = "Min and max relative WIS by age group")
 ```
 
-Model permutation results
+# Model permutation results
 ```{r, echo = FALSE}
 scores_mp |>
   summarise_scores(by = "model_variation_string") |>
@@ -349,4 +357,75 @@ coverage_mp |>
     values_from = empirical_coverage
   ) |>
   kable(caption = "Model permutations: coverage summary")
+```
+
+# Norovirus results
+
+Scores compared to Mellor et al baseline
+```{r, echo = FALSE}
+scores_sum <- scores_noro |>
+  scoringutils::summarise_scores(by = "model") |>
+  select(model, wis)
+
+baseline_comparison <- scores_sum |>
+  filter(model == "baseline Mellor et al") |>
+  rename(comparison_wis = wis) |>
+  select(comparison_wis) |>
+  pull()
+
+relative_wis <- scores_sum |>
+  filter(model != "baseline Mellor et al") |>
+  mutate(comparison_wis = baseline_comparison) |>
+  mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
+  kable(caption = "Relative WIS compared to baseline Mellor et al")
+```
+
+Scores compared to epinowcast
+```{r, echo = FALSE}
+scores_sum <- scores_noro |>
+  scoringutils::summarise_scores(by = "model") |>
+  select(model, wis)
+
+baseline_comparison <- scores_sum |>
+  filter(model == "epinowcast") |>
+  rename(comparison_wis = wis) |>
+  select(comparison_wis) |>
+  pull()
+
+relative_wis <- scores_sum |>
+  filter(model != "epinowcast") |>
+  mutate(comparison_wis = baseline_comparison) |>
+  mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
+  kable(caption = "Relative WIS compared to epinowcast Mellor et al")
+```
+Scores compared to GAM
+
+```{r, echo = FALSE}
+scores_sum <- scores_noro |>
+  scoringutils::summarise_scores(by = "model") |>
+  select(model, wis)
+
+baseline_comparison <- scores_sum |>
+  filter(model == "GAM") |>
+  rename(comparison_wis = wis) |>
+  select(comparison_wis) |>
+  pull()
+
+relative_wis <- scores_sum |>
+  filter(model != "GAM") |>
+  mutate(comparison_wis = baseline_comparison) |>
+  mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
+  kable(caption = "Relative WIS compared to GAM Mellor et al")
+```
+
+Coverage summary
+```{r, echo = FALSE}
+coverage_noro |>
+  group_by(model, interval_range) |>
+  summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+  pivot_wider(
+    names_from = interval_range,
+    values_from = empirical_coverage
+  ) |>
+  kable(caption = "norovirus: coverage summary")
 ```

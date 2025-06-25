@@ -125,9 +125,59 @@ We can sample for any number of draws, and then use the draws to compute any des
 
 ### Zero-handling approximation {#zero-handling-approximation}
 
-\*\* To be filled in\*\*
+In order to produce a nowcast for a specific reference date, we use the number of already observed cases, $x_{t,d}$ and the delay PMF, $\pi$ to estimate the expected final count of cases $X_{t} = \sum_{d=1}^D X_{t,d}$.
+For notational simplicity, we will refer to $X_{t}$ as $N$, to indicate the random variable for the total number of final cases at a particular reference time $t$, and $X_{t,d}$ as $X$ to indicate the random variable for the number of cases at a particular reference time $t$ and delay $d$. We will denote the PMF of the delay distribution at a particular delay $d$ by $\pi$.
 
-### Description of KIT simple nowcast implementation issue and revised nowcasts
+However, this simple calculation is undefined when the number of already observed cases is 0.
+
+The following derivation addresses this practical issue based on assumptions about the underlying distributions for which the observed cases at each reference time and reporting delay are drawn from. \
+
+Our problem boils down to the following. If we assume that:
+$$
+X | N \sim Bin(N, \pi)
+$$
+with $\pi$ known and an impropoer discrete unofirm prior on $N$:
+$$
+\text{pr}(N= n) \propto C \text{ for n = 0, 1, 2, ...}
+$$
+We are then interested in:
+$$
+\mathbb{E}[N | X = x]
+$$
+This can be written out as:
+$$
+\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{pr}(N = n | X = x) n
+$$
+Applying Bayes Theorem we have:
+$$
+\text{pr}(N = n | X = x)  = \frac{\text{pr}(X = x | N = n) \text{pr}(N=n)}{\sum_{i=0}^{\infty}\text{pr}( X = x | N= i) \text{pr}(N = i)}
+$$
+Because $pr(N=n) \propto C$ this simplifies to:
+
+$$
+\text{pr}(N = n | X = x)  = \frac{\text{pr}(X = x | N = n)}{\sum_{i=0}^{\infty}\text{pr}( X = x | N= i)}
+$$
+Which is equivalent to:
+
+$$
+\text{pr}(N = n | X = x) = \frac{\binom{10}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=1}^\infty \binom{1}{x}\pi^x(1-\pi)^{i-x}}
+$$
+Plugging into $\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{pr}(N = n | X = x) n$ we get the following (omitting terms for $n<x$, which are 0):
+
+$$
+\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{10}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}\pi^x(1-\pi)^{i-x}}
+$$
+Which is equivalent to:
+$$
+\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{n}{x} \pi^x(1-\pi)^{n-x}}{\sum_{i=x}^\infty \binom{1}{x}\pi^x(1-\pi)^{i-x}}
+$$
+Both the numerator and the denominator are known convergent series, with solutions available in standard libraries. We then get:
+$$
+\mathbb{E}[N | X = x]  = \frac{(x + 1 -\pi)\pi^2}{\frac{1}{\pi}} = \frac{x + 1 - \pi}{\pi}
+$$
+This formula allows us to have a defined $\mathbb{E}[N | X = x]$ even when $X = 0$.
+
+### Description of KIT simple nowcast implementation issue and revised nowcasts{#KIT-bug}
 
 When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a later observed value – which has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
 

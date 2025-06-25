@@ -11,7 +11,6 @@ get_mellor_et_al_outputs <- function(
     data_from_bnc,
     models = c("epinowcast", "GAM", "baseline Mellor et al")) {
   fake_data <- data_from_bnc |>
-    filter(model %in% models) |>
     mutate(
       model = case_when(
         model == "base" ~ "baseline Mellor et al",

@@ -32,10 +32,13 @@ get_noro_delay_outputs <- function(noro_df,
         )
         next
       }
+      # Here we estimate the delay pmf using the last 3 rows,
+      # since each row has 1 and then 7, 7, days of data
+      # and we want the latest delay
       delay_pmf <- get_delay_estimate(
         reporting_triangle = triangle,
         max_delay = max_delay,
-        n = min(nrow(triangle), n_history_delay)
+        n = 3
       )
       reference_dates <- noro_df_one_weekday |>
         filter(
@@ -45,23 +48,14 @@ get_noro_delay_outputs <- function(noro_df,
         arrange(reference_date) |>
         pull()
 
-      date_df <- tibble(reference_date = reference_dates) |>
-        mutate(
-          time = row_number() - 1
-        )
-
       delay_df <- data.frame(
         delay = delay_pmf,
         delay_time = 0:(length(delay_pmf) - 1)
       ) |>
-        left_join(
-          date_df,
-          by = c("delay_time" = "time") # nolint
-        ) |>
         mutate(
           nowcast_date = nowcast_date,
-          weekday = wday(reference_date),
-          weekday_name = wday(reference_date, label = TRUE),
+          weekday = weekday_nums[i],
+          weekday_name = as.character(wday(weekday_nums[i], label = TRUE)),
           n_history_delay = n_history_delay,
           filter_ref_dates = filter_ref_dates
         )
@@ -83,15 +77,23 @@ get_noro_delay_outputs <- function(noro_df,
     delay_pmf <- get_delay_estimate(
       reporting_triangle = triangle,
       max_delay = max_delay,
-      n = n_history_delay
+      n = max_delay + 1
     )
     reference_dates <- noro_df |>
+      # We want something from nowcast date to nowcast date - max_delay
       filter(
-        reference_date <= nowcast_date
+        reference_date <= nowcast_date,
+        reference_date >= nowcast_date - days(max_delay)
       ) |>
       distinct(reference_date) |>
       arrange(reference_date) |>
       pull()
+
+    if (length(delay_pmf) == length(reference_dates)) {
+      cli_abort(message = c(
+        "Length of delay PMF and reference dates do not line up "
+      ))
+    }
 
     date_df <- tibble(reference_date = reference_dates) |>
       mutate(

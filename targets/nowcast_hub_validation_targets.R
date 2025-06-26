@@ -39,7 +39,7 @@ nowcast_hub_validation_targets <- list(
         borrow == FALSE,
         partial_rep_tri == TRUE
       ) |>
-      # Estimate a dely fore
+      # Estimate a delay for each age group across nowcast dates
       group_by(age_group, delay_time) |>
       summarise(mean_delay = mean(delay)) |>
       mutate(cdf = cumsum(mean_delay))

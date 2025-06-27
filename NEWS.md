@@ -5,7 +5,7 @@
 -   Add the necessary intermediate targets and figure targets for the model permutation case study.
 -   Add the necessary intermediate targets and figure targets for the Hub validation case study.
 -   Set up estimating and applying dispersion to 7 day rolling sum of hospital admissions for Covid case study and compare nowcasts.
--   Generate a configuration file to generate the model permuations applied to the Covid case study.
+-   Generate a configuration file to generate the model permutations applied to the Covid case study.
 -   Load in the KIT simple nowcasts for each nowcast date in the Covid case study and combine with the corresponding model permutation.
 -   Modularise the pipeline to avoid using the wrapper functions and instead generating each component of the `baselinenowcast` pipeline.
 -   First draft of supplement with mathematical model.

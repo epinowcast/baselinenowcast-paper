@@ -44,7 +44,8 @@ Imports:
   cowplot,
   RColorBrewer,
   patchwork,
-  fs
+  fs,
+  cli
 Suggests:
     bookdown,
     targets,

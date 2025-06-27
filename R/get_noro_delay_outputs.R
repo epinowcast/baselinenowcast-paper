@@ -1,7 +1,7 @@
 #' Get norovirus delay outputs
 #'
 #' @inheritParams run_noro_nowcast_pipeline
-#'
+#' @importFrom cli cli_abort
 #' @returns Data.frame of delays with metadata
 get_noro_delay_outputs <- function(noro_df,
                                    nowcast_date,
@@ -83,14 +83,14 @@ get_noro_delay_outputs <- function(noro_df,
       # We want something from nowcast date to nowcast date - max_delay
       filter(
         reference_date <= nowcast_date,
-        reference_date >= nowcast_date - days(max_delay)
+        reference_date >= ymd(nowcast_date) - days(max_delay)
       ) |>
       distinct(reference_date) |>
       arrange(reference_date) |>
       pull()
 
-    if (length(delay_pmf) == length(reference_dates)) {
-      cli_abort(message = c(
+    if (length(delay_pmf) != length(reference_dates)) {
+      cli::cli_abort(message = c(
         "Length of delay PMF and reference dates do not line up "
       ))
     }

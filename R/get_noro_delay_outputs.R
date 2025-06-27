@@ -90,9 +90,10 @@ get_noro_delay_outputs <- function(noro_df,
       pull()
 
     if (length(delay_pmf) != length(reference_dates)) {
-      cli::cli_abort(message = c(
-        "Length of delay PMF and reference dates do not line up "
-      ))
+      cli::cli_abort(
+        message =
+          "Length of delay PMF and reference dates do not line up "
+      )
     }
 
     date_df <- tibble(reference_date = reference_dates) |>

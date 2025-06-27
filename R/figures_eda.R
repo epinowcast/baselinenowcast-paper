@@ -49,7 +49,7 @@ get_plot_data_as_of <- function(final_df,
 #' Get a plot of the nowcasts string together for all dates or a set of dates
 #'
 #' @param all_nowcasts Dataframe of the quantiled nowcasts (in wide format)
-#' @param final_summed_data Dtaaframe of the sum of the counts by reference
+#' @param final_summed_data Dataframe of the sum of the counts by reference
 #'    date as of the final reference data + the eval time frame.
 #' @param nowcast_dates_to_plot Vector of character strings of the dates you
 #'   wish to plot, default is `NULL` which will plot all of them

@@ -1,4 +1,4 @@
-#' Placeholder function for extracting the outputs from the Norovirus papaer
+#' Placeholder function for extracting the outputs from the Norovirus paper
 #'
 #' @param data_from_bnc Data.frame of the output from baselinenowcast
 #' @param models Vector of character strings indicating which models from

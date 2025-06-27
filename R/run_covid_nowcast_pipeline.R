@@ -170,9 +170,17 @@ run_covid_nowcast_pipeline <- function(
   )) |>
     mutate(time = seq_len(nrow(point_nowcast_mat)))
 
+  # Recompute delay_pmf using only the max_delay+1
+  delay_pmf_recent <- get_delay_estimate(
+    reporting_triangle = triangle_for_delay,
+    max_delay = max_delay,
+    n = max_delay + 1
+  )
+
+
   delay_df <- data.frame(
-    delay = delay_pmf,
-    delay_time = 0:(length(delay_pmf) - 1)
+    delay = delay_pmf_recent,
+    delay_time = 0:(length(delay_pmf_recent) - 1)
   ) |>
     mutate(
       model = "base",
@@ -185,7 +193,7 @@ run_covid_nowcast_pipeline <- function(
     )
   mean_delay_df <- data.frame(
     mean_delay =
-      sum(delay_pmf * (0:(length(delay_pmf) - 1)))
+      sum(delay_pmf_recent * (0:(length(delay_pmf_recent) - 1)))
   ) |>
     mutate(
       model = "base",

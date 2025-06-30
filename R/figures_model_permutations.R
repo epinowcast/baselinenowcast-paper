@@ -152,15 +152,20 @@ get_plot_bar_chart_scores_mp <- function(scores,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
-      legend.title = element_blank()
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     labs(
-      y = "WIS", x = "",
-      color = "Model permutation"
+      y = "WIS", x = ""
     ) +
-    facet_grid(. ~ model_variation, switch = "x") +
-    scale_fill_manual(values = plot_colors$permutation_colors) +
+    facet_grid(. ~ model_variation,
+      switch = "x",
+      space = "free_x",
+      scales = "free_x"
+    ) +
+    scale_fill_manual(
+      name = "Model permutation",
+      values = plot_colors$permutation_colors
+    ) +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
@@ -268,21 +273,23 @@ get_plot_coverage_by_mp <- function(all_coverage,
       ),
       stat = "identity", position = "stack"
     ) +
-    facet_grid(. ~ model_variation, switch = "x") +
+    facet_grid(. ~ model_variation,
+      switch = "x",
+      space = "free_x", scales = "free_x"
+    ) +
     get_plot_theme() +
     theme(
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
-      legend.title = element_blank()
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     scale_fill_manual(
-      name = "",
+      name = "Model permutation",
       values = plot_comps$permutation_colors
     ) +
     scale_alpha_manual(
-      name = "Empirical coverage",
+      name = "WIS breakdown",
       values = plot_comps$coverage_alpha
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
@@ -446,7 +453,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     ggtitle(glue::glue("Relative WIS components by age group for all model permutations")) # nolint
 
   if (isTRUE(facet)) {
-    p <- p + facet_wrap(~component, nrow = 3)
+    p <- p + facet_wrap(~component, nrow = 3, scales = "free_y")
   }
 
   return(p)
@@ -518,7 +525,7 @@ get_plot_wis_by_age_group_mp <- function(
       strip.background = element_rect(color = NA, fill = NA),
       legend.position = "bottom"
     ) +
-    facet_grid(. ~ age_group, switch = "x") +
+    facet_grid(. ~ age_group, switch = "x", scales = "free_y") +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_comps$score_alpha
@@ -803,6 +810,16 @@ make_fig_model_perms <- function(
       design = fig_layout,
       axes = "collect",
       guides = "collect"
+    ) +
+    plot_annotation(
+      tag_levels = "A",
+      tag_suffix = ".", # adds a period after each letter
+      tag_sep = "" # no separator between tag levels
+    ) +
+    plot_annotation(
+      tag_levels = "A",
+      tag_suffix = ".", # adds a period after each letter
+      tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.justification = "left"

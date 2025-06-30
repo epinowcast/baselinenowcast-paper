@@ -38,11 +38,12 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
     geom_bar(stat = "identity", position = "stack") +
     coord_flip() +
     get_plot_theme() +
-    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
     labs(
-      x = "Model", y = "WIS",
-      pattern = "Score Breakdown",
-      color = "Model"
+      x = "Model", y = "WIS"
     ) +
     scale_alpha_manual(
       name = "WIS breakdown",
@@ -110,8 +111,14 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    scale_color_manual(values = plot_colors$model_colors) +
-    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_color_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence")
@@ -148,7 +155,10 @@ get_plot_wis_over_time <- function(scores_summarised,
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    scale_color_manual(values = plot_colors$model_colors) +
+    scale_color_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
     ggtitle(glue("WIS over time by model across all horizons: {strata}")) +
     xlab("") +
     ylab("WIS")
@@ -191,14 +201,15 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA),
-      legend.title = element_blank()
     ) +
     labs(
-      y = "WIS", x = "",
-      color = "Model"
+      y = "WIS", x = ""
     ) +
     facet_grid(. ~ age_group, switch = "x") +
-    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
@@ -815,7 +826,13 @@ make_fig_hub_validation <- function(
     plot_mean_cdf_delay_by_age +
     plot_layout(
       design = fig_layout,
-      axes = "collect"
+      axes = "collect",
+      guides = "collect"
+    ) +
+    plot_annotation(
+      tag_levels = "A",
+      tag_suffix = ".", # adds a period after each letter
+      tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.justification = "left"

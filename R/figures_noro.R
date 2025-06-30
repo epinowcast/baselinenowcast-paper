@@ -122,10 +122,12 @@ get_bar_chart_sum_scores_noro <- function(scores) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
-      legend.title = element_blank()
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
-    facet_grid(. ~ model_type, switch = "x") +
+    facet_grid(. ~ model_type,
+      switch = "x",
+      space = "free_x", scales = "free_x"
+    ) +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
@@ -172,7 +174,7 @@ get_plot_rel_wis_over_time <- function(scores) {
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log10") +
     scale_color_manual(
-      name = "",
+      name = "Model",
       values = plot_comps$model_colors
     ) +
     scale_x_date( # Jan 2023, Feb 2023, etc.
@@ -414,6 +416,11 @@ make_fig_noro <- function(plot_noro_nowcasts,
       design = fig_layout,
       axes = "collect",
       guides = "collect"
+    ) +
+    plot_annotation(
+      tag_levels = "A",
+      tag_suffix = ".", # adds a period after each letter
+      tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.justification = "left"

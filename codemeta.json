@@ -359,9 +359,21 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=fs"
     },
+    "17": {
+      "@type": "SoftwareApplication",
+      "identifier": "cli",
+      "name": "cli",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=cli"
+    },
     "SystemRequirements": null
   },
-  "fileSize": "1467.107KB",
+  "fileSize": "1537.493KB",
   "releaseNotes": "https://github.com/epinowcast/baselinenowcast-paper/blob/master/NEWS.md",
   "readme": "https://github.com/epinowcast/baselinenowcast-paper/blob/main/README.md"
 }

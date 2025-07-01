@@ -42,6 +42,7 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       name = "Model",
       values = plot_colors$model_colors
     ) +
+    guides(fill = "none") +
     labs(
       x = "Model", y = "WIS"
     ) +
@@ -100,11 +101,19 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
       ),
       alpha = 0.3
     ) +
-    geom_line(aes(x = reference_date, y = observed),
-      color = "red"
+    geom_line(
+      aes(
+        x = reference_date, y = observed,
+        linetype = "Final evaluation data"
+      ),
+      color = "red", linewidth = 1
     ) +
-    geom_line(aes(x = reference_date, y = data_as_of),
-      color = "gray"
+    geom_line(
+      aes(
+        x = reference_date, y = data_as_of,
+        linetype = "Data as of nowcast date"
+      ),
+      color = "gray", linewidth = 1
     ) +
     get_plot_theme() +
     scale_x_date(
@@ -114,6 +123,17 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
     scale_color_manual(
       name = "Model",
       values = plot_colors$model_colors
+    ) +
+    # Add scale for the reference lines
+    scale_linetype_manual(
+      name = "",
+      values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
+      guide = guide_legend(
+        override.aes = list(
+          color = c("Final evaluation data" = "red", "Data as of nowcast date" = "gray"),
+          linewidth = 1
+        )
+      )
     ) +
     scale_fill_manual(
       name = "Model",
@@ -159,6 +179,7 @@ get_plot_wis_over_time <- function(scores_summarised,
       name = "Model",
       values = plot_colors$model_colors
     ) +
+    guides(color = "none") +
     ggtitle(glue("WIS over time by model across all horizons: {strata}")) +
     xlab("") +
     ylab("WIS")
@@ -200,16 +221,17 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
     ) +
     labs(
-      y = "WIS", x = ""
+      y = "WIS", x = "", fill = ""
     ) +
     facet_grid(. ~ age_group, switch = "x") +
     scale_fill_manual(
       name = "Model",
       values = plot_colors$model_colors
     ) +
+    guides(fill = "none") +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
@@ -834,6 +856,7 @@ make_fig_hub_validation <- function(
       tag_suffix = ".", # adds a period after each letter
       tag_sep = "" # no separator between tag levels
     ) & theme(
+    # legend.position = "none"
     legend.position = "top",
     legend.justification = "left"
   )

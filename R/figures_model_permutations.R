@@ -64,11 +64,19 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       ),
       alpha = 0.3
     ) +
-    geom_line(aes(x = reference_date, y = observed),
+    geom_line(
+      aes(
+        x = reference_date, y = observed,
+        linetype = "Final evaluation data"
+      ),
       color = "red"
     ) +
-    geom_line(aes(x = reference_date, y = data_as_of),
-      color = "gray", linetype = "dashed"
+    geom_line(
+      aes(
+        x = reference_date, y = data_as_of,
+        linetype = "Data as of nowcast date"
+      ),
+      color = "gray"
     ) +
     facet_wrap(~model_variation, nrow = 3) +
     get_plot_theme() +
@@ -78,6 +86,16 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
     scale_fill_manual(values = plot_colors$permutation_colors) +
+    scale_linetype_manual(
+      name = "",
+      values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
+      guide = guide_legend(
+        override.aes = list(
+          color = c("Final evaluation data" = "red", "Data as of nowcast date" = "gray"),
+          linewidth = 1
+        )
+      )
+    ) +
     labs(fill = "Model permutation") +
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +

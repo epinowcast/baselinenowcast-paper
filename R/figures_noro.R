@@ -47,14 +47,17 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     )) +
     geom_line(
       aes(
-        x = reference_date,
-        y = data_as_of
+        x = reference_date, y = observed,
+        linetype = "Final evaluation data"
       ),
-      color = "gray"
+      color = "red", linewidth = 1
     ) +
     geom_line(
-      aes(x = reference_date, y = observed),
-      color = "red"
+      aes(
+        x = reference_date, y = data_as_of,
+        linetype = "Data as of nowcast date"
+      ),
+      color = "gray", linewidth = 1
     ) +
     theme_bw() +
     facet_wrap(~model_type, nrow = 2) +
@@ -78,6 +81,16 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     scale_fill_manual(
       values = plot_colors$model_colors,
       name = "Model"
+    ) +
+    scale_linetype_manual(
+      name = "",
+      values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
+      guide = guide_legend(
+        override.aes = list(
+          color = c("Final evaluation data" = "red", "Data as of nowcast date" = "gray"),
+          linewidth = 1
+        )
+      )
     ) +
     # nolint end
     xlab("") +

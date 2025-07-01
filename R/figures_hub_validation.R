@@ -12,7 +12,7 @@
 #' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_bar
-#'    scale_alpha_manual
+#'    scale_alpha_manual guide_legend
 get_plot_bar_chart_sum_scores <- function(joined_scores,
                                           strata = "age groups") {
   if (strata == "age groups") {
@@ -77,7 +77,7 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
 #'    of each model
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
-#'    facet_wrap scale_color_manual scale_fill_manual
+#'    facet_wrap scale_color_manual scale_fill_manual guide_legend
 #' @importFrom dplyr filter
 #' @returns ggplot object
 #' @autoglobal
@@ -127,7 +127,7 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
     ) +
     get_plot_theme() +
     scale_x_date(
-      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -138,10 +138,16 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
     # Add scale for the reference lines
     scale_linetype_manual(
       name = "Observed data",
-      values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
+      values = c(
+        "Final evaluation data" = "solid",
+        "Data as of nowcast date" = "solid"
+      ),
       guide = guide_legend(
         override.aes = list(
-          color = c("Final evaluation data" = "red", "Data as of nowcast date" = "gray"),
+          color = c(
+            "Final evaluation data" = "red",
+            "Data as of nowcast date" = "gray"
+          ),
           linewidth = 1
         )
       )
@@ -191,7 +197,7 @@ get_plot_wis_over_time <- function(scores_summarised,
     )) +
     get_plot_theme() +
     scale_x_date(
-      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -241,7 +247,7 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     labs(
       y = "WIS", x = "", fill = ""
@@ -271,7 +277,7 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #'    scale_x_date scale_color_manual scale_linewidth_manual
-#'    guides
+#'    guides guide_legend
 get_plot_mean_delay_over_time <- function(delays_over_time) {
   plot_comps <- plot_components()
   p <- ggplot(data = delays_over_time) +
@@ -283,7 +289,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
-      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -311,7 +317,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
 #'
 #' @returns ggplot object
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_line aes labs guides
+#' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend
 get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
   plot_comps <- plot_components()
   p <- ggplot(avg_delays_by_age) +

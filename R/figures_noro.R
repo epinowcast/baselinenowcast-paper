@@ -9,7 +9,7 @@
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw
 #'    theme geom_ribbon geom_point scale_x_date element_text coord_cartesian
-#'    geom_vline scale_color_manual scale_fill_manual
+#'    geom_vline scale_color_manual scale_fill_manual guide_legend
 #' @importFrom glue glue
 #' @importFrom dplyr filter
 #' @importFrom lubridate ymd
@@ -64,7 +64,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     theme_bw() +
     facet_wrap(~model_type, nrow = 2) +
     scale_x_date(
-      limits = c(as.Date("2023-10-30"), as.Date("2024-03-10")),
+      limits = as.Date(c("2023-10-30", "2024-03-10")),
       date_breaks = "1 week", # Break every month
       date_labels = "%b %Y"
     ) +
@@ -88,10 +88,16 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     coord_cartesian(ylim = c(0, 110)) +
     scale_linetype_manual(
       name = "Observed data",
-      values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
+      values = c(
+        "Final evaluation data" = "solid",
+        "Data as of nowcast date" = "solid"
+      ),
       guide = guide_legend(
         override.aes = list(
-          color = c("Final evaluation data" = "red", "Data as of nowcast date" = "gray"),
+          color = c(
+            "Final evaluation data" = "red",
+            "Data as of nowcast date" = "gray"
+          ),
           linewidth = 1
         )
       )
@@ -121,7 +127,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
 #' @autoglobal
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
-#'    ggtitle element_blank scale_alpha_manual geom_bar
+#'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
 get_bar_chart_sum_scores_noro <- function(scores) {
   scores_summary <- scores |>
     summarise_scores(by = c("model", "model_type")) |>
@@ -210,7 +216,7 @@ get_plot_rel_wis_over_time <- function(scores) {
       values = plot_comps$model_colors
     ) +
     scale_x_date( # Jan 2023, Feb 2023, etc.
-      limits = c(as.Date("2023-10-30"), as.Date("2024-03-10")),
+      limits = as.Date(c("2023-10-30", "2024-03-10")),
       date_breaks = "1 week", # Break every month
       date_labels = "%b %Y"
     ) +
@@ -290,7 +296,7 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #' @returns ggplot object
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual
-#'    ggtitle element_blank scale_alpha_manual geom_bar
+#'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
 #' @autoglobal
 #' @importFrom dplyr select filter rename mutate
 get_plot_mean_delay_t_by_wday <- function(delay_dfs,
@@ -333,7 +339,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date( # Jan 2023, Feb 2023, etc.
-      limits = c(as.Date("2023-10-30"), as.Date("2024-03-10")),
+      limits = as.Date(c("2023-10-30", "2024-03-10")), ,
       date_breaks = "1 week", # Break every month
       date_labels = "%b %Y"
     ) +

@@ -11,7 +11,7 @@
 #' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
-#'    facet_wrap scale_color_manual scale_fill_manual
+#'    facet_wrap scale_color_manual scale_fill_manual guide_legend
 #' @importFrom dplyr filter
 #' @returns ggplot object
 #' @autoglobal
@@ -81,7 +81,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     facet_wrap(~model_variation, nrow = 3) +
     get_plot_theme() +
     scale_x_date(
-      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -89,10 +89,16 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     scale_fill_manual(values = plot_colors$permutation_colors) +
     scale_linetype_manual(
       name = "Observed data",
-      values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
+      values = c(
+        "Final evaluation data" = "solid",
+        "Data as of nowcast date" = "solid"
+      ),
       guide = guide_legend(
         override.aes = list(
-          color = c("Final evaluation data" = "red", "Data as of nowcast date" = "gray"),
+          color = c(
+            "Final evaluation data" = "red",
+            "Data as of nowcast date" = "gray"
+          ),
           linewidth = 1
         )
       )
@@ -139,7 +145,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
 #' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme coord_flip geom_bar
-#'    scale_alpha_manual facet_grid scale_fill_manual xlab ylab
+#'    scale_alpha_manual facet_grid scale_fill_manual xlab ylab guide_legend
 get_plot_bar_chart_scores_mp <- function(scores,
                                          strata = "age groups") {
   if (strata == "age groups") {
@@ -156,7 +162,10 @@ get_plot_bar_chart_scores_mp <- function(scores,
       model_variation_string, overprediction,
       underprediction, dispersion
     ) |>
-    pivot_longer(cols = c("overprediction", "underprediction", "dispersion")) |>
+    pivot_longer(cols = c(
+      "overprediction", "underprediction",
+      "dispersion"
+    )) |>
     mutate(name = factor(name, levels = c(
       "overprediction",
       "dispersion",
@@ -166,8 +175,10 @@ get_plot_bar_chart_scores_mp <- function(scores,
       model_variation =
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
-          model_variation == "Borrow for delay and uncertainty estimation" ~ "Borrow for delay\nand uncertainty\nestimation",
-          model_variation == "Reporting triangle completeness" ~ "Reporting triangle\ncompleteness",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay\nand uncertainty\nestimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
         )
     )
@@ -257,8 +268,10 @@ get_plot_rel_wis_over_time_mp <- function(scores,
       model_variation =
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
-          model_variation == "Borrow for delay and uncertainty estimation" ~ "Borrow for delay\nand uncertainty\nestimation",
-          model_variation == "Reporting triangle completeness" ~ "Reporting triangle\ncompleteness",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay\nand uncertainty\nestimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
         )
     )
@@ -272,7 +285,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     get_plot_theme() +
     scale_x_date(
-      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -324,8 +337,10 @@ get_plot_coverage_by_mp <- function(all_coverage,
       model_variation =
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
-          model_variation == "Borrow for delay and uncertainty estimation" ~ "Borrow for delay\nand uncertainty\nestimation",
-          model_variation == "Reporting triangle completeness" ~ "Reporting triangle\ncompleteness",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay\nand uncertainty\nestimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
         )
     )
@@ -380,6 +395,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
 #' @inheritParams get_plot_bar_chart_scores_mp
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#'    guide_legend
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
 #' @importFrom glue glue
@@ -415,8 +431,10 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
       model_variation =
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
-          model_variation == "Borrow for delay and uncertainty estimation" ~ "Borrow for delay\nand uncertainty\nestimation",
-          model_variation == "Reporting triangle completeness" ~ "Reporting triangle\ncompleteness",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay\nand uncertainty\nestimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
         )
     )

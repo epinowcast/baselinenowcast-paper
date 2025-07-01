@@ -200,7 +200,7 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     labs(
       y = "WIS", x = ""
@@ -794,7 +794,7 @@ get_plot_coverage_by_age_group <- function(
 #'    Default is `TRUE`.
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom patchwork plot_layout
+#' @importFrom patchwork plot_layout plot_annotation
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel

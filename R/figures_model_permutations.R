@@ -776,7 +776,7 @@ get_plot_wis_by_week_mp <- function(
 #'    Default is `TRUE`.
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom patchwork plot_layout
+#' @importFrom patchwork plot_layout plot_annotation
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel

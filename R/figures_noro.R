@@ -387,6 +387,12 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
 #' @inheritParams  make_fig_model_perms
 #'
 #' @returns ggplot
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout plot_annotation
+#' @importFrom ggplot2 ggsave theme
+#' @importFrom fs dir_create
+#' @returns ggplot object as a gridded panel
 make_fig_noro <- function(plot_noro_nowcasts,
                           bar_chart_wis_noro,
                           rel_wis_by_week_noro,

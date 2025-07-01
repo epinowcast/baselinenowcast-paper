@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_mellor_et_al_outputs.R
 \name{get_mellor_et_al_outputs}
 \alias{get_mellor_et_al_outputs}
-\title{Placeholder function for extracting the outputs from the Norovirus papaer}
+\title{Placeholder function for extracting the outputs from the Norovirus paper}
 \usage{
 get_mellor_et_al_outputs(
   data_from_bnc,
@@ -20,5 +20,5 @@ Mellor et al to include. Default is
 Data.frame labeled with models from Mellor et al
 }
 \description{
-Placeholder function for extracting the outputs from the Norovirus papaer
+Placeholder function for extracting the outputs from the Norovirus paper
 }

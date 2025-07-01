@@ -14,7 +14,7 @@ output:
 
 ## Mathematical model
 
-This model was initially developed as a reference model for the COVID-19 hospitalisations nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. It uses preliminary case count and their delays in the form of reporting triangles, and uses empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout.
+This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. It uses preliminary case count and their delays in the form of reporting triangles, and uses empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout.
 
 ### Notation
 
@@ -22,14 +22,20 @@ We denote $X_{t,d}, d = 0, .., D$ as the number of cases occurring on time $t$ w
 
 $$X_{t, \le d} = \sum_{i=0}^d X_{t,i} $$
 
-Such that $X_t = X_{t, \le D}$ is the “final” number of reported cases on time $t$. Conversely, for $d < D$
+A special case of this is the "final" number of reported cases at time $t$, $X_t$:
+
+$$
+X_t = X_{t, \le D} = \sum_{i=0}^D X_{t,i}
+$$
+
+Conversely, for delays less than the maximum delay $d < D$, we defined $X_{t,>d}$ by
 
 $$X_{t,>d} = \sum_{i = d+1} ^{D} X_{t,i}$$
 
-is the number of cases still missing after $d$ delay. We refer to $X_t$ to describe a random variable, $x_t$ for the corresponding observation, and $\hat{x}_t$ for an estimated/imputed value. The matrix of $x_{t,d}$ available at a given time $t^*$ is referred to as a reporting matrix. In the case where all $t+d>t^*$ have yet to be observed (e.g. $t^*$ is the current time), this reporting matrix is referred to as the reporting triangle, with all values in the bottom right corner of the triangle being missing, except for the first entry at $x_{t=t*, d = 0}$.
+representing the number of cases still missing after $d$ delay. We refer to $X_t$ to describe a random variable, $x_t$ for the corresponding observation, and $\hat{x}_t$ for an estimated/imputed value. The matrix of $x_{t,d}$ available at a given time $t^*$ is referred to as a reporting matrix. In the case where all $t+d>t^*$ have yet to be observed (e.g. $t^*$ is the current time), this reporting matrix is referred to as the reporting triangle, with all values in the bottom right corner of the triangle being missing, except for the first entry at $x_{t=t*, d = 0}$.
 
 |   | $d = 0$ | $d = 1$ | $d=2$ | $...$ | $d= D-1$ | $d= D$ |
-|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+|----|----|----|----|----|----|----|
 | $t=1$ | $x_{1,0}$ | $x_{1,1}$ | $x_{1,2}$ | $...$ | $x_{1,D-1}$ | $x_{1, D}$ |
 | $t=2$ | $x_{2,0}$ | $x_{2,1}$ | $x_{2,2}$ | $...$ | $x_{2,D-1}$ | $x_{2, D}$ |
 | $t=3$ | $x_{3,0}$ | $x_{3,1}$ | $x_{3,2}$ | $...$ | $x_{3,D-1}$ | $x_{3, D}$ |
@@ -41,7 +47,7 @@ is the number of cases still missing after $d$ delay. We refer to $X_t$ to descr
 
 #### Estimate of the delay distribution from a reporting matrix
 
-We can use a reporting matrix to compute an empirical estimate of the delay distribution, $\pi_d$. The empirical delay distribution, $\pi(d)$ can be computed directly from the reporting matrix $X$ using the latest $N$ reference times via:
+We can use a reporting matrix to compute an empirical estimate of the delay distribution, $\pi_d$. The empirical delay distribution, $\pi_d$ can be computed directly from the reporting matrix $X$ using the latest $N$ reference times via:
 
 $$
 \pi_d= \frac{\sum_{t=t^*-N+1}^{t=t^*} X_{t,d}}{\sum_{d'=0}^{D} \sum_{t=t^*-N+1}^{t=t^*} X_{t,d'}}
@@ -51,39 +57,33 @@ Where the numerator is the sum of all the observations across reference times $t
 
 #### Multiplicative model
 
-In the case where we have missing values in the bottom right (i.e. we have a reporting triangle), the estimator (\pi_d) can only be evaluated after discarding all data from the last $D-1$ time points.
-In order to use the partial information contained in the most recent $D-1$ time points, we use a different representation of the delay distribution via terms of the form:
+In the case where we have missing values in the bottom right (i.e. we have a reporting triangle), the estimator $\pi_d$ can only be evaluated as written in \@ref(eq:pi_d) after discarding all data from the last $D-1$ time points. In order to use the partial information contained in the most recent $D-1$ time points, we use a different representation of the delay distribution via terms of the form:
 
 $$
-\theta_d = \frac{\pi_d}{\pi_{<d}}
+\theta_d = \frac{\pi_d}{\pi_{\le d-1}}
 $$ {#eq:theta_d}
-Where
-$$
-\pi_{<d} = \sum_{d'=0}^{d-1} \pi_d
+
+Where $$
+\pi_{\le d-1} = \sum_{d'=0}^{d-1} \pi_d
 $$ {#eq:pi_less_than_d}
 
-These $\theta_d$ can be estimated via the equation above \@ref{eq:theta_d} and translated to $\pi_1,...,\pi_D$ via the recursion
+These $\theta_d$ can be estimated via the equation above \@ref(eq:theta_d) and translated to $\pi_1,...,\pi_D$ via the recursion
 
 $$
 \pi_{\leq d} = (1+\theta_d)\pi_{\leq d-1}
-$$
-Subject to the constrain that $\sum pi_i = 1$.
+$$ Subject to the constrain that $\sum \pi_i = 1$.
 
-The multiplicative model works by iteratively "filling in" the reporting triangle starting from the bottom left, and moving column by column from left to right until the bottom right of the triangle is filled in.
+![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1} <!--Noting that this caption should probably be written to refer back to theta and pi_d. My understanding is that theta is basically block top/ block top left, and we get block bottom by assuming the equivalence of  block top/block top left = block bottom/ block bottom left. -->
 
-![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1}
-<!--Noting that this caption should probably be written to refer back to theta and pi_d. My understanding is that theta is basically block top/ block top left, and we get block bottom by assuming the equivalence of  block top/block top left = block bottom/ block bottom left. -->
+The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above.
 
-The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above. The method assumes that the values at each delay $d$ for the recent times, $t$, will consist of the same proportion of the values previously reported for earlier times $t$. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases. <!-- I am guessing this is where the recipe comment from. We can remove this. However, I am in favor of making the key point that the multiplicative method -->
+The intuition behind the multiplicative method is the assumption that the values at each delay $d$ for the recent times, will consist of the same proportion of the values previously reported for earlier times. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums, $\theta_d$, is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.
 
-The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d).
-It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows.
-The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.
+The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d). It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows. The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.
 
 ### Point nowcast generation
 
-To obtain a "filled in" reporting triangle from any arbitrary delay PMF, $\pi_d$, we need to estimate the expected total number of eventual observed cases $\hat{x}_t$, for each reference time $t$.
-Let $x_{\leq t^*-t}$ be the sum over all delays $d$ that have already been observed (up until $t^*-t$), such that $x_{\leq t^*-t} =\sum_{d=1}^{d=t^*-t} x_{t,d}$ and $\pi_{\leq t^*-t}$ be the cumulative sum of the delay distribution, $\pi_d$ up until $d = t^*-t$ such that $\pi_{\leq t^*-t}= \sum_{d=1}^{d=t^*-t} \pi_d$. It can be shown (See [Zero-handling](#zero-handling-approximation) below) that the expected value of $X_t$, the total number of reported cases on reference time $t$, can be written as: <!-- Getting a bit confused with what should be a r.v. here, I think X_t should be capitalized bc it is a r.v. but x_{\leq t^*-t} should be lowercase because its all observatons -->
+To obtain a point nowcast matrix from a reporting triangle and any arbitrary delay PMF, $\pi_d$, we need to estimate the expected total number of eventual observed cases $\hat{x}_t$, for each reference time $t$. Let $x_{\leq t^*-t}$ be the sum over all delays $d$ that have already been observed (up until $t^*-t$), such that $x_{\leq t^*-t} =\sum_{d=1}^{d=t^*-t} x_{t,d}$ and $\pi_{\leq t^*-t}$ be the cumulative sum of the delay distribution, $\pi_d$ up until $d = t^*-t$ such that $\pi_{\leq t^*-t}= \sum_{d=1}^{d=t^*-t} \pi_d$. It can be shown (See [Zero-handling](#zero-handling-approximation) below) that the expected value of $X_t$, the total number of reported cases on reference time $t$, can be written as:
 
 $$
 E(X_t | x_{\leq t^*-t}, \pi_{\leq t^*-t}) = \hat{x}_t = \frac{x_{\leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\pi_{\leq t^*-t}}
@@ -92,7 +92,7 @@ $$
 Then we can compute $\hat{x}_{t,d}$ directly using the $d$th element of $\pi_d$
 
 $$
-\hat{x}_{t,d} = \pi_d_ \times \hat{x}_t
+\hat{x}_{t,d} = \pi_d \times \hat{x}_t
 $$
 
 Where the number of reports at timepoint $t$ with delay $d$ is the product of the the expected total reports, $\hat{x}_t$ and the proportion expected at that particular delay $d$, $\pi(d)$.

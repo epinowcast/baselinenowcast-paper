@@ -40,8 +40,6 @@ Default is \code{TRUE}.}
 }
 \value{
 ggplot
-
-ggplot object as a gridded panel
 }
 \description{
 Make panel for main norovirus figure

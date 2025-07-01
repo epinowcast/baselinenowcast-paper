@@ -12,6 +12,7 @@
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
 #'    facet_wrap scale_color_manual scale_fill_manual guide_legend
+#'    scale_linetype_manual
 #' @importFrom dplyr filter
 #' @returns ggplot object
 #' @autoglobal
@@ -166,12 +167,12 @@ get_plot_bar_chart_scores_mp <- function(scores,
       "overprediction", "underprediction",
       "dispersion"
     )) |>
-    mutate(name = factor(name, levels = c(
-      "overprediction",
-      "dispersion",
-      "underprediction"
-    ))) |>
     mutate(
+      name = factor(name, levels = c(
+        "overprediction",
+        "dispersion",
+        "underprediction"
+      )),
       model_variation =
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
@@ -908,11 +909,6 @@ make_fig_model_perms <- function(
       design = fig_layout,
       axes = "collect",
       guides = "collect"
-    ) +
-    plot_annotation(
-      tag_levels = "A",
-      tag_suffix = ".", # adds a period after each letter
-      tag_sep = "" # no separator between tag levels
     ) +
     plot_annotation(
       tag_levels = "A",

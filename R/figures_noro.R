@@ -65,7 +65,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     facet_wrap(~model_type, nrow = 2) +
     scale_x_date(
       limits = as.Date(c("2023-10-30", "2024-03-10")),
-      date_breaks = "1 week", # Break every month
+      date_breaks = "1 week",
       date_labels = "%b %Y"
     ) +
     theme(
@@ -217,7 +217,7 @@ get_plot_rel_wis_over_time <- function(scores) {
     ) +
     scale_x_date( # Jan 2023, Feb 2023, etc.
       limits = as.Date(c("2023-10-30", "2024-03-10")),
-      date_breaks = "1 week", # Break every month
+      date_breaks = "1 week", #
       date_labels = "%b %Y"
     ) +
     theme(
@@ -339,8 +339,8 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date( # Jan 2023, Feb 2023, etc.
-      limits = as.Date(c("2023-10-30", "2024-03-10")), ,
-      date_breaks = "1 week", # Break every month
+      limits = as.Date(c("2023-10-30", "2024-03-10")),
+      date_breaks = "1 week",
       date_labels = "%b %Y"
     ) +
     theme(
@@ -356,7 +356,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
       labels = NULL
     ) +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5),
+      color = guide_legend(title.position = "top", title.hjust = 0.5)
     ) +
     xlab("") +
     ylab("Mean delay over time")
@@ -444,7 +444,6 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
 #' @importFrom patchwork plot_layout plot_annotation
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
-#' @returns ggplot object as a gridded panel
 make_fig_noro <- function(plot_noro_nowcasts,
                           bar_chart_wis_noro,
                           rel_wis_by_week_noro,

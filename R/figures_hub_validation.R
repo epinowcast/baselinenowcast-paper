@@ -78,6 +78,7 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
 #'    facet_wrap scale_color_manual scale_fill_manual guide_legend
+#'     scale_linetype_manual
 #' @importFrom dplyr filter
 #' @returns ggplot object
 #' @autoglobal
@@ -304,7 +305,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     xlab("") +
     ylab("Mean delay over time") +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5),
+      color = guide_legend(title.position = "top", title.hjust = 0.5)
     )
 
   return(p)
@@ -337,7 +338,7 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
     ylab("Cumulative delay distribution") +
     get_plot_theme() +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5),
+      color = guide_legend(title.position = "top", title.hjust = 0.5)
     )
 
 

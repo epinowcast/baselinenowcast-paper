@@ -83,7 +83,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       name = "Model"
     ) +
     scale_linetype_manual(
-      name = "",
+      name = "Observed data",
       values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
       guide = guide_legend(
         override.aes = list(

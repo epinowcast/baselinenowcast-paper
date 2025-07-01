@@ -42,7 +42,10 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       name = "Model",
       values = plot_colors$model_colors
     ) +
-    guides(fill = "none") +
+    theme(
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+    ) +
     labs(
       x = "Model", y = "WIS"
     ) +
@@ -50,7 +53,14 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       name = "WIS breakdown",
       values = plot_colors$score_alpha
     ) +
-    ggtitle(glue("Overall WIS: {strata}"))
+    ggtitle(glue("Overall WIS: {strata}")) +
+    guides(
+      fill = "none",
+      alpha = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 3
+      )
+    )
   return(p)
 }
 
@@ -117,6 +127,7 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
     ) +
     get_plot_theme() +
     scale_x_date(
+      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -126,7 +137,7 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
     ) +
     # Add scale for the reference lines
     scale_linetype_manual(
-      name = "",
+      name = "Observed data",
       values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
       guide = guide_legend(
         override.aes = list(
@@ -141,7 +152,15 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
     ) +
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
-    ylab("7-day hospitalisation incidence")
+    ylab("7-day hospitalisation incidence") +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5),
+      fill = guide_legend(title.position = "top", title.hjust = 0.5),
+      linetype = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 2
+      )
+    )
 
   if (isTRUE(facet)) {
     p <- p + facet_wrap(~model)
@@ -172,6 +191,7 @@ get_plot_wis_over_time <- function(scores_summarised,
     )) +
     get_plot_theme() +
     scale_x_date(
+      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -231,10 +251,13 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       name = "Model",
       values = plot_colors$model_colors
     ) +
-    guides(fill = "none") +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
+    ) +
+    guides(
+      fill = "none",
+      alpha = guide_legend(title.position = "top", title.hjust = 0.5)
     )
   return(p)
 }
@@ -260,6 +283,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
+      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -272,7 +296,10 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
       labels = NULL
     ) +
     xlab("") +
-    ylab("Mean delay over time")
+    ylab("Mean delay over time") +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5),
+    )
 
   return(p)
 }
@@ -302,7 +329,11 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
     ) +
     xlab("Delay (days)") +
     ylab("Cumulative delay distribution") +
-    get_plot_theme()
+    get_plot_theme() +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5),
+    )
+
 
 
   return(p)
@@ -856,8 +887,8 @@ make_fig_hub_validation <- function(
       tag_suffix = ".", # adds a period after each letter
       tag_sep = "" # no separator between tag levels
     ) & theme(
-    # legend.position = "none"
     legend.position = "top",
+    legend.title = element_text(hjust = 0.5),
     legend.justification = "left"
   )
 

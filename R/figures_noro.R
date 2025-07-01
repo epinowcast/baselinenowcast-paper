@@ -32,14 +32,14 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
         x = reference_date, ymin = `q_0.05`, ymax = `q_0.95`,
         group = nowcast_date_model, fill = model
       ),
-      alpha = 0.3
+      alpha = 0.2
     ) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.25`, ymax = `q_0.75`,
         group = nowcast_date_model, fill = model
       ),
-      alpha = 0.3
+      alpha = 0.2
     ) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
@@ -48,22 +48,25 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     geom_line(
       aes(
         x = reference_date, y = observed,
-        linetype = "Final evaluation data"
+        linetype = "Final evaluation data",
+        group = nowcast_date
       ),
       color = "red", linewidth = 1
     ) +
     geom_line(
       aes(
         x = reference_date, y = data_as_of,
-        linetype = "Data as of nowcast date"
+        linetype = "Data as of nowcast date",
+        group = nowcast_date
       ),
       color = "gray", linewidth = 1
     ) +
     theme_bw() +
     facet_wrap(~model_type, nrow = 2) +
     scale_x_date(
-      date_breaks = "1 week",
-      date_labels = "%Y-%m-%d"
+      limits = c(as.Date("2023-10-30"), as.Date("2024-03-10")),
+      date_breaks = "1 week", # Break every month
+      date_labels = "%b %Y"
     ) +
     theme(
       axis.text.x = element_text(
@@ -82,6 +85,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       values = plot_colors$model_colors,
       name = "Model"
     ) +
+    coord_cartesian(ylim = c(0, 110)) +
     scale_linetype_manual(
       name = "Observed data",
       values = c("Final evaluation data" = "solid", "Data as of nowcast date" = "solid"),
@@ -95,7 +99,15 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     # nolint end
     xlab("") +
     ylab(glue("{pathogen} cases")) +
-    ggtitle(glue("{title}"))
+    ggtitle(glue("{title}")) +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5),
+      fill = guide_legend(title.position = "top", title.hjust = 0.5),
+      linetype = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 2
+      )
+    )
 
   return(p)
 }
@@ -149,7 +161,14 @@ get_bar_chart_sum_scores_noro <- function(scores) {
       name = "Model",
       values = plot_colors$model_colors
     ) +
-    ggtitle("Overall WIS")
+    ggtitle("Overall WIS") +
+    guides(
+      fill = "none",
+      alpha = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 3
+      )
+    )
   return(p)
 }
 
@@ -191,14 +210,18 @@ get_plot_rel_wis_over_time <- function(scores) {
       values = plot_comps$model_colors
     ) +
     scale_x_date( # Jan 2023, Feb 2023, etc.
-      date_breaks = "2 weeks" # Break every month
+      limits = c(as.Date("2023-10-30"), as.Date("2024-03-10")),
+      date_breaks = "1 week", # Break every month
+      date_labels = "%b %Y"
     ) +
     theme(
       axis.text.x = element_text(angle = 45, hjust = 1),
       legend.position = "bottom"
     ) +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS over time relative to baselinenowcast default model configuration") # nolint
+    ggtitle("Relative WIS over time relative to baselinenowcast default model configuration") + # nolint
+    guides(color = "none")
+
   return(p)
 }
 
@@ -252,7 +275,8 @@ get_plot_rel_wis_by_weekday <- function(scores) {
       legend.position = "bottom"
     ) +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS by weekday relative to baselinenowcast default model configuration") # nolint
+    ggtitle("Relative WIS by weekday relative to baselinenowcast default model configuration") + # nolint
+    guides(color = "none")
   return(p)
 }
 
@@ -309,7 +333,9 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date( # Jan 2023, Feb 2023, etc.
-      date_breaks = "2 weeks" # Break every month
+      limits = c(as.Date("2023-10-30"), as.Date("2024-03-10")),
+      date_breaks = "1 week", # Break every month
+      date_labels = "%b %Y"
     ) +
     theme(
       axis.text.x = element_text(angle = 45, hjust = 1),
@@ -322,6 +348,9 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     scale_linewidth_manual(
       values = plot_comps$weekday_linewidth,
       labels = NULL
+    ) +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5),
     ) +
     xlab("") +
     ylab("Mean delay over time")
@@ -384,7 +413,11 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
     ) +
     xlab("Delay (days)") +
     ylab("Cumulative delay distribution") +
-    get_plot_theme()
+    get_plot_theme() +
+    guides(
+      color = "none",
+      linewidth = "none"
+    )
 
   return(p)
 }
@@ -442,6 +475,7 @@ make_fig_noro <- function(plot_noro_nowcasts,
       tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
+    legend.title = element_text(hjust = 0.5),
     legend.justification = "left"
   )
 
@@ -455,7 +489,7 @@ make_fig_noro <- function(plot_noro_nowcasts,
         glue("{fig_file_name}.png")
       ),
       width = 24,
-      height = 16
+      height = 18
     )
   }
   return(fig_noro)

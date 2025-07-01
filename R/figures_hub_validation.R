@@ -257,7 +257,7 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
     ) +
     guides(
       fill = "none",
-      alpha = guide_legend(title.position = "top", title.hjust = 0.5)
+      alpha = "none"
     )
   return(p)
 }

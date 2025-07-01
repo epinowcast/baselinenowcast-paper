@@ -51,14 +51,11 @@ Where the numerator is the sum of all the observations across reference times $t
 
 #### Multiplicative model
 
-In the case where we have missing values in the bottom right (i.e. we have a reporting triangle), the estimator (\pi_d) can only be evaluated after discarding all data from the last $D-1$ time points.
-In order to use the partial information contained in the most recent $D-1$ time points, we use a different representation of the delay distribution via terms of the form:
+In the case where we have missing values in the bottom right (i.e. we have a reporting triangle), the estimator (\pi\_d) can only be evaluated after discarding all data from the last $D-1$ time points. In order to use the partial information contained in the most recent $D-1$ time points, we use a different representation of the delay distribution via terms of the form:
 
 $$
 \theta_d = \frac{\pi_d}{\pi_{<d}}
-$$ {#eq:theta_d}
-Where
-$$
+$$ {#eq:theta_d} Where $$
 \pi_{<d} = \sum_{d'=0}^{d-1} \pi_d
 $$ {#eq:pi_less_than_d}
 
@@ -66,24 +63,19 @@ These $\theta_d$ can be estimated via the equation above \@ref{eq:theta_d} and t
 
 $$
 \pi_{\leq d} = (1+\theta_d)\pi_{\leq d-1}
-$$
-Subject to the constrain that $\sum pi_i = 1$.
+$$ Subject to the constrain that $\sum pi_i = 1$.
 
 The multiplicative model works by iteratively "filling in" the reporting triangle starting from the bottom left, and moving column by column from left to right until the bottom right of the triangle is filled in.
 
-![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1}
-<!--Noting that this caption should probably be written to refer back to theta and pi_d. My understanding is that theta is basically block top/ block top left, and we get block bottom by assuming the equivalence of  block top/block top left = block bottom/ block bottom left. -->
+![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1} <!--Noting that this caption should probably be written to refer back to theta and pi_d. My understanding is that theta is basically block top/ block top left, and we get block bottom by assuming the equivalence of  block top/block top left = block bottom/ block bottom left. -->
 
 The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above. The method assumes that the values at each delay $d$ for the recent times, $t$, will consist of the same proportion of the values previously reported for earlier times $t$. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases. <!-- I am guessing this is where the recipe comment from. We can remove this. However, I am in favor of making the key point that the multiplicative method -->
 
-The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d).
-It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows.
-The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.
+The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d). It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows. The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.
 
 ### Point nowcast generation
 
-To obtain a "filled in" reporting triangle from any arbitrary delay PMF, $\pi_d$, we need to estimate the expected total number of eventual observed cases $\hat{x}_t$, for each reference time $t$.
-Let $x_{\leq t^*-t}$ be the sum over all delays $d$ that have already been observed (up until $t^*-t$), such that $x_{\leq t^*-t} =\sum_{d=1}^{d=t^*-t} x_{t,d}$ and $\pi_{\leq t^*-t}$ be the cumulative sum of the delay distribution, $\pi_d$ up until $d = t^*-t$ such that $\pi_{\leq t^*-t}= \sum_{d=1}^{d=t^*-t} \pi_d$. It can be shown (See [Zero-handling](#zero-handling-approximation) below) that the expected value of $X_t$, the total number of reported cases on reference time $t$, can be written as: <!-- Getting a bit confused with what should be a r.v. here, I think X_t should be capitalized bc it is a r.v. but x_{\leq t^*-t} should be lowercase because its all observatons -->
+To obtain a "filled in" reporting triangle from any arbitrary delay PMF, $\pi_d$, we need to estimate the expected total number of eventual observed cases $\hat{x}_t$, for each reference time $t$. Let $x_{\leq t^*-t}$ be the sum over all delays $d$ that have already been observed (up until $t^*-t$), such that $x_{\leq t^*-t} =\sum_{d=1}^{d=t^*-t} x_{t,d}$ and $\pi_{\leq t^*-t}$ be the cumulative sum of the delay distribution, $\pi_d$ up until $d = t^*-t$ such that $\pi_{\leq t^*-t}= \sum_{d=1}^{d=t^*-t} \pi_d$. It can be shown (See [Zero-handling](#zero-handling-approximation) below) that the expected value of $X_t$, the total number of reported cases on reference time $t$, can be written as: <!-- Getting a bit confused with what should be a r.v. here, I think X_t should be capitalized bc it is a r.v. but x_{\leq t^*-t} should be lowercase because its all observatons -->
 
 $$
 E(X_t | x_{\leq t^*-t}, \pi_{\leq t^*-t}) = \hat{x}_t = \frac{x_{\leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\pi_{\leq t^*-t}}
@@ -95,8 +87,7 @@ $$
 \hat{x}_{t,d} = \pi_d_ \times \hat{x}_t
 $$
 
-Where the expected count at timepoint $t$ with delay $d$ is the product of the the expected total count, $\hat{x}_t$ and the proportion expected at that particular delay $d$, $\pi_d$.
-We will use the individual elements of the point nowcast matrix, $\hat{x}_{t,d}$ for uncertainty quantification.
+Where the expected count at timepoint $t$ with delay $d$ is the product of the the expected total count, $\hat{x}_t$ and the proportion expected at that particular delay $d$, $\pi_d$. We will use the individual elements of the point nowcast matrix, $\hat{x}_{t,d}$ for uncertainty quantification.
 
 ### Uncertainty quantification
 
@@ -106,8 +97,7 @@ To estimate the uncertainty in the nowcasts, we use past nowcast errors. In this
 
 We describe a method which generates retrospective reporting triangles to replicate what would have been available as of times$s^* = t^*-1, ..., t^*-M$ to generate $M$ retrospective reporting triangles.
 
-To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles.
-We then subsequently remove values which would not have been availbale as of each $s^*$, to generate $M$ retrospective reporting triangles.
+To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been availbale as of each $s^*$, to generate $M$ retrospective reporting triangles.
 
 #### Generation of retrospective point nowcast matrices
 
@@ -119,19 +109,15 @@ Thus in order to estimate uncertainty using $N$ reference times, the total train
 
 We quantify the uncertainty in the component of the target that corresponds to the counts that are still to be added. The default in the package assumes that the target is the final count at each reference time, summed across reporting delays, however, for the COVID-19 case study, the target is defined as the 7-day rolling sum of the counts at reference time, and therefore the uncertainty is quantified in the component of this quantity that has yet to be observed as of each reference time.
 
-At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function, for the retrospective nowcast $\hat{X}_{s^*,d}$ and the truncated observed component $x_{t= s^*,d}$.
-We define the component of the retrospective nowcast that is predicted as of $s^*$, but observed as of $t^*$ as:
+At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function, for the retrospective nowcast $\hat{X}_{s^*,d}$ and the truncated observed component $x_{t= s^*,d}$. We define the component of the retrospective nowcast that is predicted as of $s^*$, but observed as of $t^*$ as:
 
 $$
 \hat{X}_{s^*-j}(s^* >d) = \sum_{d=0}^{D} \hat{X}_{s^*-j,d} \times I(s^*-j+d \leq t^*)
-$$
-and likewise the corresponding component that has been observed as of $t^*$ for each retrospective nowcast time $s^*$ as:
-$$
+$$ and likewise the corresponding component that has been observed as of $t^*$ for each retrospective nowcast time $s^*$ as: $$
 x_{s^*-j}(s^*> d) = \sum_{d=0}^{D} x_{s^*-j,d} \times I(s^*-j+d \leq t^*)
 $$
 
-This generates $M$ pairs of predicted nowcast vectors and corresponding later observed nowcast vectors for each forecast horizon $j = 1, ..., D$.
-We assume that the later observed nowcasts vectors $x_{s^*-j, >d}$ follow a negative binomial observation model with a mean of $\hat{X}_{s^*-j}(s^*-j)$ <!-- Leaving in the +0.1 for now because we still use this to estimate, need to discuss, I now do not think we need it because the mean will never be 0-->
+This generates $M$ pairs of predicted nowcast vectors and corresponding later observed nowcast vectors for each forecast horizon $j = 1, ..., D$. We assume that the later observed nowcasts vectors $x_{s^*-j, >d}$ follow a negative binomial observation model with a mean of $\hat{X}_{s^*-j}(s^*-j)$ <!-- Leaving in the +0.1 for now because we still use this to estimate, need to discuss, I now do not think we need it because the mean will never be 0-->
 
 $$
 x_{s^*-j} | \hat{X}_{s^*-j}(j) \sim \text{NegBin}(\mu = \hat{X}_{s^*-j}(s^*-j) + 0.1, disp= \phi_j)
@@ -227,20 +213,22 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ### Model permutation study
 
-![Fig S8. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs8}
+![Fig S8. Daily nowcasts overall from all age groups arrange in three facets (by row), with each showing the baseline validation model alongside variants from a specific permutation category: top row shows training data volume variations, middle row shows reporting triangle completeness variations, and bottom row shows borrowing strategy variations. Each model configuration has a consistent, distinct colour across all panels, with the baseline validation approach highlighted in black. Observed data are shown as solid lines with gray indicating data available at the nowcast date and red indicating evaluation data.Nowcasts are shown daily with a 14-day horizon.](../output/figs/supp/nowcasts_over_time_ntl.png){#figs8}
 
-![Fig S9. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs9}
+![Fig S9. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs9}
 
-![Fig S10. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs10}
+![Fig S10. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs10}
+
+![Fig S11. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs11}
 
 ### Case study: UKHSA norovirus surveillance
 
-![Fig S11. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs11}
+![Fig S12. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs12}
 
-![Fig S12. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png){#figs12}
+![Fig S13. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png){#figs13}
 
-![Fig S13. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs13}
+![Fig S14. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs14}
 
-![Fig S14. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs14}
+![Fig S15. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs15}
 
 ## References

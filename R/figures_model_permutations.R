@@ -81,6 +81,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     facet_wrap(~model_variation, nrow = 3) +
     get_plot_theme() +
     scale_x_date(
+      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -271,6 +272,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     get_plot_theme() +
     scale_x_date(
+      limits = c(as.Date("2021-11-08"), as.Date("2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -363,7 +365,11 @@ get_plot_coverage_by_mp <- function(all_coverage,
       y = "Empirical coverage", x = "",
       fill = ""
     ) +
-    ggtitle("Empirical coverage by model permutation across age groups")
+    ggtitle("Empirical coverage by model permutation across age groups") +
+    guides(
+      fill = "none",
+      alpha = "none"
+    )
   return(p)
 }
 

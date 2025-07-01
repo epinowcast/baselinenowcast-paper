@@ -6,15 +6,28 @@
 \usage{
 get_mellor_et_al_outputs(
   data_from_bnc,
-  models = c("epinowcast", "GAM", "baseline Mellor et al")
+  days_to_eval,
+  local_load = FALSE,
+  synthetic_data = TRUE,
+  model_names = c("epinowcast", "gam", "baseline_prevweek")
 )
 }
 \arguments{
-\item{data_from_bnc}{Data.frame of the output from baselinenowcast}
+\item{data_from_bnc}{Data.frame of the output from baselinenowcast model
+permutations run locally}
 
-\item{models}{Vector of character strings indicating which models from
-Mellor et al to include. Default is
-\code{c("epinowcast", "GAM", "baseline Mellor et al")}.}
+\item{days_to_eval}{Integer indicating the number of days before the nowcast
+date to evaluate against.}
+
+\item{local_load}{Boolean indicating whether or not to load data from local
+or from GitHUb. Default is FALSE which loads from GitHub.}
+
+\item{model_names}{Vector of character strings indicating the names of the
+models to include within the file names. Defaults are the three different
+models \code{c("epinowcast", "gam", "baseline_prev_week")}.}
+
+\item{synethetic_data}{Boolean indicating whether to use the synthetic or\
+or real data. Default is \code{synthetic}.}
 }
 \value{
 Data.frame labeled with models from Mellor et al

@@ -2,22 +2,58 @@ noro_comparison_targets <- list(
   # Load in scores and coverage from Mellor et al (for now use the same
   # data as from the model permutations with some noise)
   tar_target(
-    name = mellor_model_scores,
+    name = mellor_model_nowcasts,
     command = get_mellor_et_al_outputs(
-      data_from_bnc = all_scores_noro
+      days_to_eval = config$noro$days_to_eval,
+      data_from_bnc = all_nowcasts_noro,
+      local_load = TRUE
     )
+  ),
+  tar_target(
+    name = mellor_baselinenowcast_nowcasts,
+    command = get_mellor_et_al_outputs(
+      data_from_bnc = all_nowcasts_noro,
+      days_to_eval = config$noro$days_to_eval,
+      model_names = c(
+        "baselinenowcast_model1",
+        "baselinenowcast_model2",
+        "baselinenowcast_model3"
+      ),
+      local_load = TRUE
+    )
+  ),
+  tar_target(
+    name = su_mellor_model_quantiles,
+    command = mellor_model_nowcasts |>
+      scoringutils::as_forecast_quantile(
+        probs = config$norovirus$quantiles,
+        by = c(
+          "nowcast_date",
+          "reference_date",
+          "model",
+          "n_history_delay",
+          "n_history_uncertainty"
+        )
+      )
+  ),
+  tar_target(
+    name = mellor_model_scores,
+    command = su_mellor_model_quantiles |>
+      scoringutils::score()
   ),
   tar_target(
     name = mellor_model_coverage,
-    command = get_mellor_et_al_outputs(
-      data_from_bnc = all_coverage_noro
-    )
-  ),
-  tar_target(
-    name = mellor_model_nowcasts,
-    command = get_mellor_et_al_outputs(
-      data_from_bnc = all_nowcasts_noro
-    )
+    command = su_mellor_model_quantiles |>
+      scoringutils::get_coverage(
+        by = c(
+          "nowcast_date",
+          "reference_date",
+          "age_group",
+          "model",
+          "n_history_delay",
+          "n_history_uncertainty"
+        )
+      )
   ),
 
   # Combines scores and coverage from other models with baselinenowcast

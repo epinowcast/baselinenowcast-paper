@@ -106,7 +106,11 @@ run_noro_nowcast_pipeline <- function(
     filter(reference_date >=
       ymd(nowcast_date) - days(days_to_eval - 1)) |>
     left_join(eval_data, by = "reference_date") |>
-    left_join(data_as_of_df, by = "reference_date")
+    left_join(data_as_of_df, by = "reference_date") |>
+    mutate(
+      nowcast_date = as.Date(nowcast_date),
+      reference_date = as.Date(reference_date),
+    )
 
 
   return(comb_nc_noro)

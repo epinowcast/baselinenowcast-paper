@@ -25,14 +25,18 @@ noro_comparison_targets <- list(
   tar_target(
     name = su_mellor_model_quantiles,
     command = mellor_model_nowcasts |>
+      pivot_longer(
+        names_to = "quantile",
+        values_to = "predicted",
+        cols = starts_with("q_"),
+        names_prefix = "q_"
+      ) |>
+      mutate(quantile_level = as.numeric(quantile)) |>
       scoringutils::as_forecast_quantile(
-        probs = config$norovirus$quantiles,
-        by = c(
+        forecast_unit = c(
           "nowcast_date",
           "reference_date",
-          "model",
-          "n_history_delay",
-          "n_history_uncertainty"
+          "model"
         )
       )
   ),
@@ -48,10 +52,7 @@ noro_comparison_targets <- list(
         by = c(
           "nowcast_date",
           "reference_date",
-          "age_group",
-          "model",
-          "n_history_delay",
-          "n_history_uncertainty"
+          "model"
         )
       )
   ),

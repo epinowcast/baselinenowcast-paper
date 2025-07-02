@@ -38,11 +38,6 @@ get_mellor_et_al_outputs <- function(
       reference_date = as.Date(reference_date)
     )
 
-  if ("baselinenowcast_model1" %in% c(model_names)) {
-    just_data <- just_data |>
-      rename(data_as_of_bnc = data_as_of)
-  }
-
   mellor_data_matched <- data.frame()
   for (i in 1:length(model_names)) {
     model_name <- model_names[i]

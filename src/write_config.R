@@ -130,7 +130,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
       eval_timeframe = 40
     ),
-    n_draws = 500,
+    n_draws = 500, # 1000
     plot_quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975)
   )
 

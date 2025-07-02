@@ -34,7 +34,13 @@ plot_components <- function() {
     "filter weekday large training volume" = "brown4",
     "GAM" = "orange3",
     "epinowcast" = "green4",
-    "baseline Mellor et al" = "lightgreen"
+    "baseline Mellor et al" = "lightgreen",
+    "baselinenowcast_model1" = "blue",
+    "baselinenowcast_model2" = "magenta",
+    "baselinenowcast_model3" = "brown1",
+    "baselinenowcast default" = "blue",
+    "baselinenowcast weekday\nfilter small training volume" = "magenta",
+    "baselinenowcast weekday\nfilter large training volume" = "brown1"
   )
   age_colors <- c(
     "00+" = "black",

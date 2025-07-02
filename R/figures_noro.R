@@ -25,6 +25,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
   all_nowcasts <- all_nowcasts |>
     mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
   plot_colors <- plot_components()
+  n_model_types <- length(unique(all_nowcasts$model_type))
 
   p <- ggplot(all_nowcasts) +
     geom_ribbon(
@@ -62,7 +63,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       color = "gray", linewidth = 1
     ) +
     theme_bw() +
-    facet_wrap(~model_type, nrow = 2) +
+    facet_wrap(~model_type, nrow = n_model_types) +
     scale_x_date(
       limits = as.Date(c("2023-10-30", "2024-03-10")),
       date_breaks = "1 week",
@@ -194,12 +195,12 @@ get_plot_rel_wis_over_time <- function(scores) {
     select(model, nowcast_date, wis)
 
   baseline_comparison <- scores_sum |>
-    filter(model == "base") |>
+    filter(model == "baselinenowcast default") |>
     rename(comparison_wis = wis) |>
     select(comparison_wis, nowcast_date)
 
   relative_wis <- scores_sum |>
-    filter(model != "base") |>
+    filter(model != "baselinenowcast default") |>
     left_join(baseline_comparison, by = "nowcast_date") |>
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
   plot_comps <- plot_components()
@@ -255,12 +256,12 @@ get_plot_rel_wis_by_weekday <- function(scores) {
     select(model, weekday, weekday_name, wis)
 
   baseline_comparison <- scores_sum |>
-    filter(model == "base") |>
+    filter(model == "baselinenowcast default") |>
     rename(comparison_wis = wis) |>
     select(comparison_wis, weekday)
 
   relative_wis <- scores_sum |>
-    filter(model != "base") |>
+    filter(model != "baselinenowcast default") |>
     left_join(baseline_comparison, by = "weekday") |>
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
   plot_comps <- plot_components()
@@ -481,7 +482,7 @@ make_fig_noro <- function(plot_noro_nowcasts,
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "left"
+    legend.justification = "center"
   )
 
   dir_create(fig_file_dir)
@@ -558,9 +559,9 @@ get_plot_wis_over_time_noro <- function(
         "underprediction"
       )),
       model = factor(model, levels = c(
-        "base",
-        "filter weekday small training volume",
-        "filter weekday large training volume",
+        "baselinenowcast default",
+        "baselinenowcast weekday\nfilter small training volume",
+        "baselinenowcast weekday\nfilter large training volume",
         "GAM",
         "epinowcast",
         "baseline Mellor et al"
@@ -665,9 +666,9 @@ get_plot_wis_by_weekday <- function(
         "underprediction"
       )),
       model = factor(model, levels = c(
-        "base",
-        "filter weekday small training volume",
-        "filter weekday large training volume",
+        "baselinenowcast default",
+        "baselinenowcast weekday\nfilter small training volume",
+        "baselinenowcast weekday\nfilter large training volume",
         "GAM",
         "epinowcast",
         "baseline Mellor et al"
@@ -768,9 +769,9 @@ get_plot_cov_by_model_noro <- function(all_coverage,
     mutate(
       interval_range = factor(interval_range, levels = c("90", "50")),
       model = factor(model, levels = c(
-        "base",
-        "filter weekday small training volume",
-        "filter weekday large training volume",
+        "baselinenowcast default",
+        "baselinenowcast weekday\nfilter small training volume",
+        "baselinenowcast weekday\nfilter large training volume",
         "GAM",
         "epinowcast",
         "baseline Mellor et al"
@@ -874,9 +875,9 @@ get_plot_cov_by_mod_wday_noro <- function(all_coverage,
     mutate(
       interval_range = factor(interval_range, levels = c("90", "50")),
       model = factor(model, levels = c(
-        "base",
-        "filter weekday small training volume",
-        "filter weekday large training volume",
+        "baselinenowcast default",
+        "baselinenowcast weekday\nfilter small training volume",
+        "baselinenowcast weekday\nfilter large training volume",
         "GAM",
         "epinowcast",
         "baseline Mellor et al"

@@ -5,7 +5,7 @@
 #' @param days_to_eval Integer indicating the number of days before the nowcast
 #'    date to evaluate against.
 #' @param local_load Boolean indicating whether or not to load data from local
-#'    or from GitHUb. Default is FALSE which loads from GitHub.
+#'    or from GitHub. Default is FALSE which loads from GitHub.
 #' @param synthetic_data Boolean indicating whether to use the synthetic or\
 #'    or real data. Default is `synthetic`.
 #' @param model_names Vector of character strings indicating the names of the

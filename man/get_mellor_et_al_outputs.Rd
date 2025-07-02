@@ -20,7 +20,7 @@ permutations run locally}
 date to evaluate against.}
 
 \item{local_load}{Boolean indicating whether or not to load data from local
-or from GitHUb. Default is FALSE which loads from GitHub.}
+or from GitHub. Default is FALSE which loads from GitHub.}
 
 \item{synthetic_data}{Boolean indicating whether to use the synthetic or\
 or real data. Default is \code{synthetic}.}

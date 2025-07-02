@@ -109,7 +109,7 @@ run_noro_nowcast_pipeline <- function(
     left_join(data_as_of_df, by = "reference_date") |>
     mutate(
       nowcast_date = as.Date(nowcast_date),
-      reference_date = as.Date(reference_date),
+      reference_date = as.Date(reference_date)
     )
 
 

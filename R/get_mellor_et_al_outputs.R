@@ -6,7 +6,7 @@
 #'    date to evaluate against.
 #' @param local_load Boolean indicating whether or not to load data from local
 #'    or from GitHUb. Default is FALSE which loads from GitHub.
-#' @param synethetic_data Boolean indicating whether to use the synthetic or\
+#' @param synthetic_data Boolean indicating whether to use the synthetic or\
 #'    or real data. Default is `synthetic`.
 #' @param model_names Vector of character strings indicating the names of the
 #'    models to include within the file names. Defaults are the three different
@@ -21,9 +21,9 @@ get_mellor_et_al_outputs <- function(
     synthetic_data = TRUE,
     model_names = c("epinowcast", "gam", "baseline_prevweek")) {
   if (isTRUE(local_load)) {
-    prefix <- ("output/data/noro")
+    prefix <- file.path("output", "data", "noro")
   } else {
-    prefix <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast-baselinenowcast/refs/heads/initial-port/outputs/data/"
+    prefix <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast-baselinenowcast/refs/heads/initial-port/outputs/data/" # nolint
   }
   if (isTRUE(synthetic_data)) {
     data_type <- "synthetic"
@@ -39,7 +39,7 @@ get_mellor_et_al_outputs <- function(
     )
 
   mellor_data_matched <- data.frame()
-  for (i in 1:length(model_names)) {
+  for (i in seq_along(model_names)) {
     model_name <- model_names[i]
     mellor_data <- read_csv(file.path(
       prefix,
@@ -59,12 +59,14 @@ get_mellor_et_al_outputs <- function(
       rename(
         nowcast_date = prediction_end_date,
         reference_date = specimen_date,
+        # nolint start
         `q_0.5` = pi_50,
         `q_0.05` = pi_5,
         `q_0.25` = pi_25,
         `q_0.75` = pi_75,
         `q_0.95` = pi_95
       ) |>
+      # nolint end
       filter(
         nowcast_date >= min(just_data$nowcast_date),
         nowcast_date <= max(just_data$nowcast_date),
@@ -92,12 +94,12 @@ get_mellor_et_al_outputs <- function(
     mellor_data_matched <- bind_rows(mellor_data_matched, data_to_match)
   }
 
-  data <- mellor_data_matched |>
+  matched_data <- mellor_data_matched |>
     mutate(
       model = ifelse(model == "Baseline: previous week",
         "baseline Mellor et al",
         model
       )
     )
-  return(data)
+  return(matched_data)
 }

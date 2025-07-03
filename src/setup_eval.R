@@ -1,3 +1,4 @@
+library(dplyr)
 source(file.path("src", "write_config.R"))
 
 write_config(

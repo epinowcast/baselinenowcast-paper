@@ -63,7 +63,9 @@ $$
 \theta_d = \frac{\pi_d}{\pi_{\le d-1}}
 $$ {#eq:theta_d}
 
-Where $$
+Where 
+
+$$
 \pi_{\le d-1} = \sum_{d'=0}^{d-1} \pi_d
 $$ {#eq:pi_less_than_d}
 
@@ -71,7 +73,10 @@ These $\theta_d$ can be estimated via the equation above \@ref(eq:theta_d) and t
 
 $$
 \pi_{\leq d} = (1+\theta_d)\pi_{\leq d-1}
-$$ Subject to the constrain that $\sum \pi_i = 1$.
+$$
+
+Subject to the constrain that $\sum \pi_i = 1$.
+
 
 ![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1} <!--Noting that this caption should probably be written to refer back to theta and pi_d. My understanding is that theta is basically block top/ block top left, and we get block bottom by assuming the equivalence of  block top/block top left = block bottom/ block bottom left. -->
 
@@ -89,63 +94,111 @@ $$
 E(X_t | x_{\leq t^*-t}, \pi_{\leq t^*-t}) = \hat{x}_t = \frac{x_{\leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\pi_{\leq t^*-t}}
 $$
 
-Then we can compute $\hat{x}_{t,d}$ directly using the $d$th element of $\pi_d$
+Then we can compute the missing elements of the point nowcast matrix $\hat{x}_{t,d}$ directly using the $d$th element of $\pi_d$
 
 $$
 \hat{x}_{t,d} = \pi_d \times \hat{x}_t
 $$
 
-Where the number of reports at timepoint $t$ with delay $d$ is the product of the the expected total reports, $\hat{x}_t$ and the proportion expected at that particular delay $d$, $\pi(d)$.
+Where the expected count at timepoint $t$ with delay $d$ is the product of the the expected total count, $\hat{x}_t$ and the proportion expected at that particular delay $d$, $\pi_d$. We will use the individual elements of the point nowcast matrix, $\hat{x}_{t,d}$ for uncertainty quantification.
 
-### Uncertainty estimation
+### Uncertainty quantification
 
 To estimate the uncertainty in the nowcasts, we use past nowcast errors. In this analysis, we assume a negative binomial observation model.
 
 #### Generation of retrospective reporting triangles
 
-We describe a method which generates retrospective reporting triangles to replicate what would have been available as of time $t^*=s^*$, where $s^* = t^*-m$ for $m = 1, 2, ... M$ to generate $M$ retrospective reporting triangles.
+We describe a method which generates retrospective reporting triangles to replicate what would have been available as of times$s^* = t^*-1, ..., t^*-M$ to generate $M$ retrospective reporting triangles.
 
-To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the existing reporting triangle, to generate $M$ truncated reporting triangles. We then replace the bottom right of the triangle with NAs, assuming these would not have been observed as of $s^*$, to generare $M$ retrospective reporting triangles.
-
-The method uses each retrospective reporting triangle to re-estimate a delay distribution using the $N$ preceding reference times of the retrospective reporting triangle before $s^*$, and recomputes a retrospective point nowcast matrix, for $M$ realizations of the retrospective reporting triangle (so $M$ different $s^*$ values).
-
-Thus in order to estimate uncertainty using $N$ reference times, the total training volume must meet or exceed $N+M$ so that the oldest retrospective nowcast dataset at $s^* = t^*-M$ can use $N$ reference times for its point nowcast.
+To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been availbale as of each $s^*$, to generate $M$ retrospective reporting triangles.
 
 #### Generation of retrospective point nowcast matrices
 
-From the $M$ reporting triangles, we apply the method described above to estimate a delay distribution from a reporting triangle and generate a point nowcast for each reporting triangle, to generate $M$ point nowcasts.
+From the $M$ reporting triangles, we apply the method described above to estimate a delay distribution using the $N$ preceding reference times and generate a point nowcast for each retrospective reporting triangle, to generate $M$ point nowcasts.
+
+Thus in order to estimate uncertainty using $N$ reference times, the total training volume must meet or exceed $N+M$ so that the oldest retrospective nowcast dataset at $s^* = t^*-M$ can use $N$ reference times for its point nowcast.
 
 #### Fit predicted point nowcast vectors and observed counts to a negative binomial observation model at each forecast horizon
 
 We quantify the uncertainty in the component of the target that corresponds to the counts that are still to be added. The default in the package assumes that the target is the final count at each reference time, summed across reporting delays, however, for the COVID-19 case study, the target is defined as the 7-day rolling sum of the counts at reference time, and therefore the uncertainty is quantified in the component of this quantity that has yet to be observed as of each reference time.
 
-At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function. We define the predicted nowcast for forecast horizon $j$ at retrospective nowcast time $s^*$ $$
-\hat{X}_{t-j}(s^* >d) = \sum_{d=0}^{D} \hat{X}_{t-j,d}(s^*) \times I(t-j+d \leq t^*)
-$$ and likewise the observed nowcast for forecast horizon $j$ at retrospective nowcast time $s^*$ $$
-X_{t-j}(s^*\leq d) = \sum_{d=0}^{D} X_{t-j,d}(s^*) \times I(t-j+d \leq t^*)
-$$
-
-This generates $M$ pairs of predicted nowcasts and observed nowcasts for each forecast horizon $j = 1, ..., D$. We assume that the observed nowcasts $X_{t-j}$ follow a negative binomial observation model with a mean of $\hat{X}_{t-j}(t^*-j)$
+At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function, for the retrospective nowcast $\hat{X}_{s^*,d}$ and the truncated observed component $x_{t= s^*,d}$. We define the component of the retrospective nowcast that is predicted as of $s^*$, but observed as of $t^*$ as:
 
 $$
-X_{t-j} | \hat{X}_{t-j}(t^* - j) \sim \text{NegBin}(\mu = \hat{X}_{t-j}(t^*-j) + 0.1, \phi = \phi_{j})
+\hat{X}_{s^*-j}(s^* >d) = \sum_{d=0}^{D} \hat{X}_{s^*-j,d} \times I(s^*-j+d \leq t^*)
+$$ and likewise the corresponding component that has been observed as of $t^*$ for each retrospective nowcast time $s^*$ as: $$
+x_{s^*-j}(s^*> d) = \sum_{d=0}^{D} x_{s^*-j,d} \times I(s^*-j+d \leq t^*)
+$$
+
+This generates $M$ pairs of predicted nowcast vectors and corresponding later observed nowcast vectors for each forecast horizon $j = 1, ..., D$. We assume that the later observed nowcasts vectors $x_{s^*-j, >d}$ follow a negative binomial observation model with a mean of $\hat{X}_{s^*-j}(s^*-j)$ <!-- Leaving in the +0.1 for now because we still use this to estimate, need to discuss, I now do not think we need it because the mean will never be 0-->
+
+$$
+x_{s^*-j} | \hat{X}_{s^*-j}(j) \sim \text{NegBin}(\mu = \hat{X}_{s^*-j}(s^*-j) + 0.1, disp= \phi_j)
 $$ for all $s^* = 1, ..., M$.
 
 We add a small number (0.1) to the mean to avoid an ill-defined negative binomial. This generates a vector of negative binomial dispersion parameters indexed starting at forecast horizon $j=1$.
 
 ### Probabilistic nowcast generation
 
-Using the dispersion parameters for each forecast horizon, $\phi(j),$ for $j = 1,...D$, we can generate probabilistic nowcast matrices by drawing samples from the negative binomial:
+Using the dispersion parameters for each forecast horizon, $\phi_j,$ for $j = 1,...D$, we can generate probabilistic nowcast matrices by drawing samples from the negative binomial for the sum over the still missing counts:
 
 $$
-X_{t^*-j} \sim NegBin(\mu = \hat{X}_{t^*-j}, \phi = \phi(j))
+X_{t^*-j, >d} \sim NegBin(\mu = \hat{X}_{t^*-j, >d}, \phi = \phi(j))
 $$
 
 We can sample for any number of draws, and then use the draws to compute any desired quantiles to summarize the outputs.
 
 ### Zero-handling approximation {#zero-handling-approximation}
 
-\*\* To be filled in\*\*
+In order to produce a nowcast for a specific reference date, we use the number of already observed cases, $x_{t,\leq_d}$ and the delay PMF, $\pi$ to estimate the expected final count of cases $X_{t} = \sum_{d=1}^D X_{t,d}$. We will assume a simple binomial reporting model to derive an approximation for the expectation $E(X_t | X_{t, \leq d},\pi_\leq d)$.
+
+For notational simplicity, we will refer to $X_{t}$ as $N$, to indicate the random variable for the total number of final cases at a particular reference time $t$, and $X_{t,d}$ as $X$ to indicate the random variable for the number of cases at a particular reference time $t$ and delay $d$.
+
+We will denote the CDF of the delay distribution at a particular delay $d$, $\sum_{d=0}^d \pi_d$ simply by $p$.
+
+However, this simple calculation is undefined when the number of already observed cases is 0.
+
+The following derivation addresses this practical issue based on assumptions about the underlying distributions for which the observed cases at each reference time and reporting delay are drawn from.\
+
+Our problem boils down to the following. If we assume that: $$
+X | N \sim Bin(N, p)
+$$ with $\pi$ known and an improper discrete uniform prior on $N$: $$
+\text{pr}(N= n) \propto C \text{ for n = 0, 1, 2, ...}
+$$ We are then interested in: $$
+\mathbb{E}[N | X = x]
+$$ This can be written out as: $$
+\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{P}(N = n | X = x) n
+$$ Applying Bayes Theorem we have: $$
+\text{P}(N = n | X = x)  = \frac{\text{P}(X = x | N = n) \text{P}(N=n)}{\sum_{i=0}^{\infty}\text{P}( X = x | N= i) \text{P}(N = i)}
+$$ Because $\text{P}(N=n) \propto C$ this simplifies to:
+
+$$
+\text{P}(N = n | X = x)  = \frac{\text{P}(X = x | N = n)}{\sum_{i=0}^{\infty}\text{P}( X = x | N= i)}
+$$
+
+And substituting the probability mass function of the binomial distribution $f(x) = P[X = x| N = n] =\binom{n}{x} p^x(1-p)^{n-x}$ we get:
+
+$$
+\text{pr}(N = n | X = x) = \frac{\binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=1}^\infty \binom{1}{x}p^x(1-p)^{i-x}}
+$$
+
+Plugging into $\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{P}(N = n | X = x) n$ we get the following (omitting terms for $n<x$, which are 0):
+
+$$
+\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}p^x(1-p)^{i-x}}
+$$
+
+Which is equivalent to:
+
+$$
+\mathbb{E}[N | X = x] =  \frac{\sum_{n=x}^{\infty}n \binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}p^x(1-p)^{i-x}}
+$$
+
+Both the numerator and the denominator are known convergent series, with solutions available in standard libraries like Mathematica. We then get:
+
+$$
+\mathbb{E}[N | X = x]  = \frac{(x + 1 -p)/p^2}{1/\pi} = \frac{x + 1 - p}{p}
+$$ This formula allows us to have a defined $\mathbb{E}[N | X = x]$ even when $X = 0$.
 
 ### Description of KIT simple nowcast implementation issue and revised nowcasts
 
@@ -173,20 +226,22 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ### Model permutation study
 
-![Fig S8. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs8}
+![Fig S8. Daily nowcasts overall from all age groups arrange in three facets (by row), with each showing the baseline validation model alongside variants from a specific permutation category: top row shows training data volume variations, middle row shows reporting triangle completeness variations, and bottom row shows borrowing strategy variations. Each model configuration has a consistent, distinct colour across all panels, with the baseline validation approach highlighted in black. Observed data are shown as solid lines with gray indicating data available at the nowcast date and red indicating evaluation data.Nowcasts are shown daily with a 14-day horizon.](../output/figs/supp/nowcasts_over_time_ntl.png){#figs8}
 
-![Fig S9. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs9}
+![Fig S9. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs9}
 
-![Fig S10. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs10}
+![Fig S10. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs10}
+
+![Fig S11. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs11}
 
 ### Case study: UKHSA norovirus surveillance
 
-![Fig S11. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs11}
+![Fig S12. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs12}
 
-![Fig S12. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png){#figs12}
+![Fig S13. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png){#figs13}
 
-![Fig S13. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs13}
+![Fig S14. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs14}
 
-![Fig S14. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs14}
+![Fig S15. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs15}
 
 ## References

@@ -12,7 +12,7 @@
 #' @importFrom glue glue
 #' @importFrom scoringutils summarise_scores
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_bar
-#'    scale_alpha_manual
+#'    scale_alpha_manual guide_legend
 get_plot_bar_chart_sum_scores <- function(joined_scores,
                                           strata = "age groups") {
   if (strata == "age groups") {
@@ -38,17 +38,29 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
     geom_bar(stat = "identity", position = "stack") +
     coord_flip() +
     get_plot_theme() +
-    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    theme(
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+    ) +
     labs(
-      x = "Model", y = "WIS",
-      pattern = "Score Breakdown",
-      color = "Model"
+      x = "Model", y = "WIS"
     ) +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
     ) +
-    ggtitle(glue("Overall WIS: {strata}"))
+    ggtitle(glue("Overall WIS: {strata}")) +
+    guides(
+      fill = "none",
+      alpha = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 3
+      )
+    )
   return(p)
 }
 
@@ -65,7 +77,8 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
 #'    of each model
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
-#'    facet_wrap scale_color_manual scale_fill_manual
+#'    facet_wrap scale_color_manual scale_fill_manual guide_legend
+#'     scale_linetype_manual
 #' @importFrom dplyr filter
 #' @returns ggplot object
 #' @autoglobal
@@ -99,22 +112,62 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
       ),
       alpha = 0.3
     ) +
-    geom_line(aes(x = reference_date, y = observed),
-      color = "red"
+    geom_line(
+      aes(
+        x = reference_date, y = observed,
+        linetype = "Final evaluation data"
+      ),
+      color = "red", linewidth = 1
     ) +
-    geom_line(aes(x = reference_date, y = data_as_of),
-      color = "gray"
+    geom_line(
+      aes(
+        x = reference_date, y = data_as_of,
+        linetype = "Data as of nowcast date"
+      ),
+      color = "gray", linewidth = 1
     ) +
     get_plot_theme() +
     scale_x_date(
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    scale_color_manual(values = plot_colors$model_colors) +
-    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_color_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    # Add scale for the reference lines
+    scale_linetype_manual(
+      name = "Observed data",
+      values = c(
+        "Final evaluation data" = "solid",
+        "Data as of nowcast date" = "solid"
+      ),
+      guide = guide_legend(
+        override.aes = list(
+          color = c(
+            "Final evaluation data" = "red",
+            "Data as of nowcast date" = "gray"
+          ),
+          linewidth = 1
+        )
+      )
+    ) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
     ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
-    ylab("7-day hospitalisation incidence")
+    ylab("7-day hospitalisation incidence") +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5),
+      fill = guide_legend(title.position = "top", title.hjust = 0.5),
+      linetype = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 2
+      )
+    )
 
   if (isTRUE(facet)) {
     p <- p + facet_wrap(~model)
@@ -145,10 +198,15 @@ get_plot_wis_over_time <- function(scores_summarised,
     )) +
     get_plot_theme() +
     scale_x_date(
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
-    scale_color_manual(values = plot_colors$model_colors) +
+    scale_color_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    guides(color = "none") +
     ggtitle(glue("WIS over time by model across all horizons: {strata}")) +
     xlab("") +
     ylab("WIS")
@@ -190,18 +248,23 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
-      legend.title = element_blank()
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     labs(
-      y = "WIS", x = "",
-      color = "Model"
+      y = "WIS", x = "", fill = ""
     ) +
     facet_grid(. ~ age_group, switch = "x") +
-    scale_fill_manual(values = plot_colors$model_colors) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
     scale_alpha_manual(
       name = "WIS breakdown",
       values = plot_colors$score_alpha
+    ) +
+    guides(
+      fill = "none",
+      alpha = "none"
     )
   return(p)
 }
@@ -215,7 +278,7 @@ get_plot_score_by_age_group <- function(scores_by_age_group) {
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_line aes labs
 #'    scale_x_date scale_color_manual scale_linewidth_manual
-#'    guides
+#'    guides guide_legend
 get_plot_mean_delay_over_time <- function(delays_over_time) {
   plot_comps <- plot_components()
   p <- ggplot(data = delays_over_time) +
@@ -227,6 +290,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
+      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -239,7 +303,10 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
       labels = NULL
     ) +
     xlab("") +
-    ylab("Mean delay over time")
+    ylab("Mean delay over time") +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5)
+    )
 
   return(p)
 }
@@ -251,7 +318,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
 #'
 #' @returns ggplot object
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_line aes labs guides
+#' @importFrom ggplot2 ggplot geom_line aes labs guides guide_legend
 get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
   plot_comps <- plot_components()
   p <- ggplot(avg_delays_by_age) +
@@ -269,7 +336,11 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
     ) +
     xlab("Delay (days)") +
     ylab("Cumulative delay distribution") +
-    get_plot_theme()
+    get_plot_theme() +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5)
+    )
+
 
 
   return(p)
@@ -783,7 +854,7 @@ get_plot_coverage_by_age_group <- function(
 #'    Default is `TRUE`.
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom patchwork plot_layout
+#' @importFrom patchwork plot_layout plot_annotation
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel
@@ -815,9 +886,16 @@ make_fig_hub_validation <- function(
     plot_mean_cdf_delay_by_age +
     plot_layout(
       design = fig_layout,
-      axes = "collect"
+      axes = "collect",
+      guides = "collect"
+    ) +
+    plot_annotation(
+      tag_levels = "A",
+      tag_suffix = ".", # adds a period after each letter
+      tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
+    legend.title = element_text(hjust = 0.5),
     legend.justification = "left"
   )
 

@@ -172,7 +172,6 @@ utils::globalVariables(c(
   "relative_overprediction", # <get_plot_rel_decomposed_wis>
   "relative_dispersion", # <get_plot_rel_decomposed_wis>
   "rel_score", # <get_plot_rel_decomposed_wis>
-  "component", # <get_plot_rel_decomposed_wis>
   "model_variation", # <get_plot_wis_by_age_group_mp>
   "model_variation_string", # <get_plot_wis_by_age_group_mp>
   "age_group", # <get_plot_wis_by_age_group_mp>
@@ -210,8 +209,8 @@ utils::globalVariables(c(
   "q_0.25", # <get_plot_mult_nowcasts_noro>
   "q_0.75", # <get_plot_mult_nowcasts_noro>
   "q_0.5", # <get_plot_mult_nowcasts_noro>
-  "data_as_of", # <get_plot_mult_nowcasts_noro>
   "observed", # <get_plot_mult_nowcasts_noro>
+  "data_as_of", # <get_plot_mult_nowcasts_noro>
   "model", # <get_bar_chart_sum_scores_noro>
   "model_type", # <get_bar_chart_sum_scores_noro>
   "overprediction", # <get_bar_chart_sum_scores_noro>

@@ -16,7 +16,7 @@ get_plot_mult_nowcasts(
 \arguments{
 \item{all_nowcasts}{Dataframe of the quantiled nowcasts (in wide format)}
 
-\item{final_summed_data}{Dtaaframe of the sum of the counts by reference
+\item{final_summed_data}{Dataframe of the sum of the counts by reference
 date as of the final reference data + the eval time frame.}
 
 \item{nowcast_dates_to_plot}{Vector of character strings of the dates you

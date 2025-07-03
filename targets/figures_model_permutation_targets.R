@@ -7,31 +7,75 @@ figures_model_permutation_targets <- list(
       fig_file_name = "nowcasts_over_time_ntl"
     )
   ),
+  # Split the previous facets into separate subplots that will get arranged
+  # Each model permutation for a single age group
   tar_target(
-    name = plot_nowcasts_over_time_mp_00_04,
+    name = plot_nowcasts_over_time_mp_00_04_borrow,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "00-04",
-      horizon_to_plot = -14,
-      fig_file_name = "nowcasts_over_time_00_04"
+      permutation_grouping = "Borrow for delay and uncertainty estimation",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_borrow"
     )
   ),
   tar_target(
-    name = plot_nowcasts_over_time_mp_60_79,
+    name = plot_nowcasts_over_time_mp_00_04_rep_tri,
+    command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
+      age_group_to_plot = "00-04",
+      permutation_grouping = "Reporting triangle completeness",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_rep_tri"
+    )
+  ),
+  tar_target(
+    name = plot_nowcasts_over_time_mp_00_04_volume,
+    command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
+      age_group_to_plot = "00-04",
+      permutation_grouping = "Training volume",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_volume"
+    )
+  ),
+  # Make the ones for the 60-79 year old age group
+  tar_target(
+    name = plot_nowcasts_over_time_mp_60_79_borrow,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "60-79",
-      horizon_to_plot = -14,
-      fig_file_name = "nowcasts_over_time_60_79"
+      permutation_grouping = "Borrow for delay and uncertainty estimation",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_borrow"
+    )
+  ),
+  tar_target(
+    name = plot_nowcasts_over_time_mp_60_79_rep_tri,
+    command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
+      age_group_to_plot = "60-79",
+      permutation_grouping = "Reporting triangle completeness",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_rep_tri"
+    )
+  ),
+  tar_target(
+    name = plot_nowcasts_over_time_mp_60_79_volume,
+    command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
+      age_group_to_plot = "60-79",
+      permutation_grouping = "Training volume",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_volume"
+    )
+  ),
+  # Make the relative WIS subplots
+  tar_target(
+    name = rel_wis_over_time_mp_00_04_borrow,
+    command = get_plot_rel_wis_over_time_mp(scores_mp,
+      permutation_grouping = "Borrow for delay and uncertainty estimation",
+      strata = "age groups",
+      age_group_to_plot = "00-04"
     )
   ),
   tar_target(
     name = bar_chart_wis_by_mp,
     command = get_plot_bar_chart_scores_mp(scores_mp,
-      strata = "age groups"
-    )
-  ),
-  tar_target(
-    name = rel_wis_over_time_mp,
-    command = get_plot_rel_wis_over_time_mp(scores_mp,
       strata = "age groups"
     )
   ),

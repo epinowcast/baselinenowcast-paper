@@ -8,6 +8,8 @@
 #' @param horizon_to_plot Integer indicating which horizon to plot
 #' @param age_group_to_plot Character string indicating which age group to
 #'    show in the plot. Default is `"00+"`for all age groups.
+#' @param permutation_grouping Character string indicating which model
+#'    permutation grouping to plot. Default is `NULL` for all of them.
 #' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
@@ -19,6 +21,7 @@
 get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
                                            horizon_to_plot,
                                            age_group_to_plot = "00+",
+                                           permutation_grouping = NULL,
                                            fig_file_name = NULL,
                                            fig_file_dir = file.path(
                                              "output",
@@ -35,13 +38,20 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     age_group == age_group_to_plot
   )
 
+
   nc_base <- filter(nc, model_variation == "Baseline validation")
 
-  nc_perms <- filter(nc, model_variation != "Baseline validation") |>
-    bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
-    bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |> # nolint
-    bind_rows(mutate(nc_base, model_variation = "Training volume"))
+  if (is.null(permutation_grouping)) {
+    nc_perms <- filter(nc, model_variation != "Baseline validation") |>
+      bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
+      bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |> # nolint
+      bind_rows(mutate(nc_base, model_variation = "Training volume"))
+  } else {
+    nc_perms <- filter(nc, model_variation == {{ permutation_grouping }}) |>
+      bind_rows(mutate(nc_base, model_variation = {{ permutation_grouping }}))
+  }
 
+  n_perms <- length(unique(nc_perms$model_variation_string))
   plot_colors <- plot_components()
   p <- ggplot(nc_perms) +
     geom_line(aes(
@@ -53,36 +63,53 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         x = reference_date,
         ymin = `q_0.25`,
         ymax = `q_0.75`,
-        fill = model_variation_string
-      ),
-      alpha = 0.3
+        fill = model_variation_string,
+        alpha = "50%"
+      )
     ) +
     geom_ribbon(
       aes(
         x = reference_date,
         ymin = `q_0.025`,
-        ymax = `q_0.975`, fill = model_variation_string
-      ),
-      alpha = 0.3
+        ymax = `q_0.975`,
+        fill = model_variation_string,
+        alpha = "95%"
+      )
     ) +
     geom_line(
       aes(
         x = reference_date, y = observed,
         linetype = "Final evaluation data"
       ),
-      color = "red"
+      color = "red",
+      linewidth = 1
     ) +
     geom_line(
       aes(
         x = reference_date, y = data_as_of,
         linetype = "Data as of nowcast date"
       ),
-      color = "gray"
+      color = "gray",
+      linewidth = 1
+    ) +
+    scale_alpha_manual(
+      name = "Prediction intervals",
+      values = c(
+        "95%" = 0.2,
+        "50%" = 0.4
+      ),
+      guide = guide_legend(
+        override.aes = list(
+          alpha = c(
+            "95%" = 0.2,
+            "50%" = 0.4
+          )
+        )
+      )
     ) +
     facet_wrap(~model_variation, nrow = 3) +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
@@ -105,15 +132,14 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       )
     ) +
     labs(fill = "Model permutation") +
-    ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence") +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5),
-      fill = guide_legend(title.position = "top", title.hjust = 0.5),
+      color = guide_legend(title.position = "top"),
+      fill = guide_legend(title.position = "top"),
       linetype = guide_legend(
-        title.position = "top", title.hjust = 0.5,
-        nrow = 2
+        title.position = "top",
+        nrow = n_perms
       )
     )
 
@@ -233,6 +259,10 @@ get_plot_bar_chart_scores_mp <- function(scores,
 #' Get a line plot of the relative wis over time for each model permutation
 #'
 #' @inheritParams get_plot_bar_chart_scores_mp
+#' @param age_group_to_plot Character string indicating which age group to
+#'    show in the plot. Default is `"00+"`for all age groups.
+#' @param permutation_grouping Character string indicating which model
+#'    permutation grouping to plot. Default is `NULL` for all of them.
 #' @autoglobal
 #' @returns ggplot object
 #' @importFrom dplyr filter mutate left_join rename select
@@ -241,12 +271,24 @@ get_plot_bar_chart_scores_mp <- function(scores,
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_line
 #'    scale_color_manual geom_hline xlab ylab ggtitle scale_x_date
 get_plot_rel_wis_over_time_mp <- function(scores,
-                                          strata) {
+                                          strata,
+                                          age_group_to_plot = NULL,
+                                          permutation_grouping = NULL) {
   plot_colors <- plot_components()
   if (strata == "age groups") {
     scores <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
     scores <- filter(scores, age_group == "00+")
+  }
+  if (!is.null(permutation_grouping)) {
+    scores <- filter(scores, model_variation %in%
+      c(
+        {{ permutation_grouping }},
+        "Baseline validation"
+      ))
+  }
+  if (!is.null(age_group_to_plot)) {
+    scores <- filter(scores, age_group == {{ age_group_to_plot }})
   }
 
   summarised_scores <- scores |>
@@ -281,24 +323,19 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     geom_line(aes(
       x = nowcast_date, y = rel_wis,
       color = model_variation_string,
-      linetype = model_variation
     )) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
       date_breaks = "2 months",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
-    labs(color = "Model permutation", linetype = "Permutation grouping") +
-    ggtitle(glue("Relative WIS over time by model permutation across all horizons: {strata}")) + # nolint
     xlab("") +
-    ylab("Relative WIS compared\nto baseline validation approach") +
-    guides(
-      color = "none",
-      linetype = guide_legend(title.position = "top", title.hjust = 0.5)
-    )
+    guides(color = "none") +
+    scale_y_continuous(trans = "log10") +
+    ylab("Relative WIS compared\nto baseline validation approach")
+
   return(p)
 }
 

@@ -74,7 +74,7 @@ plot_components <- function() {
     "All" = 2
   )
   permutation_colors <- c(
-    "Baseline validation approach" = "black",
+    "Baseline validation approach" = "purple4",
     "Borrowed estimates from all age groups" = pal_mps[1],
     "Complete reporting triangle" = pal_mps[2],
     "Delay:180,\nUncertainty:60" = pal_mps[3],

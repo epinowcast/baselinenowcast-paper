@@ -149,9 +149,9 @@ utils::globalVariables(c(
   "name", # <get_plot_bar_chart_scores_mp>
   "value", # <get_plot_bar_chart_scores_mp>
   "age_group", # <get_plot_rel_wis_over_time_mp>
+  "model_variation", # <get_plot_rel_wis_over_time_mp>
   "wis", # <get_plot_rel_wis_over_time_mp>
   "model_variation_string", # <get_plot_rel_wis_over_time_mp>
-  "model_variation", # <get_plot_rel_wis_over_time_mp>
   "nowcast_date", # <get_plot_rel_wis_over_time_mp>
   "baseline_wis", # <get_plot_rel_wis_over_time_mp>
   "age_group", # <get_plot_coverage_by_mp>

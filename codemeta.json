@@ -218,6 +218,18 @@
     },
     "4": {
       "@type": "SoftwareApplication",
+      "identifier": "patchwork",
+      "name": "patchwork",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=patchwork"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
       "identifier": "zoo",
       "name": "zoo",
       "provider": {
@@ -228,7 +240,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=zoo"
     },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
@@ -240,12 +252,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "epinowcast",
       "name": "epinowcast"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "glue",
       "name": "glue",
@@ -257,7 +269,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=glue"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "lubridate",
       "name": "lubridate",
@@ -269,7 +281,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=lubridate"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "scoringutils",
       "name": "scoringutils",
@@ -281,13 +293,13 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=scoringutils"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "baselinenowcast",
       "name": "baselinenowcast",
       "sameAs": "https://github.com/baselinenowcast=epinowcast/baselinenowcast"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -299,7 +311,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -311,7 +323,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "13": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "cowplot",
       "name": "cowplot",
@@ -323,7 +335,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=cowplot"
     },
-    "14": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "RColorBrewer",
       "name": "RColorBrewer",
@@ -335,7 +347,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=RColorBrewer"
     },
-    "15": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "patchwork",
       "name": "patchwork",
@@ -347,7 +359,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=patchwork"
     },
-    "16": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "fs",
       "name": "fs",
@@ -359,7 +371,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=fs"
     },
-    "17": {
+    "18": {
       "@type": "SoftwareApplication",
       "identifier": "cli",
       "name": "cli",
@@ -373,7 +385,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1537.493KB",
+  "fileSize": "1544.883KB",
   "releaseNotes": "https://github.com/epinowcast/baselinenowcast-paper/blob/master/NEWS.md",
   "readme": "https://github.com/epinowcast/baselinenowcast-paper/blob/main/README.md"
 }

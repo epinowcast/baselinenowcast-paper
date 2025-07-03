@@ -289,6 +289,20 @@ utils::globalVariables(c(
   "delay", # <get_eval_data_from_long_df>
   "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
+  "nowcast_date", # <get_mellor_et_al_outputs>
+  "reference_date", # <get_mellor_et_al_outputs>
+  "observed", # <get_mellor_et_al_outputs>
+  "data_as_of", # <get_mellor_et_al_outputs>
+  "prediction_end_date", # <get_mellor_et_al_outputs>
+  "specimen_date", # <get_mellor_et_al_outputs>
+  "horizon", # <get_mellor_et_al_outputs>
+  "pi_50", # <get_mellor_et_al_outputs>
+  "pi_5", # <get_mellor_et_al_outputs>
+  "pi_25", # <get_mellor_et_al_outputs>
+  "pi_75", # <get_mellor_et_al_outputs>
+  "pi_95", # <get_mellor_et_al_outputs>
+  "t_aggregation", # <get_mellor_et_al_outputs>
+  "model", # <get_mellor_et_al_outputs>
   "reference_date", # <get_nowcast_quantiles>
   "draw", # <get_nowcast_quantiles>
   "pred_count", # <get_nowcast_quantiles>

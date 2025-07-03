@@ -217,7 +217,7 @@ get_plot_nowcast_illustration <- function(combined_nowcasts,
         title.position = "top",
         nrow = 3
       ),
-      alpha = guide_legend(title.position = "top"),
+      alpha = guide_legend(title.position = "top")
     )
 
   if (isTRUE(facet)) {

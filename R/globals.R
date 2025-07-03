@@ -45,6 +45,19 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_bar_chart_sum_scores>
   "name", # <get_plot_bar_chart_sum_scores>
   "value", # <get_plot_bar_chart_sum_scores>
+  "horizon", # <get_plot_nowcast_illustration>
+  "age_group", # <get_plot_nowcast_illustration>
+  "nowcast_date", # <get_plot_nowcast_illustration>
+  "reference_date", # <get_plot_nowcast_illustration>
+  "q_0.5", # <get_plot_nowcast_illustration>
+  "model", # <get_plot_nowcast_illustration>
+  "nowcast_date_model", # <get_plot_nowcast_illustration>
+  "data_as_of", # <get_plot_nowcast_illustration>
+  "q_0.25", # <get_plot_nowcast_illustration>
+  "q_0.75", # <get_plot_nowcast_illustration>
+  "q_0.025", # <get_plot_nowcast_illustration>
+  "q_0.975", # <get_plot_nowcast_illustration>
+  "observed", # <get_plot_nowcast_illustration>
   "horizon", # <get_plot_nowcasts_over_time>
   "age_group", # <get_plot_nowcasts_over_time>
   "reference_date", # <get_plot_nowcasts_over_time>

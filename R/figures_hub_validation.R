@@ -64,6 +64,171 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
   return(p)
 }
 
+#' Get a plot illustrating nowcasts at certain dates
+#'
+#' Hub validation figure A
+#'
+#' @param combined_nowcasts Dataframe of the combined quantiles across
+#'    horizons and nowcast dates
+#' @param max_horizon Integer indicating the maximum horizon to plot.
+#' @param nowcast_dates_to_plot Vector of character strings of the dates you
+#'   wish to plot, default is `NULL` which will plot all of them
+#' @param age_group_to_plot Character string indicating which age group to
+#'    show in the plot, default is "00+" for all age groups.
+#' @param facet Boolean indicating whether or not to make separate facets
+#'    of each model
+#' @importFrom glue glue
+#' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
+#'    facet_wrap scale_color_manual scale_fill_manual guide_legend
+#'     scale_linetype_manual
+#' @importFrom dplyr filter
+#' @returns ggplot object
+#' @autoglobal
+get_plot_nowcast_illustration <- function(combined_nowcasts,
+                                          max_horizon = 28,
+                                          nowcast_dates_to_plot = NULL,
+                                          age_group_to_plot = "00+",
+                                          facet = FALSE) {
+  nc <- combined_nowcasts |>
+    filter(
+      horizon <= max_horizon,
+      age_group == age_group_to_plot,
+      nowcast_date %in% c(nowcast_dates_to_plot)
+    ) |>
+    mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
+  data_only <- filter(
+    combined_nowcasts,
+    horizon <= max_horizon,
+    age_group == age_group_to_plot,
+    horizon == 0
+  )
+  plot_colors <- plot_components()
+  p <- ggplot() +
+    geom_line(
+      data = nc,
+      aes(
+        x = reference_date, y = `q_0.5`,
+        color = model, group = nowcast_date_model
+      )
+    ) +
+    geom_line(
+      data = nc,
+      aes(
+        x = reference_date, y = data_as_of,
+        group = nowcast_date,
+        linetype = "Data as of nowcast date"
+      ),
+      color = "gray",
+      linewidth = 1
+    ) +
+    geom_vline(
+      data = nc,
+      aes(
+        xintercept = nowcast_date,
+        linetype = "Date of nowcast"
+      ),
+      color = "black"
+    ) +
+    geom_ribbon(
+      data = nc,
+      aes(
+        x = reference_date,
+        ymin = `q_0.25`,
+        ymax = `q_0.75`, fill = model,
+        group = nowcast_date_model,
+        alpha = "50%"
+      )
+    ) +
+    geom_ribbon(
+      data = nc,
+      aes(
+        x = reference_date,
+        ymin = `q_0.025`,
+        ymax = `q_0.975`, fill = model,
+        group = nowcast_date_model,
+        alpha = "95%"
+      )
+    ) +
+    geom_line(
+      data = data_only,
+      aes(
+        x = reference_date, y = observed,
+        linetype = "Final evaluation data"
+      ),
+      color = "red", linewidth = 1
+    ) +
+    get_plot_theme() +
+    scale_x_date(
+      date_breaks = "1 month",
+      date_labels = "%b %Y"
+    ) +
+    scale_color_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    # Add scale for the reference lines
+    scale_linetype_manual(
+      name = "Observed data",
+      values = c(
+        "Final evaluation data" = "solid",
+        "Data as of nowcast date" = "solid",
+        "Date of nowcast" = "dashed"
+      ),
+      breaks = c(
+        "Final evaluation data",
+        "Data as of nowcast date",
+        "Date of nowcast"
+      ),
+      guide = guide_legend(
+        override.aes = list(
+          color = c(
+            "Final evaluation data" = "red",
+            "Data as of nowcast date" = "gray",
+            "Date of nowcast" = "black"
+          ),
+          linewidth = 1
+        )
+      )
+    ) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    scale_alpha_manual(
+      name = "Prediction intervals",
+      values = c(
+        "95%" = 0.2,
+        "50%" = 0.4
+      ),
+      guide = guide_legend(
+        override.aes = list(
+          alpha = c(
+            "95%" = 0.2,
+            "50%" = 0.4
+          )
+        )
+      )
+    ) +
+    xlab("") +
+    ylab("7-day hospitalisation incidence") +
+    guides(
+      color = guide_legend(title.position = "top"),
+      fill = guide_legend(title.position = "top"),
+      linetype = guide_legend(
+        title.position = "top",
+        nrow = 3
+      ),
+      alpha = guide_legend(title.position = "top"),
+    )
+
+  if (isTRUE(facet)) {
+    p <- p + facet_wrap(~model)
+  }
+
+
+  return(p)
+}
+
 #' Get a plot of the nowcasts over time for both KIT and baselinenowcast
 #'
 #' Hub validation figure A

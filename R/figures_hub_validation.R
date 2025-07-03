@@ -53,7 +53,6 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       name = "WIS breakdown",
       values = plot_colors$score_alpha
     ) +
-    ggtitle(glue("Overall WIS: {strata}")) +
     guides(
       fill = "none",
       alpha = guide_legend(
@@ -372,7 +371,6 @@ get_plot_wis_over_time <- function(scores_summarised,
       values = plot_colors$model_colors
     ) +
     guides(color = "none") +
-    ggtitle(glue("WIS over time by model across all horizons: {strata}")) +
     xlab("") +
     ylab("WIS")
   return(p)

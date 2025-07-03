@@ -8,7 +8,9 @@ get_plot_theme <- function() {
   plot_theme <- cowplot::theme_half_open() +
     cowplot::background_grid() +
     theme(
-      plot.background = element_rect(fill = "white")
+      plot.background = element_rect(fill = "white"),
+      legend.text = element_text(size = 14),
+      legend.title = element_text(size = 15)
     )
 
   return(plot_theme)
@@ -26,21 +28,21 @@ plot_components <- function() {
   pal_mps <- brewer.pal(6, "Set2")
   # nolint start
   model_colors <- c(
-    "KIT simple nowcast" = "darkgreen",
-    "KIT simple nowcast revised" = "darkorange",
+    "KIT simple nowcast" = "darkorange",
+    "KIT simple nowcast revised" = "darkgreen",
     "baselinenowcast" = "purple4",
-    "base" = "navyblue",
-    "filter weekday small training volume" = "magenta4",
-    "filter weekday large training volume" = "brown4",
+    "base" = "purple4",
+    "filter weekday small training volume" = "blue3",
+    "filter weekday large training volume" = "red3",
     "GAM" = "orange3",
     "epinowcast" = "green4",
-    "baseline Mellor et al" = "lightgreen",
-    "baselinenowcast_model1" = "blue",
-    "baselinenowcast_model2" = "magenta",
-    "baselinenowcast_model3" = "brown1",
-    "baselinenowcast default" = "blue",
-    "baselinenowcast weekday\nfilter small training volume" = "magenta",
-    "baselinenowcast weekday\nfilter large training volume" = "brown1"
+    "baseline Mellor et al" = "magenta4",
+    "baselinenowcast_model1" = "purple4",
+    "baselinenowcast_model2" = "blue3",
+    "baselinenowcast_model3" = "red3",
+    "baselinenowcast default" = "purple4",
+    "baselinenowcast weekday\nfilter small training volume" = "blue3",
+    "baselinenowcast weekday\nfilter large training volume" = "red3"
   )
   age_colors <- c(
     "00+" = "black",

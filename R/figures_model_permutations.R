@@ -141,6 +141,10 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         title.position = "top",
         nrow = n_perms
       )
+    ) +
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA)
     )
 
   if (isTRUE(save)) {
@@ -201,7 +205,6 @@ get_plot_bar_chart_scores_mp <- function(scores,
       )),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
             "Borrow for delay\nand uncertainty\nestimation",
           model_variation == "Reporting triangle completeness" ~
@@ -209,9 +212,15 @@ get_plot_bar_chart_scores_mp <- function(scores,
           TRUE ~ model_variation
         )
     )
+  scores_base <- filter(scores_summary, model_variation == "Baseline validation")
+  # Make baseline validation approach be alongside all the others
+  scores_perms <- filter(scores_summary, model_variation != "Baseline validation") |>
+    bind_rows(mutate(scores_base, model_variation = "Borrow for delay\nand uncertainty\nestimation")) |> # nolint
+    bind_rows(mutate(scores_base, model_variation = "Reporting triangle\ncompleteness")) |> # nolint
+    bind_rows(mutate(scores_base, model_variation = "Training volume"))
 
   p <- ggplot(
-    scores_summary,
+    scores_perms,
     aes(
       x = model_variation_string,
       y = value, fill = model_variation_string, alpha = name
@@ -232,7 +241,6 @@ get_plot_bar_chart_scores_mp <- function(scores,
       y = "WIS", x = ""
     ) +
     facet_grid(. ~ model_variation,
-      switch = "x",
       space = "free_x",
       scales = "free_x"
     ) +
@@ -244,9 +252,8 @@ get_plot_bar_chart_scores_mp <- function(scores,
       name = "WIS breakdown",
       values = plot_colors$score_alpha
     ) +
-    ggtitle(glue("Overall WIS by model permutation: {strata}")) +
     guides(
-      fill = "none",
+      # Can used fill = "none" if we want to remove color
       alpha = guide_legend(
         title.position = "top",
         title.hjust = 0.5,
@@ -374,7 +381,6 @@ get_plot_coverage_by_mp <- function(all_coverage,
       interval_range = factor(interval_range, levels = c("95", "50")),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
             "Borrow for delay\nand uncertainty\nestimation",
           model_variation == "Reporting triangle completeness" ~
@@ -382,9 +388,15 @@ get_plot_coverage_by_mp <- function(all_coverage,
           TRUE ~ model_variation
         )
     )
+  coverage_base <- filter(coverage_summarised, model_variation == "Baseline validation")
+  # Make baseline validation approach be alongside all the others
+  coverage_perms <- filter(coverage_summarised, model_variation != "Baseline validation") |>
+    bind_rows(mutate(coverage_base, model_variation = "Borrow for delay\nand uncertainty\nestimation")) |> # nolint
+    bind_rows(mutate(coverage_base, model_variation = "Reporting triangle\ncompleteness")) |> # nolint
+    bind_rows(mutate(coverage_base, model_variation = "Training volume"))
 
   plot_comps <- plot_components()
-  p <- ggplot(coverage_summarised) +
+  p <- ggplot(coverage_perms) +
     geom_bar(
       aes(
         x = model_variation_string, y = empirical_coverage,
@@ -394,7 +406,6 @@ get_plot_coverage_by_mp <- function(all_coverage,
       stat = "identity", position = "stack"
     ) +
     facet_grid(. ~ model_variation,
-      switch = "x",
       space = "free_x", scales = "free_x"
     ) +
     get_plot_theme() +
@@ -418,7 +429,6 @@ get_plot_coverage_by_mp <- function(all_coverage,
       y = "Empirical coverage", x = "",
       fill = ""
     ) +
-    ggtitle("Empirical coverage by model permutation across age groups") +
     guides(
       fill = "none",
       alpha = "none"
@@ -480,11 +490,17 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
     x = horizon, y = relative_wis,
-    color = model_variation_string,
-    linetype = model_variation
+    color = model_variation_string
   )) +
-    geom_line() +
+    geom_line(linewidth = 1) +
+    facet_grid(. ~ model_variation,
+      space = "free_x", scales = "free_x"
+    ) +
     get_plot_theme() +
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA)
+    ) +
     scale_color_manual(
       name = "Permutation grouping",
       values = plot_comps$permutation_colors
@@ -494,9 +510,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
     labs(
       x = "Horizon (days)",
       y = "Relative WIS compared\nto baseline validation approach",
-      linetype = "Permutation grouping"
     ) +
-    ggtitle(glue::glue("Relative WIS by horizon for all model permutations: {strata}")) + # nolint
     guides(
       color = "none",
       linetype = guide_legend(title.position = "top", title.hjust = 0.5)
@@ -556,7 +570,7 @@ get_plot_rel_decomposed_wis <- function(scores,
       )
     ) |>
     select(
-      age_group, model_variation_string,
+      age_group, model_variation_string, model_variation,
       relative_underprediction, relative_overprediction,
       relative_dispersion
     ) |>
@@ -565,18 +579,49 @@ get_plot_rel_decomposed_wis <- function(scores,
       names_prefix = "relative_",
       names_to = "component",
       values_to = "rel_score"
+    ) |>
+    mutate(
+      model_variation =
+        case_when(
+          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay\nand uncertainty\nestimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
+          TRUE ~ model_variation
+        )
     )
 
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
-    x = age_group, y = rel_score,
-    fill = model_variation_string
+    x = component, y = rel_score,
+    fill = model_variation_string,
+    color = model_variation_string,
+    shape = component
   )) +
-    geom_bar(stat = "identity", position = "dodge") +
+    geom_point(size = 2) +
+    facet_grid(
+      cols = vars(age_group),
+      rows = vars(model_variation),
+      scales = "free_y"
+    ) +
     get_plot_theme() +
-    scale_fill_manual(
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    scale_color_manual(
       name = "Model permutation",
       values = plot_comps$permutation_colors
+    ) +
+    scale_shape_manual(
+      name = "WIS breakdown",
+      values = c(
+        "dispersion" = 16,
+        "overprediction" = 17,
+        "underprediction" = 15
+      )
     ) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log10") +
@@ -584,8 +629,10 @@ get_plot_rel_decomposed_wis <- function(scores,
       x = "",
       y = "Relative WIS compared\nto baseline validation approach"
     ) +
-    ggtitle(glue::glue("Relative WIS components by age group for all model permutations")) + # nolint
-    guides(fill = "none")
+    guides(
+      color = "none",
+      fill = "none"
+    )
 
 
   if (isTRUE(facet)) {
@@ -906,7 +953,7 @@ get_plot_wis_by_week_mp <- function(
 #' @param rel_wis_over_time_mp_volume underlay relative WIS
 #'
 #' @returns patchwork gg plot object
-make_panel_A_model_perms <- function(
+make_panel_A_mps <- function(
     plot_nowcasts_over_time_mp_borrow,
     rel_wis_over_time_mp_borrow,
     plot_nowcasts_over_time_mp_rep_tri,
@@ -975,8 +1022,15 @@ make_fig_model_perms <- function(
   }
   fig_layout <- "
   AABB
+  AABB
+  AABB
+  AACC
+  AACC
   AACC
   AADD
+  AAEE
+  AAEE
+  AAEE
   AAEE
   "
 

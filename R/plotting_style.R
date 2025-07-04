@@ -25,7 +25,7 @@ get_plot_theme <- function() {
 plot_components <- function() {
   pal_age_groups <- brewer.pal(6, "Spectral")
   pal_weekday <- brewer.pal(7, "Set1")
-  pal_mps <- brewer.pal(6, "Set2")
+  pal_mps <- brewer.pal(12, "Paired")
   # nolint start
   model_colors <- c(
     "KIT simple nowcast" = "darkorange",
@@ -75,12 +75,16 @@ plot_components <- function() {
   )
   permutation_colors <- c(
     "Baseline validation approach" = "purple4",
-    "Borrowed estimates from all age groups" = pal_mps[1],
-    "Complete reporting triangle" = pal_mps[2],
-    "Delay:180,\nUncertainty:60" = pal_mps[3],
-    "Delay:41,\nUncertainty:19" = pal_mps[4],
-    "Delay:50,\nUncertainty:10" = pal_mps[5],
-    "Delay:60,\nUncertainty:180" = pal_mps[6]
+    "Borrowed estimates from all age groups" = pal_mps[4],
+    "Complete reporting triangle" = pal_mps[8],
+    "Increased delay estimate" = pal_mps[1],
+    "Increased uncertainty estimate" = pal_mps[2],
+    "Reduced delay estimate" = pal_mps[5],
+    "Reduced uncertainty estimate" = pal_mps[6],
+    "Delay:180,\nUncertainty:60" = pal_mps[1],
+    "Delay:41,\nUncertainty:19" = pal_mps[5],
+    "Delay:50,\nUncertainty:10" = pal_mps[6],
+    "Delay:60,\nUncertainty:180" = pal_mps[2]
   )
 
   permutation_linetype <- c(

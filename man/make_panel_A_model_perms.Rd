@@ -18,13 +18,13 @@ make_panel_A_model_perms(
 
 \item{rel_wis_over_time_mp_borrow}{underlay relative WIS}
 
+\item{plot_nowcasts_t_mp_rep_tri}{larger nowcasts over time}
+
 \item{rel_wis_over_time_mp_rep_tri}{underlay relative WIS}
 
+\item{plot_nowcasts_t_mp_volume}{larger nowcasts over time}
+
 \item{rel_wis_over_time_mp_volume}{underlay relative WIS}
-
-\item{plot_nowcasts_over_time_mp_rep_tri}{larger nowcasts over time}
-
-\item{plot_nowcasts_over_time_mp_volume}{larger nowcasts over time}
 }
 \value{
 patchwork ggplot object

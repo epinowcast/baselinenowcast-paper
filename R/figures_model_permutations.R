@@ -972,9 +972,9 @@ get_plot_wis_by_week_mp <- function(
 #'
 #' @param plot_nowcasts_t_mp_borrow larger nowcasts over time
 #' @param rel_wis_over_time_mp_borrow underlay relative WIS
-#' @param plot_nowcasts_over_time_mp_rep_tri larger nowcasts over time
+#' @param plot_nowcasts_t_mp_rep_tri larger nowcasts over time
 #' @param rel_wis_over_time_mp_rep_tri underlay relative WIS
-#' @param plot_nowcasts_over_time_mp_volume larger nowcasts over time
+#' @param plot_nowcasts_t_mp_volume larger nowcasts over time
 #' @param rel_wis_over_time_mp_volume underlay relative WIS
 #'
 #' @returns patchwork ggplot object

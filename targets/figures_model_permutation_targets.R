@@ -43,7 +43,7 @@ figures_model_permutation_targets <- list(
       age_group_to_plot = "60-79",
       permutation_grouping = "Borrow for delay and uncertainty estimation",
       horizon_to_plot = 0,
-      fig_file_name = "nowcasts_over_time_00_04_borrow"
+      fig_file_name = "nowcasts_over_time_60_79_borrow"
     )
   ),
   tar_target(
@@ -52,7 +52,7 @@ figures_model_permutation_targets <- list(
       age_group_to_plot = "60-79",
       permutation_grouping = "Reporting triangle completeness",
       horizon_to_plot = 0,
-      fig_file_name = "nowcasts_over_time_00_04_rep_tri"
+      fig_file_name = "nowcasts_over_time_60_79_rep_tri"
     )
   ),
   tar_target(
@@ -61,7 +61,7 @@ figures_model_permutation_targets <- list(
       age_group_to_plot = "60-79",
       permutation_grouping = "Training volume",
       horizon_to_plot = 0,
-      fig_file_name = "nowcasts_over_time_00_04_volume"
+      fig_file_name = "nowcasts_over_time_60_79_volume"
     )
   ),
   # Make the relative WIS subplots

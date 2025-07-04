@@ -272,7 +272,7 @@ get_plot_bar_chart_scores_mp <- function(scores,
 #'    scale_color_manual geom_hline xlab ylab ggtitle scale_x_date
 get_plot_rel_wis_over_time_mp <- function(scores,
                                           strata,
-                                          age_group_to_plot = NULL,
+                                          age_group_to_plot = "00+",
                                           permutation_grouping = NULL) {
   plot_colors <- plot_components()
   if (strata == "age groups") {

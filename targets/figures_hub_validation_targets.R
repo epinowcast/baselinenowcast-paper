@@ -166,7 +166,7 @@ figures_hub_validation_targets <- list(
     )
   ),
   tar_target(
-    name = plot_nowcast_illustrationt,
+    name = plot_nowcast_illustrationr,
     command = get_plot_nowcast_illustration(
       combined_nowcastsr,
       nowcast_dates_to_plot = c(

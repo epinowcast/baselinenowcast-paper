@@ -289,6 +289,101 @@ get_plot_rel_wis_by_weekday <- function(scores) {
   return(p)
 }
 
+#' Get plot relative mean delay over time by weekday
+#'
+#' @param delay_dfs Data.frame of delay estimates both separately by weekday
+#'    and jointly, indexed by the weekday of the reference date.
+#' @param n_history_delay_filter Integer indicating how much historical data
+#'    to use to estimate the mean delay at each nowcast time. Default is `14`.
+#' @inheritParams get_plot_rel_wis_by_age_group
+#' @returns ggplot object
+#' @importFrom ggplot2 ggplot aes labs
+#'    facet_grid theme scale_fill_manual
+#'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
+#' @autoglobal
+#' @importFrom dplyr select filter rename mutate
+get_plot_rel_mean_delay_t_by_wday <- function(delay_dfs,
+                                              n_history_delay_filter = 28,
+                                              fig_file_name = NULL,
+                                              fig_file_dir = file.path("output", "figs", "supp"),
+                                              save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
+  mean_delay_by_weekday_and_date <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      filter_ref_dates
+    ) |>
+    group_by(nowcast_date, weekday, weekday_name) |>
+    summarise(
+      mean_delay = sum(delay * delay_time)
+    )
+
+  mean_delay_all_weekdays <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      !filter_ref_dates
+    ) |>
+    group_by(nowcast_date) |>
+    summarise(
+      mean_delay_all = sum(delay * delay_time)
+    )
+
+
+  mean_delay_df <- mean_delay_by_weekday_and_date |>
+    left_join(mean_delay_all_weekdays, by = "nowcast_date") |>
+    mutate(rel_mean_delay = mean_delay / mean_delay_all)
+  plot_comps <- plot_components()
+  p <- ggplot(data = mean_delay_df) +
+    geom_line(aes(
+      x = ymd(nowcast_date), y = rel_mean_delay,
+      color = weekday_name,
+      linewidth = weekday_name
+    )) +
+    guides(linewidth = "none") +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    get_plot_theme() +
+    scale_x_date( # Jan 2023, Feb 2023, etc.
+      limits = as.Date(c("2023-10-30", "2024-03-10")),
+      date_breaks = "1 week",
+      date_labels = "%b %Y"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom"
+    ) +
+    scale_color_manual(
+      name = "Weekday",
+      values = plot_comps$weekday_colors
+    ) +
+    scale_linewidth_manual(
+      values = plot_comps$weekday_linewidth,
+      labels = NULL
+    ) +
+    scale_y_continuous(trans = "log10") +
+    guides(
+      color = guide_legend(title.position = "top", title.hjust = 0.5)
+    ) +
+    xlab("") +
+    ylab("Relative mean delay compared\nto average across all weekdays")
+
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 12,
+      height = 8
+    )
+  }
+  return(p)
+}
+
 #' Get plot mean delay over time by weekday
 #'
 #' @param delay_dfs Data.frame of delay estimates both separately by weekday

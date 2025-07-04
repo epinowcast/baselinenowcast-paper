@@ -469,7 +469,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
 #' @importFrom ggplot2 ggplot aes labs
 #'    theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
-#'    geom_jitter
+#'    geom_jitter geom_violin
 #' @autoglobal
 #' @importFrom dplyr select filter rename mutate
 get_plot_distrib_delays <- function(delay_dfs,
@@ -501,7 +501,7 @@ get_plot_distrib_delays <- function(delay_dfs,
   p <- ggplot(data = mean_delay_df) +
     geom_violin(aes(
       x = weekday_name, y = mean_delay,
-      fill = weekday_name,
+      fill = weekday_name
     )) +
     geom_jitter(
       aes(
@@ -592,11 +592,26 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
   return(p)
 }
 
+#' Make panel A norovirus figure
+#'
+#' @param plot_noro_nowcasts_GAM nowcasts over time
+#' @param rel_wis_by_week_noro_GAM  relative WIS
+#' @param plot_noro_nowcasts_enw nowcasts over time
+#' @param rel_wis_by_week_noro_enw relative WIS
+#' @param plot_noro_nowcasts_bnc nowcasts over time
+#' @param rel_wis_by_week_noro_bnc relative WIS
+#'
+#' @returns ggplot
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout plot_annotation
+#' @importFrom ggplot2 ggsave theme
+#' @importFrom fs dir_create
 make_panel_A_noro <- function(
     plot_noro_nowcasts_GAM,
     rel_wis_by_week_noro_GAM,
-    plot_noro_nowcasts_epinowcast,
-    rel_wis_by_week_noro_epinowcast,
+    plot_noro_nowcasts_enw,
+    rel_wis_by_week_noro_enw,
     plot_noro_nowcasts_bnc,
     rel_wis_by_week_noro_bnc) {
   fig_layout <- "
@@ -613,8 +628,8 @@ make_panel_A_noro <- function(
 
   panel_A_noro <- plot_noro_nowcasts_GAM +
     rel_wis_by_week_noro_GAM +
-    plot_noro_nowcasts_epinowcast +
-    rel_wis_by_week_noro_epinowcast +
+    plot_noro_nowcasts_enw +
+    rel_wis_by_week_noro_enw +
     plot_noro_nowcasts_bnc +
     rel_wis_by_week_noro_bnc +
     plot_layout(

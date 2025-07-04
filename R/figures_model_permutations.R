@@ -970,7 +970,7 @@ get_plot_wis_by_week_mp <- function(
 
 #' Make a patchwork plot for panel A combining facets and underlays
 #'
-#' @param plot_nowcasts_over_time_mp_borrow larger nowcasts over time
+#' @param plot_nowcasts_t_mp_borrow larger nowcasts over time
 #' @param rel_wis_over_time_mp_borrow underlay relative WIS
 #' @param plot_nowcasts_over_time_mp_rep_tri larger nowcasts over time
 #' @param rel_wis_over_time_mp_rep_tri underlay relative WIS
@@ -997,11 +997,11 @@ make_panel_A_model_perms <- function(
   FFFF
   "
 
-  fig_panel_A <- plot_nowcasts_over_time_mp_borrow +
+  fig_panel_A <- plot_nowcasts_t_mp_borrow +
     rel_wis_over_time_mp_borrow +
-    plot_nowcasts_over_time_mp_rep_tri +
+    plot_nowcasts_t_mp_rep_tri +
     rel_wis_over_time_mp_rep_tri +
-    plot_nowcasts_over_time_mp_volume +
+    plot_nowcasts_t_mp_volume +
     rel_wis_over_time_mp_volume +
     plot_layout(
       design = fig_layout,

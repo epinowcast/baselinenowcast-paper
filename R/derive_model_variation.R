@@ -35,13 +35,13 @@ derive_model_variation <- function(df) {
         .default = model_variation
       ),
       model_variation_string = case_when(
-        n_history_delay == 41 && n_history_uncertainty == 19 ~
+        n_history_delay == 41 & n_history_uncertainty == 19 ~
           "Reduced delay estimate",
-        n_history_delay == 50 && n_history_uncertainty == 10 ~
+        n_history_delay == 50 & n_history_uncertainty == 10 ~
           "Reduced uncertainty estimate",
-        n_history_delay == 60 && n_history_uncertainty == 180 ~
+        n_history_delay == 60 & n_history_uncertainty == 180 ~
           "Increased uncertainty estimate",
-        n_history_delay == 180 && n_history_uncertainty == 60 ~
+        n_history_delay == 180 & n_history_uncertainty == 60 ~
           "Increased delay estimate",
         TRUE ~ model_variation_string
       )

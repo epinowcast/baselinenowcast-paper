@@ -5,7 +5,6 @@
 #'   wish to plot, default is `NULL` which will plot all of them
 #' @param facet_title Character string indicating facet title.
 #' @param pathogen Character sting of the pathogen being plotted
-#' @param title Character string indicating the title
 #'
 #' @autoglobal
 #' @importFrom ggplot2 aes geom_line ggplot ggtitle xlab ylab theme_bw

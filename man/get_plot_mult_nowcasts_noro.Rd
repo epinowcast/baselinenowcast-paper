@@ -20,8 +20,6 @@ wish to plot, default is \code{NULL} which will plot all of them}
 \item{facet_title}{Character string indicating facet title.}
 
 \item{pathogen}{Character sting of the pathogen being plotted}
-
-\item{title}{Character string indicating the title}
 }
 \value{
 ggplot object

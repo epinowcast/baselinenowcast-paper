@@ -2,33 +2,33 @@
 % Please edit documentation in R/figures_model_permutations.R
 \name{make_panel_A_model_perms}
 \alias{make_panel_A_model_perms}
-\title{Make a patchwork plot for panel A combinign facets and underlays}
+\title{Make a patchwork plot for panel A combining facets and underlays}
 \usage{
 make_panel_A_model_perms(
-  plot_nowcasts_over_time_mp_borrow,
+  plot_nowcasts_t_mp_borrow,
   rel_wis_over_time_mp_borrow,
-  plot_nowcasts_over_time_mp_rep_tri,
+  plot_nowcasts_t_mp_rep_tri,
   rel_wis_over_time_mp_rep_tri,
-  plot_nowcasts_over_time_mp_volume,
+  plot_nowcasts_t_mp_volume,
   rel_wis_over_time_mp_volume
 )
 }
 \arguments{
-\item{plot_nowcasts_over_time_mp_borrow}{larger nowcasts over time}
-
 \item{rel_wis_over_time_mp_borrow}{underlay relative WIS}
-
-\item{plot_nowcasts_over_time_mp_rep_tri}{larger nowcasts over time}
 
 \item{rel_wis_over_time_mp_rep_tri}{underlay relative WIS}
 
-\item{plot_nowcasts_over_time_mp_volume}{larger nowcasts over time}
-
 \item{rel_wis_over_time_mp_volume}{underlay relative WIS}
+
+\item{plot_nowcasts_over_time_mp_borrow}{larger nowcasts over time}
+
+\item{plot_nowcasts_over_time_mp_rep_tri}{larger nowcasts over time}
+
+\item{plot_nowcasts_over_time_mp_volume}{larger nowcasts over time}
 }
 \value{
-patchwork gg plot object
+patchwork ggplot object
 }
 \description{
-Make a patchwork plot for panel A combinign facets and underlays
+Make a patchwork plot for panel A combining facets and underlays
 }

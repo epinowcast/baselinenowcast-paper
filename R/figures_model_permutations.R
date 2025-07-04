@@ -341,7 +341,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
   p <- ggplot(rel_wis) +
     geom_line(aes(
       x = nowcast_date, y = rel_wis,
-      color = model_variation_string,
+      color = model_variation_string
     )) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     get_plot_theme() +
@@ -968,7 +968,7 @@ get_plot_wis_by_week_mp <- function(
   return(p)
 }
 
-#' Make a patchwork plot for panel A combinign facets and underlays
+#' Make a patchwork plot for panel A combining facets and underlays
 #'
 #' @param plot_nowcasts_over_time_mp_borrow larger nowcasts over time
 #' @param rel_wis_over_time_mp_borrow underlay relative WIS
@@ -977,13 +977,13 @@ get_plot_wis_by_week_mp <- function(
 #' @param plot_nowcasts_over_time_mp_volume larger nowcasts over time
 #' @param rel_wis_over_time_mp_volume underlay relative WIS
 #'
-#' @returns patchwork gg plot object
+#' @returns patchwork ggplot object
 make_panel_A_model_perms <- function(
-    plot_nowcasts_over_time_mp_borrow,
+    plot_nowcasts_t_mp_borrow,
     rel_wis_over_time_mp_borrow,
-    plot_nowcasts_over_time_mp_rep_tri,
+    plot_nowcasts_t_mp_rep_tri,
     rel_wis_over_time_mp_rep_tri,
-    plot_nowcasts_over_time_mp_volume,
+    plot_nowcasts_t_mp_volume,
     rel_wis_over_time_mp_volume) {
   fig_layout <- "
   AAAA

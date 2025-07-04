@@ -10,7 +10,7 @@ figures_model_permutation_targets <- list(
   # Nowcasts over time with rel wis underlaid--------------------------------
   # Plots for 00-04 age group
   tar_target(
-    name = plot_nowcasts_over_time_mp_00_04_borrow,
+    name = plot_nowcasts_t_mp_00_04_borrow,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "00-04",
       permutation_grouping = "Borrow for delay and uncertainty estimation",
@@ -19,7 +19,7 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = plot_nowcasts_over_time_mp_00_04_rep_tri,
+    name = plot_nowcasts_t_mp_00_04_rep_tri,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "00-04",
       permutation_grouping = "Reporting triangle completeness",
@@ -28,7 +28,7 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = plot_nowcasts_over_time_mp_00_04_volume,
+    name = plot_nowcasts_t_mp_00_04_volume,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "00-04",
       permutation_grouping = "Training volume",
@@ -38,7 +38,7 @@ figures_model_permutation_targets <- list(
   ),
   # Make the ones for the 60-79 year old age group
   tar_target(
-    name = plot_nowcasts_over_time_mp_60_79_borrow,
+    name = plot_nowcasts_t_mp_60_79_borrow,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "60-79",
       permutation_grouping = "Borrow for delay and uncertainty estimation",
@@ -47,7 +47,7 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = plot_nowcasts_over_time_mp_60_79_rep_tri,
+    name = plot_nowcasts_t_mp_60_79_rep_tri,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "60-79",
       permutation_grouping = "Reporting triangle completeness",
@@ -56,7 +56,7 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
-    name = plot_nowcasts_over_time_mp_60_79_volume,
+    name = plot_nowcasts_t_mp_60_79_volume,
     command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
       age_group_to_plot = "60-79",
       permutation_grouping = "Training volume",
@@ -116,22 +116,22 @@ figures_model_permutation_targets <- list(
   tar_target(
     name = panel_A_nowcasts_over_time_00_04,
     command = make_panel_A_model_perm(
-      plot_nowcasts_over_time_mp_00_04_borrow,
+      plot_nowcasts_t_mp_00_04_borrow,
       rel_wis_over_time_mp_00_04_borrow,
-      plot_nowcasts_over_time_mp_00_04_rep_tri,
+      plot_nowcasts_t_mp_00_04_rep_tri,
       rel_wis_over_time_mp_00_04_rep_tri,
-      plot_nowcasts_over_time_mp_00_04_volume,
+      plot_nowcasts_t_mp_00_04_volume,
       rel_wis_over_time_mp_00_04_volume
     )
   ),
   tar_target(
     name = panel_A_nowcasts_over_time_60_79,
     command = make_panel_A_model_perm(
-      plot_nowcasts_over_time_mp_60_79_borrow,
+      plot_nowcasts_t_mp_60_79_borrow,
       rel_wis_over_time_mp_60_79_borrow,
-      plot_nowcasts_over_time_mp_60_79_rep_tri,
+      plot_nowcasts_t_mp_60_79_rep_tri,
       rel_wis_over_time_mp_60_79_rep_tri,
-      plot_nowcasts_over_time_mp_60_79_volume,
+      plot_nowcasts_t_mp_60_79_volume,
       rel_wis_over_time_mp_60_79_volume
     )
   ),

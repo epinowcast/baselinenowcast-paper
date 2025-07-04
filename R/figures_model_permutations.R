@@ -212,12 +212,24 @@ get_plot_bar_chart_scores_mp <- function(scores,
           TRUE ~ model_variation
         )
     )
-  scores_base <- filter(scores_summary, model_variation == "Baseline validation")
+  scores_base <- filter(
+    scores_summary,
+    model_variation == "Baseline validation"
+  )
   # Make baseline validation approach be alongside all the others
-  scores_perms <- filter(scores_summary, model_variation != "Baseline validation") |>
-    bind_rows(mutate(scores_base, model_variation = "Borrow for delay\nand uncertainty\nestimation")) |> # nolint
-    bind_rows(mutate(scores_base, model_variation = "Reporting triangle\ncompleteness")) |> # nolint
-    bind_rows(mutate(scores_base, model_variation = "Training volume"))
+  scores_perms <- filter(
+    scores_summary,
+    model_variation != "Baseline validation"
+  ) |>
+    bind_rows(mutate(scores_base,
+      model_variation = "Borrow for delay\nand uncertainty\nestimation"
+    )) |> # nolint
+    bind_rows(mutate(scores_base,
+      model_variation = "Reporting triangle\ncompleteness"
+    )) |> # nolint
+    bind_rows(mutate(scores_base,
+      model_variation = "Training volume"
+    ))
 
   p <- ggplot(
     scores_perms,
@@ -388,11 +400,21 @@ get_plot_coverage_by_mp <- function(all_coverage,
           TRUE ~ model_variation
         )
     )
-  coverage_base <- filter(coverage_summarised, model_variation == "Baseline validation")
+  coverage_base <- filter(
+    coverage_summarised,
+    model_variation == "Baseline validation"
+  )
   # Make baseline validation approach be alongside all the others
-  coverage_perms <- filter(coverage_summarised, model_variation != "Baseline validation") |>
-    bind_rows(mutate(coverage_base, model_variation = "Borrow for delay\nand uncertainty\nestimation")) |> # nolint
-    bind_rows(mutate(coverage_base, model_variation = "Reporting triangle\ncompleteness")) |> # nolint
+  coverage_perms <- filter(
+    coverage_summarised,
+    model_variation != "Baseline validation"
+  ) |>
+    bind_rows(mutate(coverage_base,
+      model_variation = "Borrow for delay\nand uncertainty\nestimation"
+    )) |> # nolint
+    bind_rows(mutate(coverage_base,
+      model_variation = "Reporting triangle\ncompleteness"
+    )) |> # nolint
     bind_rows(mutate(coverage_base, model_variation = "Training volume"))
 
   plot_comps <- plot_components()
@@ -509,7 +531,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
     scale_y_continuous(trans = "log10", limits = c(0.6, 2.5)) +
     labs(
       x = "Horizon (days)",
-      y = "Relative WIS compared\nto baseline validation approach",
+      y = "Relative WIS compared\nto baseline validation approach"
     ) +
     guides(
       color = "none",
@@ -525,7 +547,8 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
 #' @param facet Boolean indicating whether or not to create separate facets for
 #'    each WIS component. Default is `FALSE`
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual vars
+#'    facet_grid scale_shape_manual
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
 #' @importFrom glue glue
@@ -615,6 +638,7 @@ get_plot_rel_decomposed_wis <- function(scores,
       name = "Model permutation",
       values = plot_comps$permutation_colors
     ) +
+    # nolint start
     scale_shape_manual(
       name = "WIS breakdown",
       values = c(
@@ -623,6 +647,7 @@ get_plot_rel_decomposed_wis <- function(scores,
         "underprediction" = 15
       )
     ) +
+    # nolint end
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log10") +
     labs(
@@ -953,7 +978,7 @@ get_plot_wis_by_week_mp <- function(
 #' @param rel_wis_over_time_mp_volume underlay relative WIS
 #'
 #' @returns patchwork gg plot object
-make_panel_A_mps <- function(
+make_panel_A_model_perms <- function(
     plot_nowcasts_over_time_mp_borrow,
     rel_wis_over_time_mp_borrow,
     plot_nowcasts_over_time_mp_rep_tri,

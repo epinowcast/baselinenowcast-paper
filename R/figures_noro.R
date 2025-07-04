@@ -29,7 +29,6 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       facet_title = {{ facet_title }}
     )
   plot_colors <- plot_components()
-  n_model_types <- length(unique(all_nowcasts$model_type))
 
   p <- ggplot(all_nowcasts) +
     geom_ribbon(
@@ -302,11 +301,13 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
 #' @autoglobal
 #' @importFrom dplyr select filter rename mutate
-get_plot_rel_mean_delay_t_by_wday <- function(delay_dfs,
-                                              n_history_delay_filter = 28,
-                                              fig_file_name = NULL,
-                                              fig_file_dir = file.path("output", "figs", "supp"),
-                                              save = TRUE) {
+get_plot_rel_delay_t_by_wday <- function(delay_dfs,
+                                         n_history_delay_filter = 28,
+                                         fig_file_name = NULL,
+                                         fig_file_dir = file.path(
+                                           "output", "figs", "supp"
+                                         ),
+                                         save = TRUE) {
   if (save && is.null(fig_file_name)) {
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
@@ -468,6 +469,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
 #' @importFrom ggplot2 ggplot aes labs
 #'    theme scale_fill_manual
 #'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
+#'    geom_jitter
 #' @autoglobal
 #' @importFrom dplyr select filter rename mutate
 get_plot_distrib_delays <- function(delay_dfs,
@@ -482,19 +484,6 @@ get_plot_distrib_delays <- function(delay_dfs,
       mean_delay = sum(delay * delay_time)
     )
 
-  mean_delay_all_weekdays <- delay_dfs |>
-    filter(
-      n_history_delay == n_history_delay_filter,
-      !filter_ref_dates
-    ) |>
-    group_by(nowcast_date) |>
-    summarise(
-      mean_delay = sum(delay * delay_time)
-    ) |>
-    mutate(
-      weekday = NA,
-      weekday_name = "All"
-    )
   mean_delay_df <- mean_delay_by_weekday_and_date
 
   mean_delay_df$weekday_name <- factor(mean_delay_df$weekday_name,
@@ -535,6 +524,7 @@ get_plot_distrib_delays <- function(delay_dfs,
     xlab("") +
     coord_cartesian(ylim = c(0, max(mean_delay_df$mean_delay))) +
     ylab("Mean delay distribution by weekday")
+  return(p)
 }
 
 #' Get a plot of the cdf colored by weekday
@@ -621,14 +611,7 @@ make_panel_A_noro <- function(
   FFF
   "
 
-  panel_A_noro <- fig_layout <- "
-  AAABB
-  AAABB
-  CCCDD
-  EEEFF
-  "
-
-  fig_noro <- plot_noro_nowcasts_GAM +
+  panel_A_noro <- plot_noro_nowcasts_GAM +
     rel_wis_by_week_noro_GAM +
     plot_noro_nowcasts_epinowcast +
     rel_wis_by_week_noro_epinowcast +

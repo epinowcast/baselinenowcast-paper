@@ -106,7 +106,7 @@ figures_noro_targets <- list(
   # Supplement ---------------------------------------------------------------
   tar_target(
     name = rel_delay_over_time,
-    command = get_plot_rel_mean_delay_t_by_wday(all_delay_dfs_noro,
+    command = get_plot_rel_delay_t_by_wday(all_delay_dfs_noro,
       fig_file_name = "rel_mean_delay_over_time_noro"
     )
   ),

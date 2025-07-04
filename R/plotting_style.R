@@ -36,7 +36,7 @@ plot_components <- function() {
     "filter weekday large training volume" = "red3",
     "GAM" = "orange3",
     "epinowcast" = "green4",
-    "baseline Mellor et al" = "magenta4",
+    "baseline Mellor et al" = "gray",
     "baselinenowcast_model1" = "purple4",
     "baselinenowcast_model2" = "blue3",
     "baselinenowcast_model3" = "red3",

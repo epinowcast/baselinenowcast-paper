@@ -117,6 +117,18 @@ get_noro_delay_outputs <- function(noro_df,
         filter_ref_dates = filter_ref_dates
       )
   }
+  # Order weekday names so that horizons are in order from -7 to 0
+  delay_dfs$weekday_name <- factor(delay_dfs$weekday_name,
+    levels = c(
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    )
+  )
 
   return(delay_dfs)
 }

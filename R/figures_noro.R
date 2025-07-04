@@ -3,6 +3,7 @@
 #' @param all_nowcasts Dataframe of the quantiled nowcasts (in wide format)
 #' @param nowcast_dates_to_plot Vector of character strings of the dates you
 #'   wish to plot, default is `NULL` which will plot all of them
+#' @param facet_title Character string indicating facet title.
 #' @param pathogen Character sting of the pathogen being plotted
 #' @param title Character string indicating the title
 #'
@@ -16,14 +17,17 @@
 #' @returns ggplot object
 get_plot_mult_nowcasts_noro <- function(all_nowcasts,
                                         nowcast_dates_to_plot = NULL,
-                                        pathogen = "",
-                                        title = "") {
+                                        facet_title = "",
+                                        pathogen = "Norovirus") {
   if (!is.null(nowcast_dates_to_plot)) {
     all_nowcasts <- all_nowcasts |>
       filter(nowcast_date %in% c(nowcast_dates_to_plot))
   }
   all_nowcasts <- all_nowcasts |>
-    mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
+    mutate(
+      nowcast_date_model = glue("{nowcast_date}-{model}"),
+      facet_title = {{ facet_title }}
+    )
   plot_colors <- plot_components()
   n_model_types <- length(unique(all_nowcasts$model_type))
 
@@ -63,7 +67,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       color = "gray", linewidth = 1
     ) +
     theme_bw() +
-    facet_wrap(~model_type, nrow = n_model_types) +
+    facet_wrap(~facet_title) +
     scale_x_date(
       limits = as.Date(c("2023-10-30", "2024-03-10")),
       date_breaks = "1 week",
@@ -106,7 +110,6 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     # nolint end
     xlab("") +
     ylab(glue("{pathogen} cases")) +
-    ggtitle(glue("{title}")) +
     guides(
       color = guide_legend(title.position = "top", title.hjust = 0.5),
       fill = guide_legend(title.position = "top", title.hjust = 0.5),
@@ -226,7 +229,6 @@ get_plot_rel_wis_over_time <- function(scores) {
       legend.position = "bottom"
     ) +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS over time relative to baselinenowcast default model configuration") + # nolint
     guides(color = "none")
 
   return(p)
@@ -292,7 +294,7 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #' @param delay_dfs Data.frame of delay estimates both separately by weekday
 #'    and jointly, indexed by the weekday of the reference date.
 #' @param n_history_delay_filter Integer indicating how much historical data
-#'    to use to estimate the mean delay at each nowcast time. Default is `28`.
+#'    to use to estimate the mean delay at each nowcast time. Default is `14`.
 #'
 #' @returns ggplot object
 #' @importFrom ggplot2 ggplot aes labs
@@ -314,7 +316,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
 
   mean_delay_all_weekdays <- delay_dfs |>
     filter(
-      n_history_delay == 28,
+      n_history_delay == n_history_delay_filter,
       !filter_ref_dates
     ) |>
     group_by(nowcast_date) |>
@@ -362,6 +364,82 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     xlab("") +
     ylab("Mean delay over time")
   return(p)
+}
+
+#' Get plot of the distribution of delays by weekday
+#'
+#' @inheritParams get_plot_mean_delay_t_by_wday
+#' @returns ggplot object
+#' @importFrom ggplot2 ggplot aes labs
+#'    theme scale_fill_manual
+#'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
+#' @autoglobal
+#' @importFrom dplyr select filter rename mutate
+get_plot_distrib_delays <- function(delay_dfs,
+                                    n_history_delay_filter = 28) {
+  mean_delay_by_weekday_and_date <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      filter_ref_dates
+    ) |>
+    group_by(nowcast_date, weekday, weekday_name) |>
+    summarise(
+      mean_delay = sum(delay * delay_time)
+    )
+
+  mean_delay_all_weekdays <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      !filter_ref_dates
+    ) |>
+    group_by(nowcast_date) |>
+    summarise(
+      mean_delay = sum(delay * delay_time)
+    ) |>
+    mutate(
+      weekday = NA,
+      weekday_name = "All"
+    )
+  mean_delay_df <- mean_delay_by_weekday_and_date
+
+  mean_delay_df$weekday_name <- factor(mean_delay_df$weekday_name,
+    levels = c(
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    )
+  )
+  plot_comps <- plot_components()
+  p <- ggplot(data = mean_delay_df) +
+    geom_violin(aes(
+      x = weekday_name, y = mean_delay,
+      fill = weekday_name,
+    )) +
+    geom_jitter(
+      aes(
+        x = weekday_name,
+        y = mean_delay
+      ),
+      width = 0.1, # Control horizontal spread
+      alpha = 0.8, # Make points semi-transparent
+      size = 0.8 # Point size
+    ) +
+    get_plot_theme() +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "bottom"
+    ) +
+    scale_fill_manual(
+      name = "Weekday",
+      values = plot_comps$weekday_colors
+    ) +
+    xlab("") +
+    coord_cartesian(ylim = c(0, max(mean_delay_df$mean_delay))) +
+    ylab("Mean delay distribution by weekday")
 }
 
 #' Get a plot of the cdf colored by weekday
@@ -429,14 +507,59 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
   return(p)
 }
 
+make_panel_A_noro <- function(
+    plot_noro_nowcasts_GAM,
+    rel_wis_by_week_noro_GAM,
+    plot_noro_nowcasts_epinowcast,
+    rel_wis_by_week_noro_epinowcast,
+    plot_noro_nowcasts_bnc,
+    rel_wis_by_week_noro_bnc) {
+  fig_layout <- "
+  AAA
+  AAA
+  BBB
+  CCC
+  CCC
+  DDD
+  EEE
+  EEE
+  FFF
+  "
+
+  panel_A_noro <- fig_layout <- "
+  AAABB
+  AAABB
+  CCCDD
+  EEEFF
+  "
+
+  fig_noro <- plot_noro_nowcasts_GAM +
+    rel_wis_by_week_noro_GAM +
+    plot_noro_nowcasts_epinowcast +
+    rel_wis_by_week_noro_epinowcast +
+    plot_noro_nowcasts_bnc +
+    rel_wis_by_week_noro_bnc +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect",
+      guides = "collect"
+    ) + theme(
+      legend.position = "top",
+      legend.justification = "center"
+    )
+
+  return(panel_A_noro)
+}
+
 #' Make panel for main norovirus figure
 #'
-#' @param plot_noro_nowcasts A
+#' @param panel_A_noro A
 #' @param bar_chart_wis_noro B
-#' @param rel_wis_by_week_noro C
-#' @param rel_wis_by_weekday D
-#' @param plot_mean_delay_t_by_wday E
-#' @param plot_cdf_by_weekday F
+#' @param rel_wis_by_weekday C
+#' @param wis_by_weekday D
+#' @param distrib_mean_delay_weekday E
+#' @param plot_mean_delay_t_by_wday F
+#' @param plot_cdf_by_weekday G
 #' @inheritParams  make_fig_model_perms
 #'
 #' @returns ggplot
@@ -445,10 +568,11 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
 #' @importFrom patchwork plot_layout plot_annotation
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
-make_fig_noro <- function(plot_noro_nowcasts,
+make_fig_noro <- function(panel_A_noro,
                           bar_chart_wis_noro,
-                          rel_wis_by_week_noro,
                           rel_wis_by_weekday,
+                          wis_by_weekday,
+                          distrib_mean_delay_weekday,
                           plot_mean_delay_t_by_wday,
                           plot_cdf_by_weekday,
                           fig_file_name,
@@ -459,15 +583,17 @@ make_fig_noro <- function(plot_noro_nowcasts,
   }
   fig_layout <- "
   AAABB
-  AAABB
-  CCCDD
-  EEEFF
+  AAACC
+  AAADD
+  AAAEE
+  FFFGG
   "
 
-  fig_noro <- plot_noro_nowcasts +
+  fig_noro <- panel_A_noro +
     bar_chart_wis_noro +
-    rel_wis_by_week_noro +
     rel_wis_by_weekday +
+    wis_by_weekday +
+    distrib_mean_delay_weekday +
     plot_mean_delay_t_by_wday +
     plot_cdf_by_weekday +
     plot_layout(
@@ -675,9 +801,58 @@ get_plot_wis_by_weekday <- function(
       ))
     )
 
+  # scores for all weekdays except sun
+  scores_mon_sat <- scores |>
+    mutate(
+      weekday = wday(reference_date),
+      weekday_name = wday(reference_date, label = TRUE)
+    ) |>
+    filter(weekday_name != "Sun") |>
+    scoringutils::summarise_scores(by = c(
+      "model",
+      "model_type"
+    )) |>
+    select(
+      model, model_type, overprediction, underprediction, dispersion
+    ) |>
+    mutate(weekday_name = "Mon-Sat") |>
+    pivot_longer(cols = c(
+      "overprediction",
+      "underprediction",
+      "dispersion"
+    )) |>
+    mutate(
+      name = factor(name, levels = c(
+        "overprediction",
+        "dispersion",
+        "underprediction"
+      )),
+      model = factor(model, levels = c(
+        "baselinenowcast default",
+        "baselinenowcast weekday\nfilter small training volume",
+        "baselinenowcast weekday\nfilter large training volume",
+        "GAM",
+        "epinowcast",
+        "baseline Mellor et al"
+      ))
+    )
+  scores_comb <- bind_rows(scores_sum, scores_mon_sat)
+  scores_comb$weekday_name <- factor(scores_comb$weekday_name,
+    levels = c(
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun",
+      "Mon-Sat"
+    )
+  )
+
   plot_comps <- plot_components()
   p <- ggplot(
-    scores_sum,
+    scores_comb,
     aes(
       x = model, y = value,
       fill = model,
@@ -707,8 +882,7 @@ get_plot_wis_by_weekday <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ weekday_name, switch = "x") +
-    labs(x = "Weekday", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by weekday for all models")) # nolint
+    labs(x = "Weekday", y = "WIS breakdown")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(

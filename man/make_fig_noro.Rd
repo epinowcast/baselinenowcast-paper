@@ -5,10 +5,11 @@
 \title{Make panel for main norovirus figure}
 \usage{
 make_fig_noro(
-  plot_noro_nowcasts,
+  panel_A_noro,
   bar_chart_wis_noro,
-  rel_wis_by_week_noro,
   rel_wis_by_weekday,
+  wis_by_weekday,
+  distrib_mean_delay_weekday,
   plot_mean_delay_t_by_wday,
   plot_cdf_by_weekday,
   fig_file_name,
@@ -17,17 +18,19 @@ make_fig_noro(
 )
 }
 \arguments{
-\item{plot_noro_nowcasts}{A}
+\item{panel_A_noro}{A}
 
 \item{bar_chart_wis_noro}{B}
 
-\item{rel_wis_by_week_noro}{C}
+\item{rel_wis_by_weekday}{C}
 
-\item{rel_wis_by_weekday}{D}
+\item{wis_by_weekday}{D}
 
-\item{plot_mean_delay_t_by_wday}{E}
+\item{distrib_mean_delay_weekday}{E}
 
-\item{plot_cdf_by_weekday}{F}
+\item{plot_mean_delay_t_by_wday}{F}
+
+\item{plot_cdf_by_weekday}{G}
 
 \item{fig_file_name}{Character string indicating name of the figure to be
 saved as the file name}

@@ -7,7 +7,7 @@
 get_plot_rel_wis_over_time_mp(
   scores,
   strata,
-  age_group_to_plot = NULL,
+  age_group_to_plot = "00+",
   permutation_grouping = NULL
 )
 }

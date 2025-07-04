@@ -213,6 +213,7 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_week_mp>
   "name", # <get_plot_wis_by_week_mp>
   "value", # <get_plot_wis_by_week_mp>
+  "rel_wis_over_time_mp", # <make_fig_model_perms>
   "nowcast_date", # <get_plot_mult_nowcasts_noro>
   "reference_date", # <get_plot_mult_nowcasts_noro>
   "q_0.05", # <get_plot_mult_nowcasts_noro>

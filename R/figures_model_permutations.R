@@ -896,14 +896,59 @@ get_plot_wis_by_week_mp <- function(
   return(p)
 }
 
+#' Make a patchwork plot for panel A combinign facets and underlays
+#'
+#' @param plot_nowcasts_over_time_mp_borrow larger nowcasts over time
+#' @param rel_wis_over_time_mp_borrow underlay relative WIS
+#' @param plot_nowcasts_over_time_mp_rep_tri larger nowcasts over time
+#' @param rel_wis_over_time_mp_rep_tri underlay relative WIS
+#' @param plot_nowcasts_over_time_mp_volume larger nowcasts over time
+#' @param rel_wis_over_time_mp_volume underlay relative WIS
+#'
+#' @returns patchwork gg plot object
+make_panel_A_model_perms <- function(
+    plot_nowcasts_over_time_mp_borrow,
+    rel_wis_over_time_mp_borrow,
+    plot_nowcasts_over_time_mp_rep_tri,
+    rel_wis_over_time_mp_rep_tri,
+    plot_nowcasts_over_time_mp_volume,
+    rel_wis_over_time_mp_volume) {
+  fig_layout <- "
+  AAAA
+  AAAA
+  BBBB
+  CCCC
+  CCCC
+  DDDD
+  EEEE
+  EEEE
+  FFFF
+  "
+
+  fig_panel_A <- plot_nowcasts_over_time_mp_borrow +
+    rel_wis_over_time_mp_borrow +
+    plot_nowcasts_over_time_mp_rep_tri +
+    rel_wis_over_time_mp_rep_tri +
+    plot_nowcasts_over_time_mp_volume +
+    rel_wis_over_time_mp_volume +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect",
+      guides = "collect"
+    ) & theme(
+    legend.position = "top",
+    legend.justification = "left"
+  )
+  return(fig_panel_A)
+}
+
 #' Make panel for main model permutation figure
 #'
-#' @param plot_nowcasts_over_time_mp A
+#' @param panel_A_nowcasts_over_time A
 #' @param bar_chart_wis_by_mp B
-#' @param rel_wis_over_time_mp C
-#' @param bar_chart_coverage_mp D
-#' @param rel_wis_by_horizon_mp E
-#' @param rel_decomp_wis_by_age_group F
+#' @param bar_chart_coverage_mp C
+#' @param rel_wis_by_horizon_mp D
+#' @param rel_decomp_wis_by_age_group E
 #' @param fig_file_name Character string indicating name of the figure to be
 #'    saved as the file name
 #' @param fig_file_dir Path to save figure. Default is
@@ -917,9 +962,8 @@ get_plot_wis_by_week_mp <- function(
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel
 make_fig_model_perms <- function(
-    plot_nowcasts_over_time_mp,
+    panel_A_nowcasts_over_time,
     bar_chart_wis_by_mp,
-    rel_wis_over_time_mp,
     bar_chart_coverage_mp,
     rel_wis_by_horizon_mp,
     rel_decomp_wis_by_age_group,
@@ -930,13 +974,13 @@ make_fig_model_perms <- function(
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   fig_layout <- "
-  AAABB
-  AAADD
-  AAAEE
-  CCCFF
+  AABB
+  AACC
+  AADD
+  AAEE
   "
 
-  fig_model_perm <- plot_nowcasts_over_time_mp +
+  fig_model_perm <- panel_A_nowcasts_over_time +
     bar_chart_wis_by_mp +
     rel_wis_over_time_mp +
     bar_chart_coverage_mp +

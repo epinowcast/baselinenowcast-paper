@@ -248,6 +248,16 @@ utils::globalVariables(c(
   "wis", # <get_plot_rel_wis_by_weekday>
   "comparison_wis", # <get_plot_rel_wis_by_weekday>
   "rel_wis", # <get_plot_rel_wis_by_weekday>
+  "n_history_delay", # <get_plot_rel_delay_t_by_wday>
+  "filter_ref_dates", # <get_plot_rel_delay_t_by_wday>
+  "nowcast_date", # <get_plot_rel_delay_t_by_wday>
+  "weekday", # <get_plot_rel_delay_t_by_wday>
+  "weekday_name", # <get_plot_rel_delay_t_by_wday>
+  "delay", # <get_plot_rel_delay_t_by_wday>
+  "delay_time", # <get_plot_rel_delay_t_by_wday>
+  "mean_delay", # <get_plot_rel_delay_t_by_wday>
+  "mean_delay_all", # <get_plot_rel_delay_t_by_wday>
+  "rel_mean_delay", # <get_plot_rel_delay_t_by_wday>
   "n_history_delay", # <get_plot_mean_delay_t_by_wday>
   "filter_ref_dates", # <get_plot_mean_delay_t_by_wday>
   "nowcast_date", # <get_plot_mean_delay_t_by_wday>
@@ -256,6 +266,14 @@ utils::globalVariables(c(
   "delay", # <get_plot_mean_delay_t_by_wday>
   "delay_time", # <get_plot_mean_delay_t_by_wday>
   "mean_delay", # <get_plot_mean_delay_t_by_wday>
+  "n_history_delay", # <get_plot_distrib_delays>
+  "filter_ref_dates", # <get_plot_distrib_delays>
+  "nowcast_date", # <get_plot_distrib_delays>
+  "weekday", # <get_plot_distrib_delays>
+  "weekday_name", # <get_plot_distrib_delays>
+  "delay", # <get_plot_distrib_delays>
+  "delay_time", # <get_plot_distrib_delays>
+  "mean_delay", # <get_plot_distrib_delays>
   "n_history_delay", # <get_plot_cdf_by_weekday>
   "filter_ref_dates", # <get_plot_cdf_by_weekday>
   "weekday_name", # <get_plot_cdf_by_weekday>

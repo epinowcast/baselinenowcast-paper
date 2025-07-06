@@ -99,6 +99,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         "50%" = 0.4
       ),
       guide = guide_legend(
+        title.position = "top",
         override.aes = list(
           alpha = c(
             "95%" = 0.2,
@@ -110,7 +111,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     facet_wrap(~model_variation, nrow = 3) +
     get_plot_theme() +
     scale_x_date(
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
@@ -122,6 +123,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         "Data as of nowcast date" = "solid"
       ),
       guide = guide_legend(
+        title.position = "top",
         override.aes = list(
           color = c(
             "Final evaluation data" = "red",
@@ -131,16 +133,11 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         )
       )
     ) +
-    labs(fill = "Model permutation") +
     xlab("") +
     ylab("7-day hospitalisation incidence") +
     guides(
-      color = guide_legend(title.position = "top"),
-      fill = guide_legend(title.position = "top"),
-      linetype = guide_legend(
-        title.position = "top",
-        nrow = n_perms
-      )
+      color = "none",
+      fill = "none",
     ) +
     theme(
       strip.placement = "outside",
@@ -270,6 +267,9 @@ get_plot_bar_chart_scores_mp <- function(scores,
         title.position = "top",
         title.hjust = 0.5,
         nrow = 3
+      ),
+      fill = guide_legend(
+        nrow = 2
       )
     )
   return(p)
@@ -346,14 +346,14 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     get_plot_theme() +
     scale_x_date(
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
     xlab("") +
     guides(color = "none") +
     scale_y_continuous(trans = "log10") +
-    ylab("Relative WIS compared\nto baseline validation approach")
+    ylab("Relative WIS")
 
   return(p)
 }
@@ -442,18 +442,16 @@ get_plot_coverage_by_mp <- function(all_coverage,
       values = plot_comps$permutation_colors
     ) +
     scale_alpha_manual(
-      name = "WIS breakdown",
+      name = "Interval coverage",
       values = plot_comps$coverage_alpha
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
     labs(
-      y = "Empirical coverage", x = "",
-      fill = ""
+      y = "Empirical coverage", x = ""
     ) +
     guides(
-      fill = "none",
-      alpha = "none"
+      fill = "none"
     )
   return(p)
 }
@@ -618,21 +616,22 @@ get_plot_rel_decomposed_wis <- function(scores,
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
     x = component, y = rel_score,
-    fill = model_variation_string,
+    # fill = model_variation_string,
     color = model_variation_string,
     shape = component
   )) +
     geom_point(size = 2) +
     facet_grid(
-      cols = vars(age_group),
-      rows = vars(model_variation),
+      rows = vars(age_group),
+      cols = vars(model_variation),
       scales = "free_y"
     ) +
     get_plot_theme() +
     theme(
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA),
-      axis.text.x = element_text(angle = 45, hjust = 1)
+      # axis.text.x = element_text(angle = 45, hjust = 1),
+      axis.text.x = element_blank()
     ) +
     scale_color_manual(
       name = "Model permutation",
@@ -652,7 +651,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     scale_y_continuous(trans = "log10") +
     labs(
       x = "",
-      y = "Relative WIS compared\nto baseline validation approach"
+      y = "Relative WIS"
     ) +
     guides(
       color = "none",
@@ -1055,8 +1054,9 @@ make_fig_model_perms <- function(
   AAEE
   "
 
-  fig_model_perm <- panel_A_nowcasts_over_time + # A
-    bar_chart_wis_by_mp + # B
+  wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time)
+  fig_model_perm <- (wrapped_panel_A + theme(plot.tag.position = c(0, 0.75))) + # A
+    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.75))) + # B
     bar_chart_coverage_mp + # C
     rel_wis_by_horizon_mp + # D
     rel_decomp_wis_by_age_group + # E
@@ -1072,7 +1072,7 @@ make_fig_model_perms <- function(
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "left"
+    legend.justification = "center"
   )
 
   dir_create(fig_file_dir)

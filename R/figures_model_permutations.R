@@ -269,7 +269,9 @@ get_plot_bar_chart_scores_mp <- function(scores,
         nrow = 3
       ),
       fill = guide_legend(
-        nrow = 2
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 4
       )
     )
   return(p)
@@ -451,8 +453,15 @@ get_plot_coverage_by_mp <- function(all_coverage,
       y = "Empirical coverage", x = ""
     ) +
     guides(
+      # Can used fill = "none" if we want to remove color
+      alpha = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 3
+      ),
       fill = "none"
     )
+
   return(p)
 }
 
@@ -1067,12 +1076,12 @@ make_fig_model_perms <- function(
     ) +
     plot_annotation(
       tag_levels = "A",
-      tag_suffix = ".", # adds a period after each letter
       tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "center"
+    legend.justification = "center",
+    plot.tag = element_text(size = 18)
   )
 
   dir_create(fig_file_dir)

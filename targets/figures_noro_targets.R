@@ -1,6 +1,6 @@
 figures_noro_targets <- list(
   tar_target(
-    name = plot_noro_nowcasts_GAM_bnc,
+    name = plot_noro_nowcasts_GAM,
     command = get_plot_mult_nowcasts_noro(
       all_nowcasts = noro_nowcasts |>
         filter(model %in% c("GAM", "baselinenowcast default")),
@@ -54,7 +54,7 @@ figures_noro_targets <- list(
       rel_wis_by_week_noro_GAM,
       plot_noro_nowcasts_epinowcast,
       rel_wis_by_week_noro_epinowcast,
-      plot_noro_nowcasts_bnc,
+      plot_noro_nowcasts_bnc_variants,
       rel_wis_by_week_noro_bnc
     )
   ),

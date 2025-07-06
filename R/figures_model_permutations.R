@@ -1006,11 +1006,7 @@ make_panel_A_model_perms <- function(
     plot_layout(
       design = fig_layout,
       axes = "collect",
-      guides = "collect"
-    ) & theme(
-    legend.position = "top",
-    legend.justification = "left"
-  )
+    )
   return(fig_panel_A)
 }
 
@@ -1059,12 +1055,11 @@ make_fig_model_perms <- function(
   AAEE
   "
 
-  fig_model_perm <- panel_A_nowcasts_over_time +
-    bar_chart_wis_by_mp +
-    rel_wis_over_time_mp +
-    bar_chart_coverage_mp +
-    rel_wis_by_horizon_mp +
-    rel_decomp_wis_by_age_group +
+  fig_model_perm <- panel_A_nowcasts_over_time + # A
+    bar_chart_wis_by_mp + # B
+    bar_chart_coverage_mp + # C
+    rel_wis_by_horizon_mp + # D
+    rel_decomp_wis_by_age_group + # E
     plot_layout(
       design = fig_layout,
       axes = "collect",

@@ -362,8 +362,7 @@ get_plot_wis_over_time <- function(scores_summarised,
     )) +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(
@@ -453,8 +452,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(
@@ -1041,8 +1039,9 @@ make_fig_hub_validation <- function(
   EEEEFF
   "
 
-  fig_hub_validation <- plot_nowcasts_over_time +
-    horiz_bar_chart_sum_scores_ag +
+  fig_hub_validation <- (plot_nowcasts_over_time +
+    theme(plot.tag.position = c(0, 0.75))) +
+    (horiz_bar_chart_sum_scores_ag + theme(plot.tag.position = c(0, 0.75))) +
     plot_wis_comp_over_time_ag +
     bar_chart_scores_by_age_group +
     plot_mean_delay_over_time_by_age +
@@ -1054,12 +1053,12 @@ make_fig_hub_validation <- function(
     ) +
     plot_annotation(
       tag_levels = "A",
-      tag_suffix = ".", # adds a period after each letter
-      tag_sep = "" # no separator between tag levels
+      tag_sep = ""
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "left"
+    legend.justification = "center",
+    plot.tag = element_text(size = 18)
   )
 
   dir_create(fig_file_dir)

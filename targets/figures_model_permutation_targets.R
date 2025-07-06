@@ -115,7 +115,7 @@ figures_model_permutation_targets <- list(
   ),
   tar_target(
     name = panel_A_nowcasts_over_time_00_04,
-    command = make_panel_A_model_perm(
+    command = make_panel_A_model_perms(
       plot_nowcasts_t_mp_00_04_borrow,
       rel_wis_over_time_mp_00_04_borrow,
       plot_nowcasts_t_mp_00_04_rep_tri,
@@ -126,7 +126,7 @@ figures_model_permutation_targets <- list(
   ),
   tar_target(
     name = panel_A_nowcasts_over_time_60_79,
-    command = make_panel_A_model_perm(
+    command = make_panel_A_model_perms(
       plot_nowcasts_t_mp_60_79_borrow,
       rel_wis_over_time_mp_60_79_borrow,
       plot_nowcasts_t_mp_60_79_rep_tri,

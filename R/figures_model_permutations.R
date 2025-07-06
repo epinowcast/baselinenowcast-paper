@@ -124,6 +124,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       ),
       guide = guide_legend(
         title.position = "top",
+        nrow = 3,
         override.aes = list(
           color = c(
             "Final evaluation data" = "red",
@@ -538,7 +539,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
     scale_y_continuous(trans = "log10", limits = c(0.6, 2.5)) +
     labs(
       x = "Horizon (days)",
-      y = "Relative WIS compared\nto baseline validation approach"
+      y = "Relative WIS"
     ) +
     guides(
       color = "none",
@@ -663,8 +664,14 @@ get_plot_rel_decomposed_wis <- function(scores,
       y = "Relative WIS"
     ) +
     guides(
-      color = "none",
-      fill = "none"
+      # Can used fill = "none" if we want to remove color
+      alpha = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 3
+      ),
+      fill = "none",
+      color = "none"
     )
 
 

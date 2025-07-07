@@ -204,7 +204,7 @@ get_plot_bar_chart_scores_mp <- function(scores,
       model_variation =
         case_when(
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -220,7 +220,7 @@ get_plot_bar_chart_scores_mp <- function(scores,
     model_variation != "Baseline validation"
   ) |>
     bind_rows(mutate(scores_base,
-      model_variation = "Borrow for delay\nand uncertainty\nestimation"
+      model_variation = "Borrow for delay and\nuncertainty estimation"
     )) |> # nolint
     bind_rows(mutate(scores_base,
       model_variation = "Reporting triangle\ncompleteness"
@@ -334,7 +334,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -397,7 +397,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
       model_variation =
         case_when(
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -413,7 +413,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
     model_variation != "Baseline validation"
   ) |>
     bind_rows(mutate(coverage_base,
-      model_variation = "Borrow for delay\nand uncertainty\nestimation"
+      model_variation = "Borrow for delay and\nuncertainty estimation"
     )) |> # nolint
     bind_rows(mutate(coverage_base,
       model_variation = "Reporting triangle\ncompleteness"
@@ -510,7 +510,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -616,7 +616,7 @@ get_plot_rel_decomposed_wis <- function(scores,
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -630,7 +630,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     color = model_variation_string,
     shape = component
   )) +
-    geom_point(size = 2) +
+    geom_point(size = 4) +
     facet_grid(
       rows = vars(age_group),
       cols = vars(model_variation),
@@ -666,6 +666,11 @@ get_plot_rel_decomposed_wis <- function(scores,
     guides(
       # Can used fill = "none" if we want to remove color
       alpha = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 3
+      ),
+      shape = guide_legend(
         title.position = "top",
         title.hjust = 0.5,
         nrow = 3
@@ -1012,7 +1017,8 @@ make_panel_A_model_perms <- function(
   FFFF
   "
 
-  fig_panel_A <- plot_nowcasts_t_mp_borrow +
+  fig_panel_A <- (plot_nowcasts_t_mp_borrow +
+    theme(plot.tag.position = c(0, 0.75))) +
     rel_wis_over_time_mp_borrow +
     plot_nowcasts_t_mp_rep_tri +
     rel_wis_over_time_mp_rep_tri +
@@ -1059,8 +1065,6 @@ make_fig_model_perms <- function(
   fig_layout <- "
   AABB
   AABB
-  AABB
-  AACC
   AACC
   AACC
   AADD
@@ -1068,11 +1072,14 @@ make_fig_model_perms <- function(
   AAEE
   AAEE
   AAEE
+  AAEE
+  AAEE
   "
 
-  wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time)
-  fig_model_perm <- (wrapped_panel_A + theme(plot.tag.position = c(0, 0.75))) + # A
-    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.75))) + # B
+  wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time +
+    theme(plot.tag.position = c(0, 0.70)))
+  fig_model_perm <- wrapped_panel_A + # A
+    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.7))) + # B
     bar_chart_coverage_mp + # C
     rel_wis_by_horizon_mp + # D
     rel_decomp_wis_by_age_group + # E

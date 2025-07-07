@@ -53,7 +53,6 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
       name = "WIS breakdown",
       values = plot_colors$score_alpha
     ) +
-    ggtitle(glue("Overall WIS: {strata}")) +
     guides(
       fill = "none",
       alpha = guide_legend(
@@ -61,6 +60,171 @@ get_plot_bar_chart_sum_scores <- function(joined_scores,
         nrow = 3
       )
     )
+  return(p)
+}
+
+#' Get a plot illustrating nowcasts at certain dates
+#'
+#' Hub validation figure A
+#'
+#' @param combined_nowcasts Dataframe of the combined quantiles across
+#'    horizons and nowcast dates
+#' @param max_horizon Integer indicating the maximum horizon to plot.
+#' @param nowcast_dates_to_plot Vector of character strings of the dates you
+#'   wish to plot, default is `NULL` which will plot all of them
+#' @param age_group_to_plot Character string indicating which age group to
+#'    show in the plot, default is "00+" for all age groups.
+#' @param facet Boolean indicating whether or not to make separate facets
+#'    of each model
+#' @importFrom glue glue
+#' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
+#'    facet_wrap scale_color_manual scale_fill_manual guide_legend
+#'     scale_linetype_manual
+#' @importFrom dplyr filter
+#' @returns ggplot object
+#' @autoglobal
+get_plot_nowcast_illustration <- function(combined_nowcasts,
+                                          max_horizon = 28,
+                                          nowcast_dates_to_plot = NULL,
+                                          age_group_to_plot = "00+",
+                                          facet = FALSE) {
+  nc <- combined_nowcasts |>
+    filter(
+      horizon <= max_horizon,
+      age_group == age_group_to_plot,
+      nowcast_date %in% c(nowcast_dates_to_plot)
+    ) |>
+    mutate(nowcast_date_model = glue("{nowcast_date}-{model}"))
+  data_only <- filter(
+    combined_nowcasts,
+    horizon <= max_horizon,
+    age_group == age_group_to_plot,
+    horizon == 0
+  )
+  plot_colors <- plot_components()
+  p <- ggplot() +
+    geom_line(
+      data = nc,
+      aes(
+        x = reference_date, y = `q_0.5`,
+        color = model, group = nowcast_date_model
+      )
+    ) +
+    geom_line(
+      data = nc,
+      aes(
+        x = reference_date, y = data_as_of,
+        group = nowcast_date,
+        linetype = "Data as of nowcast date"
+      ),
+      color = "gray",
+      linewidth = 1
+    ) +
+    geom_vline(
+      data = nc,
+      aes(
+        xintercept = nowcast_date,
+        linetype = "Date of nowcast"
+      ),
+      color = "black"
+    ) +
+    geom_ribbon(
+      data = nc,
+      aes(
+        x = reference_date,
+        ymin = `q_0.25`,
+        ymax = `q_0.75`, fill = model,
+        group = nowcast_date_model,
+        alpha = "50%"
+      )
+    ) +
+    geom_ribbon(
+      data = nc,
+      aes(
+        x = reference_date,
+        ymin = `q_0.025`,
+        ymax = `q_0.975`, fill = model,
+        group = nowcast_date_model,
+        alpha = "95%"
+      )
+    ) +
+    geom_line(
+      data = data_only,
+      aes(
+        x = reference_date, y = observed,
+        linetype = "Final evaluation data"
+      ),
+      color = "red", linewidth = 1
+    ) +
+    get_plot_theme() +
+    scale_x_date(
+      date_breaks = "1 month",
+      date_labels = "%b %Y"
+    ) +
+    scale_color_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    # Add scale for the reference lines
+    scale_linetype_manual(
+      name = "Observed data",
+      values = c(
+        "Final evaluation data" = "solid",
+        "Data as of nowcast date" = "solid",
+        "Date of nowcast" = "dashed"
+      ),
+      breaks = c(
+        "Final evaluation data",
+        "Data as of nowcast date",
+        "Date of nowcast"
+      ),
+      guide = guide_legend(
+        override.aes = list(
+          color = c(
+            "Final evaluation data" = "red",
+            "Data as of nowcast date" = "gray",
+            "Date of nowcast" = "black"
+          ),
+          linewidth = 1
+        )
+      )
+    ) +
+    scale_fill_manual(
+      name = "Model",
+      values = plot_colors$model_colors
+    ) +
+    scale_alpha_manual(
+      name = "Prediction intervals",
+      values = c(
+        "95%" = 0.2,
+        "50%" = 0.4
+      ),
+      guide = guide_legend(
+        override.aes = list(
+          alpha = c(
+            "95%" = 0.2,
+            "50%" = 0.4
+          )
+        )
+      )
+    ) +
+    xlab("") +
+    ylab("7-day hospitalisation incidence") +
+    guides(
+      color = guide_legend(title.position = "top"),
+      fill = guide_legend(title.position = "top"),
+      linetype = guide_legend(
+        title.position = "top",
+        nrow = 3
+      ),
+      alpha = guide_legend(title.position = "top")
+    )
+
+  if (isTRUE(facet)) {
+    p <- p + facet_wrap(~model)
+  }
+
+
   return(p)
 }
 
@@ -157,7 +321,6 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
       name = "Model",
       values = plot_colors$model_colors
     ) +
-    ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence") +
     guides(
@@ -198,8 +361,7 @@ get_plot_wis_over_time <- function(scores_summarised,
     )) +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(
@@ -207,7 +369,6 @@ get_plot_wis_over_time <- function(scores_summarised,
       values = plot_colors$model_colors
     ) +
     guides(color = "none") +
-    ggtitle(glue("WIS over time by model across all horizons: {strata}")) +
     xlab("") +
     ylab("WIS")
   return(p)
@@ -290,8 +451,7 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(
@@ -420,7 +580,6 @@ get_plot_bar_chart_coverage <- function(
       x = "Empirical coverage", y = "",
       fill = ""
     ) +
-    ggtitle(glue::glue("Empirical coverage: {strata}")) +
     coord_flip() +
     get_plot_theme()
   if (isTRUE(save)) {
@@ -444,7 +603,7 @@ get_plot_bar_chart_coverage <- function(
 #' @param scores_by_age_group Dataframe of the summarised scores by age group
 #'    and model
 #' @param KIT_comparison_model Character string indicating which of the KIT
-#'     models to compare to. Default is `"KIT simple nowcast"`.
+#'     models to compare to. Default is `"KIT simple nowcast revised"`.
 #' @param fig_file_dir Path to save figure. Default is
 #'    `file.path("output", "figs", "supp")`.
 #' @inheritParams make_fig_hub_validation
@@ -458,7 +617,7 @@ get_plot_bar_chart_coverage <- function(
 #' @returns ggplot object
 get_plot_rel_wis_by_age_group <- function(
     scores_by_age_group,
-    KIT_comparison_model = "KIT simple nowcast",
+    KIT_comparison_model = "KIT simple nowcast revised",
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
@@ -551,9 +710,7 @@ get_plot_mean_wis_by_horizon <- function(
       values = plot_comps$model_colors
     ) +
     get_plot_theme() +
-    labs(x = "Horizon (days)", y = "Mean WIS") +
-    ggtitle(glue::glue("Mean WIS by horizon: {strata}"))
-
+    labs(x = "Horizon (days)", y = "Mean WIS")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -588,7 +745,7 @@ get_plot_mean_wis_by_horizon <- function(
 get_plot_rel_wis_by_horizon <- function(
     scores,
     strata,
-    KIT_comparison_model = "KIT simple nowcast",
+    KIT_comparison_model = "KIT simple nowcast revised",
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
@@ -629,8 +786,7 @@ get_plot_rel_wis_by_horizon <- function(
       name = "",
       values = plot_comps$model_colors
     ) +
-    labs(x = "Horizon (days)", y = "Relative WIS") +
-    ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}")) # nolint
+    labs(x = "Horizon (days)", y = "Relative WIS")
 
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
@@ -723,7 +879,6 @@ get_plot_coverage_by_horizon <- function(
       x = "Horizon(days)", y = "Empirical coverage",
       color = "Model"
     ) +
-    ggtitle(glue::glue("Empirical coverage by horizon: {strata}")) +
     get_plot_theme() +
     theme(legend.position = "bottom")
 
@@ -819,7 +974,6 @@ get_plot_coverage_by_age_group <- function(
       x = "Empirical coverage", y = "",
       fill = ""
     ) +
-    ggtitle("Empirical coverage by age group") +
     coord_flip() +
     get_plot_theme()
   if (isTRUE(save)) {
@@ -878,8 +1032,9 @@ make_fig_hub_validation <- function(
   EEEEFF
   "
 
-  fig_hub_validation <- plot_nowcasts_over_time +
-    horiz_bar_chart_sum_scores_ag +
+  fig_hub_validation <- (plot_nowcasts_over_time +
+    theme(plot.tag.position = c(0, 0.75))) +
+    (horiz_bar_chart_sum_scores_ag + theme(plot.tag.position = c(0, 0.75))) +
     plot_wis_comp_over_time_ag +
     bar_chart_scores_by_age_group +
     plot_mean_delay_over_time_by_age +
@@ -891,12 +1046,12 @@ make_fig_hub_validation <- function(
     ) +
     plot_annotation(
       tag_levels = "A",
-      tag_suffix = ".", # adds a period after each letter
-      tag_sep = "" # no separator between tag levels
+      tag_sep = ""
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "left"
+    legend.justification = "center",
+    plot.tag = element_text(size = 18)
   )
 
   dir_create(fig_file_dir)

@@ -40,14 +40,6 @@ get_noro_delay_outputs <- function(noro_df,
         max_delay = max_delay,
         n = 3
       )
-      reference_dates <- noro_df_one_weekday |>
-        filter(
-          reference_date <= nowcast_date
-        ) |>
-        distinct(reference_date) |>
-        arrange(reference_date) |>
-        pull()
-
       delay_df <- data.frame(
         delay = delay_pmf,
         delay_time = 0:(length(delay_pmf) - 1)
@@ -79,44 +71,31 @@ get_noro_delay_outputs <- function(noro_df,
       max_delay = max_delay,
       n = max_delay + 1
     )
-    reference_dates <- noro_df |>
-      # We want something from nowcast date to nowcast date - max_delay
-      filter(
-        reference_date <= nowcast_date,
-        reference_date >= ymd(nowcast_date) - days(max_delay)
-      ) |>
-      distinct(reference_date) |>
-      arrange(reference_date) |>
-      pull()
-
-    if (length(delay_pmf) != length(reference_dates)) {
-      cli::cli_abort(
-        message =
-          "Length of delay PMF and reference dates do not line up "
-      )
-    }
-
-    date_df <- tibble(reference_date = reference_dates) |>
-      mutate(
-        time = row_number() - 1
-      )
 
     delay_dfs <- data.frame(
       delay = delay_pmf,
       delay_time = (0:(length(delay_pmf) - 1))
     ) |>
-      left_join(
-        date_df,
-        by = c("delay_time" = "time") # nolint
-      ) |>
       mutate(
         nowcast_date = nowcast_date,
-        weekday = wday(reference_date),
-        weekday_name = wday(reference_date, label = TRUE),
+        weekday = NA,
+        weekday_name = "All",
         n_history_delay = n_history_delay,
         filter_ref_dates = filter_ref_dates
       )
   }
+  # Order weekday names so that horizons are in order from -7 to 0
+  delay_dfs$weekday_name <- factor(delay_dfs$weekday_name,
+    levels = c(
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    )
+  )
 
   return(delay_dfs)
 }

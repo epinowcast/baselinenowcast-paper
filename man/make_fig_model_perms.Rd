@@ -5,9 +5,8 @@
 \title{Make panel for main model permutation figure}
 \usage{
 make_fig_model_perms(
-  plot_nowcasts_over_time_mp,
+  panel_A_nowcasts_over_time,
   bar_chart_wis_by_mp,
-  rel_wis_over_time_mp,
   bar_chart_coverage_mp,
   rel_wis_by_horizon_mp,
   rel_decomp_wis_by_age_group,
@@ -17,17 +16,15 @@ make_fig_model_perms(
 )
 }
 \arguments{
-\item{plot_nowcasts_over_time_mp}{A}
+\item{panel_A_nowcasts_over_time}{A}
 
 \item{bar_chart_wis_by_mp}{B}
 
-\item{rel_wis_over_time_mp}{C}
+\item{bar_chart_coverage_mp}{C}
 
-\item{bar_chart_coverage_mp}{D}
+\item{rel_wis_by_horizon_mp}{D}
 
-\item{rel_wis_by_horizon_mp}{E}
-
-\item{rel_decomp_wis_by_age_group}{F}
+\item{rel_decomp_wis_by_age_group}{E}
 
 \item{fig_file_name}{Character string indicating name of the figure to be
 saved as the file name}

@@ -8,6 +8,8 @@
 #' @param horizon_to_plot Integer indicating which horizon to plot
 #' @param age_group_to_plot Character string indicating which age group to
 #'    show in the plot. Default is `"00+"`for all age groups.
+#' @param permutation_grouping Character string indicating which model
+#'    permutation grouping to plot. Default is `NULL` for all of them.
 #' @inheritParams get_plot_rel_wis_by_age_group
 #' @importFrom glue glue
 #' @importFrom ggplot2 aes ggplot ggtitle xlab ylab geom_line geom_ribbon
@@ -19,6 +21,7 @@
 get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
                                            horizon_to_plot,
                                            age_group_to_plot = "00+",
+                                           permutation_grouping = NULL,
                                            fig_file_name = NULL,
                                            fig_file_dir = file.path(
                                              "output",
@@ -35,55 +38,84 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     age_group == age_group_to_plot
   )
 
+
   nc_base <- filter(nc, model_variation == "Baseline validation")
 
-  nc_perms <- filter(nc, model_variation != "Baseline validation") |>
-    bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
-    bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |> # nolint
-    bind_rows(mutate(nc_base, model_variation = "Training volume"))
+  if (is.null(permutation_grouping)) {
+    nc_perms <- filter(nc, model_variation != "Baseline validation") |>
+      bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
+      bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |> # nolint
+      bind_rows(mutate(nc_base, model_variation = "Training volume"))
+  } else {
+    nc_perms <- filter(nc, model_variation == {{ permutation_grouping }}) |>
+      bind_rows(mutate(nc_base, model_variation = {{ permutation_grouping }}))
+  }
 
   plot_colors <- plot_components()
   p <- ggplot(nc_perms) +
-    geom_line(aes(
-      x = reference_date, y = `q_0.5`,
-      color = model_variation_string
-    ), show.legend = FALSE) +
     geom_ribbon(
       aes(
         x = reference_date,
         ymin = `q_0.25`,
         ymax = `q_0.75`,
-        fill = model_variation_string
-      ),
-      alpha = 0.3
+        fill = model_variation_string,
+        alpha = "50%"
+      )
     ) +
     geom_ribbon(
       aes(
         x = reference_date,
         ymin = `q_0.025`,
-        ymax = `q_0.975`, fill = model_variation_string
+        ymax = `q_0.975`,
+        fill = model_variation_string,
+        alpha = "95%"
+      )
+    ) +
+    geom_line(
+      aes(
+        x = reference_date, y = `q_0.5`,
+        color = model_variation_string
       ),
-      alpha = 0.3
+      show.legend = FALSE,
+      linewidth = 1
     ) +
     geom_line(
       aes(
         x = reference_date, y = observed,
         linetype = "Final evaluation data"
       ),
-      color = "red"
+      color = "red",
+      linewidth = 1
     ) +
     geom_line(
       aes(
         x = reference_date, y = data_as_of,
         linetype = "Data as of nowcast date"
       ),
-      color = "gray"
+      color = "gray",
+      linewidth = 1
+    ) +
+    scale_alpha_manual(
+      name = "Prediction intervals",
+      values = c(
+        "95%" = 0.2,
+        "50%" = 0.4
+      ),
+      guide = guide_legend(
+        nrow = 2,
+        title.position = "top",
+        override.aes = list(
+          alpha = c(
+            "95%" = 0.2,
+            "50%" = 0.4
+          )
+        )
+      )
     ) +
     facet_wrap(~model_variation, nrow = 3) +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
@@ -95,6 +127,8 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         "Data as of nowcast date" = "solid"
       ),
       guide = guide_legend(
+        title.position = "top",
+        nrow = 3,
         override.aes = list(
           color = c(
             "Final evaluation data" = "red",
@@ -104,17 +138,15 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         )
       )
     ) +
-    labs(fill = "Model permutation") +
-    ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence") +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5),
-      fill = guide_legend(title.position = "top", title.hjust = 0.5),
-      linetype = guide_legend(
-        title.position = "top", title.hjust = 0.5,
-        nrow = 2
-      )
+      color = "none",
+      fill = "none"
+    ) +
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA)
     )
 
   if (isTRUE(save)) {
@@ -175,17 +207,34 @@ get_plot_bar_chart_scores_mp <- function(scores,
       )),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
         )
     )
+  scores_base <- filter(
+    scores_summary,
+    model_variation == "Baseline validation"
+  )
+  # Make baseline validation approach be alongside all the others
+  scores_perms <- filter(
+    scores_summary,
+    model_variation != "Baseline validation"
+  ) |>
+    bind_rows(mutate(scores_base,
+      model_variation = "Borrow for delay and\nuncertainty estimation"
+    )) |> # nolint
+    bind_rows(mutate(scores_base,
+      model_variation = "Reporting triangle\ncompleteness"
+    )) |> # nolint
+    bind_rows(mutate(scores_base,
+      model_variation = "Training volume"
+    ))
 
   p <- ggplot(
-    scores_summary,
+    scores_perms,
     aes(
       x = model_variation_string,
       y = value, fill = model_variation_string, alpha = name
@@ -206,7 +255,6 @@ get_plot_bar_chart_scores_mp <- function(scores,
       y = "WIS", x = ""
     ) +
     facet_grid(. ~ model_variation,
-      switch = "x",
       space = "free_x",
       scales = "free_x"
     ) +
@@ -218,13 +266,17 @@ get_plot_bar_chart_scores_mp <- function(scores,
       name = "WIS breakdown",
       values = plot_colors$score_alpha
     ) +
-    ggtitle(glue("Overall WIS by model permutation: {strata}")) +
     guides(
-      fill = "none",
+      # Can used fill = "none" if we want to remove color
       alpha = guide_legend(
         title.position = "top",
         title.hjust = 0.5,
         nrow = 3
+      ),
+      fill = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 4
       )
     )
   return(p)
@@ -233,6 +285,10 @@ get_plot_bar_chart_scores_mp <- function(scores,
 #' Get a line plot of the relative wis over time for each model permutation
 #'
 #' @inheritParams get_plot_bar_chart_scores_mp
+#' @param age_group_to_plot Character string indicating which age group to
+#'    show in the plot. Default is `"00+"`for all age groups.
+#' @param permutation_grouping Character string indicating which model
+#'    permutation grouping to plot. Default is `NULL` for all of them.
 #' @autoglobal
 #' @returns ggplot object
 #' @importFrom dplyr filter mutate left_join rename select
@@ -241,12 +297,24 @@ get_plot_bar_chart_scores_mp <- function(scores,
 #' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_line
 #'    scale_color_manual geom_hline xlab ylab ggtitle scale_x_date
 get_plot_rel_wis_over_time_mp <- function(scores,
-                                          strata) {
+                                          strata,
+                                          age_group_to_plot = "00+",
+                                          permutation_grouping = NULL) {
   plot_colors <- plot_components()
   if (strata == "age groups") {
     scores <- filter(scores, age_group != "00+")
   } else if (strata == "national") {
     scores <- filter(scores, age_group == "00+")
+  }
+  if (!is.null(permutation_grouping)) {
+    scores <- filter(scores, model_variation %in%
+      c(
+        {{ permutation_grouping }},
+        "Baseline validation"
+      ))
+  }
+  if (!is.null(age_group_to_plot)) {
+    scores <- filter(scores, age_group == {{ age_group_to_plot }})
   }
 
   summarised_scores <- scores |>
@@ -270,7 +338,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -280,25 +348,21 @@ get_plot_rel_wis_over_time_mp <- function(scores,
   p <- ggplot(rel_wis) +
     geom_line(aes(
       x = nowcast_date, y = rel_wis,
-      color = model_variation_string,
-      linetype = model_variation
+      color = model_variation_string
     )) +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     get_plot_theme() +
     scale_x_date(
-      limits = as.Date(c("2021-11-08", "2022-04-29")),
-      date_breaks = "2 months",
+      date_breaks = "1 month",
       date_labels = "%b %Y"
     ) +
     scale_color_manual(values = plot_colors$permutation_colors) +
-    labs(color = "Model permutation", linetype = "Permutation grouping") +
-    ggtitle(glue("Relative WIS over time by model permutation across all horizons: {strata}")) + # nolint
     xlab("") +
-    ylab("Relative WIS compared\nto baseline validation approach") +
-    guides(
-      color = "none",
-      linetype = guide_legend(title.position = "top", title.hjust = 0.5)
-    )
+    guides(color = "none") +
+    scale_y_continuous(trans = "log10") +
+    # theme( axis.text.x = element_text(angle = 45, hjust = 1)) +
+    ylab("Relative WIS")
+
   return(p)
 }
 
@@ -337,17 +401,32 @@ get_plot_coverage_by_mp <- function(all_coverage,
       interval_range = factor(interval_range, levels = c("95", "50")),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
         )
     )
+  coverage_base <- filter(
+    coverage_summarised,
+    model_variation == "Baseline validation"
+  )
+  # Make baseline validation approach be alongside all the others
+  coverage_perms <- filter(
+    coverage_summarised,
+    model_variation != "Baseline validation"
+  ) |>
+    bind_rows(mutate(coverage_base,
+      model_variation = "Borrow for delay and\nuncertainty estimation"
+    )) |> # nolint
+    bind_rows(mutate(coverage_base,
+      model_variation = "Reporting triangle\ncompleteness"
+    )) |> # nolint
+    bind_rows(mutate(coverage_base, model_variation = "Training volume"))
 
   plot_comps <- plot_components()
-  p <- ggplot(coverage_summarised) +
+  p <- ggplot(coverage_perms) +
     geom_bar(
       aes(
         x = model_variation_string, y = empirical_coverage,
@@ -357,7 +436,6 @@ get_plot_coverage_by_mp <- function(all_coverage,
       stat = "identity", position = "stack"
     ) +
     facet_grid(. ~ model_variation,
-      switch = "x",
       space = "free_x", scales = "free_x"
     ) +
     get_plot_theme() +
@@ -372,20 +450,25 @@ get_plot_coverage_by_mp <- function(all_coverage,
       values = plot_comps$permutation_colors
     ) +
     scale_alpha_manual(
-      name = "WIS breakdown",
-      values = plot_comps$coverage_alpha
+      name = "Interval coverage",
+      values = plot_comps$coverage_alpha,
+      labels = c("50" = "50%", "95" = "95%")
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
     labs(
-      y = "Empirical coverage", x = "",
-      fill = ""
+      y = "Empirical coverage", x = ""
     ) +
-    ggtitle("Empirical coverage by model permutation across age groups") +
     guides(
-      fill = "none",
-      alpha = "none"
+      # Can used fill = "none" if we want to remove color
+      alpha = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 3
+      ),
+      fill = "none"
     )
+
   return(p)
 }
 
@@ -433,7 +516,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
         case_when(
           model_variation == "Baseline validation" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
-            "Borrow for delay\nand uncertainty\nestimation",
+            "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
@@ -443,11 +526,17 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
     x = horizon, y = relative_wis,
-    color = model_variation_string,
-    linetype = model_variation
+    color = model_variation_string
   )) +
-    geom_line() +
+    geom_line(linewidth = 1) +
+    facet_grid(. ~ model_variation,
+      space = "free_x", scales = "free_x"
+    ) +
     get_plot_theme() +
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA)
+    ) +
     scale_color_manual(
       name = "Permutation grouping",
       values = plot_comps$permutation_colors
@@ -456,10 +545,8 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
     scale_y_continuous(trans = "log10", limits = c(0.6, 2.5)) +
     labs(
       x = "Horizon (days)",
-      y = "Relative WIS compared\nto baseline validation approach",
-      linetype = "Permutation grouping"
+      y = "Relative WIS"
     ) +
-    ggtitle(glue::glue("Relative WIS by horizon for all model permutations: {strata}")) + # nolint
     guides(
       color = "none",
       linetype = guide_legend(title.position = "top", title.hjust = 0.5)
@@ -474,7 +561,8 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
 #' @param facet Boolean indicating whether or not to create separate facets for
 #'    each WIS component. Default is `FALSE`
 #' @autoglobal
-#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual
+#' @importFrom ggplot2 ggplot geom_line aes labs scale_color_manual vars
+#'    facet_grid scale_shape_manual
 #' @importFrom dplyr select filter
 #' @importFrom scoringutils summarise_scores
 #' @importFrom glue glue
@@ -519,7 +607,7 @@ get_plot_rel_decomposed_wis <- function(scores,
       )
     ) |>
     select(
-      age_group, model_variation_string,
+      age_group, model_variation_string, model_variation,
       relative_underprediction, relative_overprediction,
       relative_dispersion
     ) |>
@@ -528,27 +616,77 @@ get_plot_rel_decomposed_wis <- function(scores,
       names_prefix = "relative_",
       names_to = "component",
       values_to = "rel_score"
+    ) |>
+    mutate(
+      model_variation =
+        case_when(
+          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay and\nuncertainty estimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
+          TRUE ~ model_variation
+        ),
+      component = factor(component, levels = c(
+        "overprediction",
+        "dispersion",
+        "underprediction"
+      ))
     )
 
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
-    x = age_group, y = rel_score,
-    fill = model_variation_string
+    x = component, y = rel_score,
+    color = model_variation_string,
+    shape = component
   )) +
-    geom_bar(stat = "identity", position = "dodge") +
+    geom_point(size = 4) +
+    facet_grid(
+      rows = vars(age_group),
+      cols = vars(model_variation),
+      scales = "free_y"
+    ) +
     get_plot_theme() +
-    scale_fill_manual(
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+      axis.text.x = element_blank()
+    ) +
+    scale_color_manual(
       name = "Model permutation",
       values = plot_comps$permutation_colors
     ) +
+    # nolint start
+    scale_shape_manual(
+      name = "WIS breakdown",
+      values = c(
+        "dispersion" = 16,
+        "overprediction" = 17,
+        "underprediction" = 15
+      )
+    ) +
+    # nolint end
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log10") +
     labs(
       x = "",
-      y = "Relative WIS compared\nto baseline validation approach"
+      y = "Relative WIS"
     ) +
-    ggtitle(glue::glue("Relative WIS components by age group for all model permutations")) + # nolint
-    guides(fill = "none")
+    guides(
+      # Can used fill = "none" if we want to remove color
+      alpha = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 3
+      ),
+      shape = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 3
+      ),
+      fill = "none",
+      color = "none"
+    )
 
 
   if (isTRUE(facet)) {
@@ -629,8 +767,7 @@ get_plot_wis_by_age_group_mp <- function(
       name = "WIS breakdown",
       values = plot_comps$score_alpha
     ) +
-    labs(x = "", y = "WIS") +
-    ggtitle("WIS by age group for all model permutations")
+    labs(x = "", y = "WIS")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -727,8 +864,7 @@ get_plot_wis_by_horizon_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ horizon, switch = "x") +
-    labs(x = "Horizon (days)", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by horizon for all model permutations: {strata}")) # nolint
+    labs(x = "Horizon (days)", y = "WIS breakdown")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -842,8 +978,7 @@ get_plot_wis_by_week_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ week_end_date, switch = "x") +
-    labs(x = "Nowcast date", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by nowcast date for all model permutations: {strata}")) # nolint
+    labs(x = "Nowcast date", y = "WIS breakdown")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -859,14 +994,166 @@ get_plot_wis_by_week_mp <- function(
   return(p)
 }
 
+#' Make a patchwork plot for panel A combining facets and underlays
+#'
+#' @param plot_nowcasts_t_mp_borrow larger nowcasts over time
+#' @param rel_wis_over_time_mp_borrow underlay relative WIS
+#' @param plot_nowcasts_t_mp_rep_tri larger nowcasts over time
+#' @param rel_wis_over_time_mp_rep_tri underlay relative WIS
+#' @param plot_nowcasts_t_mp_volume larger nowcasts over time
+#' @param rel_wis_over_time_mp_volume underlay relative WIS
+#' @param fig_file_name Character string indicating name of the figure to be
+#'    saved as the file name
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs")`.
+#' @param save Boolean indicating whether or not to save the figure to disk.
+#'    Default is `FALSE`.
+#'
+#' @returns patchwork ggplot object
+make_panel_A_model_perms <- function(
+    plot_nowcasts_t_mp_borrow,
+    rel_wis_over_time_mp_borrow,
+    plot_nowcasts_t_mp_rep_tri,
+    rel_wis_over_time_mp_rep_tri,
+    plot_nowcasts_t_mp_volume,
+    rel_wis_over_time_mp_volume,
+    fig_file_name,
+    fig_file_dir = file.path("output", "figs"),
+    save = FALSE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+  fig_layout <- "
+  AAAA
+  AAAA
+  BBBB
+  CCCC
+  CCCC
+  DDDD
+  EEEE
+  EEEE
+  FFFF
+  "
+
+  fig_panel_A <- (plot_nowcasts_t_mp_borrow +
+    theme(plot.tag.position = c(0, 0.75))) +
+    rel_wis_over_time_mp_borrow +
+    plot_nowcasts_t_mp_rep_tri +
+    rel_wis_over_time_mp_rep_tri +
+    plot_nowcasts_t_mp_volume +
+    rel_wis_over_time_mp_volume +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect"
+    )
+
+  if (isTRUE(save)) {
+    # Add tags and fill legend if saving as stand-alone
+    fig_panel_A <- (plot_nowcasts_t_mp_borrow +
+      theme(plot.tag.position = c(0, 0.75)) +
+      guides(fill = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 4
+      ))) +
+      rel_wis_over_time_mp_borrow +
+      plot_nowcasts_t_mp_rep_tri +
+      rel_wis_over_time_mp_rep_tri +
+      plot_nowcasts_t_mp_volume +
+      rel_wis_over_time_mp_volume +
+      plot_layout(
+        design = fig_layout,
+        axes = "collect",
+        guides = "collect"
+      ) +
+      plot_annotation(
+        tag_levels = "A",
+        tag_sep = "" # no separator between tag levels
+      )
+    ggsave(
+      plot = fig_panel_A,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 20
+    )
+  }
+  return(fig_panel_A)
+}
+
+#' Make a patchwork plot for panel A combining facets and underlays with two
+#'    age groups side by side
+#'
+#' @param plot_nowcasts_t_mp_borrow1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_borrow1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_rep_tri1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_rep_tri1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_volume1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_volume1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_borrow2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_borrow2 underlay relative WIS
+#' @param plot_nowcasts_t_mp_rep_tri2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_rep_tri2 underlay relative WIS
+#' @param plot_nowcasts_t_mp_volume2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_volume2 underlay relative WIS
+#'
+#' @returns patchwork ggplot object
+make_panel_A_mps_2_ags <- function(
+    plot_nowcasts_t_mp_borrow1,
+    rel_wis_over_time_mp_borrow1,
+    plot_nowcasts_t_mp_rep_tri1,
+    rel_wis_over_time_mp_rep_tri1,
+    plot_nowcasts_t_mp_volume1,
+    rel_wis_over_time_mp_volume1,
+    plot_nowcasts_t_mp_borrow2,
+    rel_wis_over_time_mp_borrow2,
+    plot_nowcasts_t_mp_rep_tri2,
+    rel_wis_over_time_mp_rep_tri2,
+    plot_nowcasts_t_mp_volume2,
+    rel_wis_over_time_mp_volume2) {
+  fig_layout <- "
+  AAGG
+  AAGG
+  BBHH
+  CCII
+  CCII
+  DDJJ
+  EEKK
+  EEKK
+  FFLL
+  "
+
+  fig_panel_A <- (plot_nowcasts_t_mp_borrow1 +
+    theme(plot.tag.position = c(0, 0.6))) +
+    rel_wis_over_time_mp_borrow1 +
+    plot_nowcasts_t_mp_rep_tri1 +
+    rel_wis_over_time_mp_rep_tri1 +
+    plot_nowcasts_t_mp_volume1 +
+    rel_wis_over_time_mp_volume1 +
+    (plot_nowcasts_t_mp_borrow2 +
+      theme(plot.tag.position = c(0, 0.6))) +
+    rel_wis_over_time_mp_borrow2 +
+    plot_nowcasts_t_mp_rep_tri2 +
+    rel_wis_over_time_mp_rep_tri2 +
+    plot_nowcasts_t_mp_volume2 +
+    rel_wis_over_time_mp_volume2 +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect"
+    )
+  return(fig_panel_A)
+}
+
+
 #' Make panel for main model permutation figure
 #'
-#' @param plot_nowcasts_over_time_mp A
+#' @param panel_A_nowcasts_over_time A
 #' @param bar_chart_wis_by_mp B
-#' @param rel_wis_over_time_mp C
-#' @param bar_chart_coverage_mp D
-#' @param rel_wis_by_horizon_mp E
-#' @param rel_decomp_wis_by_age_group F
+#' @param bar_chart_coverage_mp C
+#' @param rel_wis_by_horizon_mp D
+#' @param rel_decomp_wis_by_age_group E
 #' @param fig_file_name Character string indicating name of the figure to be
 #'    saved as the file name
 #' @param fig_file_dir Path to save figure. Default is
@@ -875,14 +1162,13 @@ get_plot_wis_by_week_mp <- function(
 #'    Default is `TRUE`.
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom patchwork plot_layout plot_annotation
+#' @importFrom patchwork plot_layout plot_annotation wrap_plots
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel
 make_fig_model_perms <- function(
-    plot_nowcasts_over_time_mp,
+    panel_A_nowcasts_over_time,
     bar_chart_wis_by_mp,
-    rel_wis_over_time_mp,
     bar_chart_coverage_mp,
     rel_wis_by_horizon_mp,
     rel_decomp_wis_by_age_group,
@@ -894,17 +1180,26 @@ make_fig_model_perms <- function(
   }
   fig_layout <- "
   AAABB
+  AAABB
+  AAACC
+  AAACC
   AAADD
   AAAEE
-  CCCFF
+  AAAEE
+  AAAEE
+  AAAEE
+  AAAEE
+  AAAEE
   "
 
-  fig_model_perm <- plot_nowcasts_over_time_mp +
-    bar_chart_wis_by_mp +
-    rel_wis_over_time_mp +
-    bar_chart_coverage_mp +
-    rel_wis_by_horizon_mp +
-    rel_decomp_wis_by_age_group +
+
+  wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time)
+  # theme(plot.tag.position = c(0, 0.70)))
+  fig_model_perm <- wrapped_panel_A + # A
+    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.6))) + # B
+    bar_chart_coverage_mp + # C
+    rel_wis_by_horizon_mp + # D
+    rel_decomp_wis_by_age_group + # E
     plot_layout(
       design = fig_layout,
       axes = "collect",
@@ -912,12 +1207,17 @@ make_fig_model_perms <- function(
     ) +
     plot_annotation(
       tag_levels = "A",
-      tag_suffix = ".", # adds a period after each letter
       tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "left"
+    legend.justification = "center",
+    plot.tag = element_text(size = 18),
+    plot.title.position = "plot", # Position title relative to plot area
+    plot.title = element_text(
+      hjust = 0.5, # Center the title
+      vjust = -4 # Move title down (negative moves down)
+    )
   )
 
   dir_create(fig_file_dir)
@@ -929,7 +1229,7 @@ make_fig_model_perms <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 24,
+      width = 26,
       height = 20
     )
   }

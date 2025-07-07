@@ -4,7 +4,12 @@
 \alias{get_plot_rel_wis_over_time_mp}
 \title{Get a line plot of the relative wis over time for each model permutation}
 \usage{
-get_plot_rel_wis_over_time_mp(scores, strata)
+get_plot_rel_wis_over_time_mp(
+  scores,
+  strata,
+  age_group_to_plot = "00+",
+  permutation_grouping = NULL
+)
 }
 \arguments{
 \item{scores}{Data.frame of model permutations for all nowcast dates,
@@ -13,6 +18,12 @@ horizons, and age groups.}
 \item{strata}{Character string indicating whether to summarise across the
 different age strata (\code{"age groups"}) or across the nation as a whole
 (\code{"national"}). Default is \code{"age groups"}.}
+
+\item{age_group_to_plot}{Character string indicating which age group to
+show in the plot. Default is \code{"00+"}for all age groups.}
+
+\item{permutation_grouping}{Character string indicating which model
+permutation grouping to plot. Default is \code{NULL} for all of them.}
 }
 \value{
 ggplot object

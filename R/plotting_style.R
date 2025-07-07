@@ -40,7 +40,7 @@ plot_components <- function() {
     "baselinenowcast_model1" = "purple4",
     "baselinenowcast_model2" = "blue3",
     "baselinenowcast_model3" = "maroon",
-    "baselinenowcast default" = "purple4",
+    "baselinenowcast base" = "purple4",
     "baselinenowcast weekday\nfilter small training volume" = "blue3",
     "baselinenowcast weekday\nfilter large training volume" = "maroon"
   )

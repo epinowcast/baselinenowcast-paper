@@ -273,6 +273,14 @@ figures_hub_validation_targets <- list(
     )
   ),
   tar_target(
+    name = horiz_bar_chart_coverage_ag2,
+    command = get_plot_bar_chart_coverage(
+      validation_coverage2,
+      strata = "age groups",
+      fig_file_name = "bar_chart_cov_ag_rt"
+    )
+  ),
+  tar_target(
     name = plot_coverage_by_horizon_ntl,
     command = get_plot_coverage_by_horizon(
       validation_coverager,

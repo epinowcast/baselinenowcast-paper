@@ -207,12 +207,12 @@ get_plot_rel_wis_over_time <- function(scores) {
     select(model, nowcast_date, wis)
 
   baseline_comparison <- scores_sum |>
-    filter(model == "baselinenowcast default") |>
+    filter(model == "baselinenowcast base") |>
     rename(comparison_wis = wis) |>
     select(comparison_wis, nowcast_date)
 
   relative_wis <- scores_sum |>
-    filter(model != "baselinenowcast default") |>
+    filter(model != "baselinenowcast base") |>
     left_join(baseline_comparison, by = "nowcast_date") |>
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
   plot_comps <- plot_components()
@@ -270,12 +270,12 @@ get_plot_rel_wis_by_weekday <- function(scores) {
     select(model, weekday, weekday_name, wis)
 
   baseline_comparison <- scores_sum |>
-    filter(model == "baselinenowcast default") |>
+    filter(model == "baselinenowcast base") |>
     rename(comparison_wis = wis) |>
     select(comparison_wis, weekday)
 
   relative_wis <- scores_sum |>
-    filter(model != "baselinenowcast default") |>
+    filter(model != "baselinenowcast base") |>
     left_join(baseline_comparison, by = "weekday") |>
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
 
@@ -814,7 +814,7 @@ get_plot_wis_over_time_noro <- function(
         "underprediction"
       )),
       model = factor(model, levels = c(
-        "baselinenowcast default",
+        "baselinenowcast base",
         "baselinenowcast weekday\nfilter small training volume",
         "baselinenowcast weekday\nfilter large training volume",
         "GAM",
@@ -922,7 +922,7 @@ get_plot_wis_by_weekday <- function(
         "underprediction"
       )),
       model = factor(model, levels = c(
-        "baselinenowcast default",
+        "baselinenowcast base",
         "baselinenowcast weekday\nfilter small training volume",
         "baselinenowcast weekday\nfilter large training volume",
         "GAM",
@@ -958,7 +958,7 @@ get_plot_wis_by_weekday <- function(
         "underprediction"
       )),
       model = factor(model, levels = c(
-        "baselinenowcast default",
+        "baselinenowcast base",
         "baselinenowcast weekday\nfilter small training volume",
         "baselinenowcast weekday\nfilter large training volume",
         "GAM",
@@ -1076,7 +1076,7 @@ get_plot_cov_by_model_noro <- function(all_coverage,
     mutate(
       interval_range = factor(interval_range, levels = c("90", "50")),
       model = factor(model, levels = c(
-        "baselinenowcast default",
+        "baselinenowcast base",
         "baselinenowcast weekday\nfilter small training volume",
         "baselinenowcast weekday\nfilter large training volume",
         "GAM",
@@ -1182,7 +1182,7 @@ get_plot_cov_by_mod_wday_noro <- function(all_coverage,
     mutate(
       interval_range = factor(interval_range, levels = c("90", "50")),
       model = factor(model, levels = c(
-        "baselinenowcast default",
+        "baselinenowcast base",
         "baselinenowcast weekday\nfilter small training volume",
         "baselinenowcast weekday\nfilter large training volume",
         "GAM",

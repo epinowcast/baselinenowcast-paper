@@ -159,7 +159,7 @@ scores_sum <- validation_scores |>
   summarise_scores(by = c("model", "age_group"))
 
 comparison_score_rt <- scores_sum |>
-  filter(model == "KIT simple nowcast") |>
+  filter(model == "KIT simple nowcast revised") |>
   rename(KIT_rt_wis = wis) |>
   select(KIT_rt_wis, age_group)
 

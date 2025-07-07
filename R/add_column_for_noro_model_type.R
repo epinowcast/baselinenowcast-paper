@@ -35,7 +35,7 @@ replace_Mellor_name_with_ours <- function(df) {
   df_w_new_model_name <- df |>
     mutate(model = case_when(
       model == "baselinenowcast_model1" ~
-        "baselinenowcast default",
+        "baselinenowcast base",
       model == "baselinenowcast_model2" ~
         "baselinenowcast weekday\nfilter small training volume",
       model == "baselinenowcast_model3" ~

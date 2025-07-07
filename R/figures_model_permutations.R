@@ -771,8 +771,7 @@ get_plot_wis_by_age_group_mp <- function(
       name = "WIS breakdown",
       values = plot_comps$score_alpha
     ) +
-    labs(x = "", y = "WIS") +
-    ggtitle("WIS by age group for all model permutations")
+    labs(x = "", y = "WIS")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -869,8 +868,7 @@ get_plot_wis_by_horizon_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ horizon, switch = "x") +
-    labs(x = "Horizon (days)", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by horizon for all model permutations: {strata}")) # nolint
+    labs(x = "Horizon (days)", y = "WIS breakdown")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -984,8 +982,7 @@ get_plot_wis_by_week_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ week_end_date, switch = "x") +
-    labs(x = "Nowcast date", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by nowcast date for all model permutations: {strata}")) # nolint
+    labs(x = "Nowcast date", y = "WIS breakdown")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(

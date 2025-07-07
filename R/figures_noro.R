@@ -33,21 +33,21 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.05`, ymax = `q_0.95`,
-        group = nowcast_date_model, fill = model
-      ),
-      alpha = 0.2
+        group = nowcast_date_model, fill = model,
+        alpha = "90%"
+      )
     ) +
     geom_ribbon(
       aes(
         x = reference_date, ymin = `q_0.25`, ymax = `q_0.75`,
-        group = nowcast_date_model, fill = model
-      ),
-      alpha = 0.2
+        group = nowcast_date_model, fill = model,
+        alpha = "50%"
+      )
     ) +
     geom_line(aes(
       x = reference_date, y = `q_0.5`,
       group = nowcast_date_model, color = model
-    )) +
+    ), show.legend = FALSE, linewidth = 1) +
     geom_line(
       aes(
         x = reference_date, y = observed,
@@ -64,20 +64,28 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       ),
       color = "gray", linewidth = 1
     ) +
-    theme_bw() +
+    scale_alpha_manual(
+      name = "Prediction intervals",
+      values = c(
+        "90%" = 0.2,
+        "50%" = 0.4
+      )
+    ) +
     facet_wrap(~facet_title) +
     scale_x_date(
       limits = as.Date(c("2023-10-30", "2024-03-10")),
       date_breaks = "1 week",
-      date_labels = "%b %Y"
+      date_labels = "%d %b %Y"
     ) +
+    get_plot_theme() +
     theme(
       axis.text.x = element_text(
         vjust = 1,
         hjust = 1,
         angle = 45
       ),
-      legend.position = "bottom"
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
     ) +
     # nolint start
     scale_color_manual(
@@ -109,9 +117,13 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
     xlab("") +
     ylab(glue("{pathogen} cases")) +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5),
-      fill = guide_legend(title.position = "top", title.hjust = 0.5),
+      color = "none",
+      fill = "none",
       linetype = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 2
+      ),
+      alpha = guide_legend(
         title.position = "top", title.hjust = 0.5,
         nrow = 2
       )
@@ -169,7 +181,6 @@ get_bar_chart_sum_scores_noro <- function(scores) {
       name = "Model",
       values = plot_colors$model_colors
     ) +
-    ggtitle("Overall WIS") +
     guides(
       fill = "none",
       alpha = guide_legend(
@@ -217,16 +228,19 @@ get_plot_rel_wis_over_time <- function(scores) {
       name = "Model",
       values = plot_comps$model_colors
     ) +
-    scale_x_date( # Jan 2023, Feb 2023, etc.
+    scale_x_date(
       limits = as.Date(c("2023-10-30", "2024-03-10")),
-      date_breaks = "1 week", #
-      date_labels = "%b %Y"
+      date_breaks = "1 week",
+      date_labels = "%d %b %Y"
     ) +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      legend.position = "bottom"
+      axis.text.x = element_text(
+        vjust = 1,
+        hjust = 1,
+        angle = 45
+      )
     ) +
-    labs(x = "", y = "Relative WIS") +
+    labs(x = "", y = "Relative\nWIS") +
     guides(color = "none")
 
   return(p)
@@ -264,6 +278,18 @@ get_plot_rel_wis_by_weekday <- function(scores) {
     filter(model != "baselinenowcast default") |>
     left_join(baseline_comparison, by = "weekday") |>
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
+
+  relative_wis$weekday_name <- factor(relative_wis$weekday_name,
+    levels = c(
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    )
+  )
   plot_comps <- plot_components()
   p <- ggplot(relative_wis) +
     geom_line(aes(
@@ -282,107 +308,11 @@ get_plot_rel_wis_by_weekday <- function(scores) {
       legend.position = "bottom"
     ) +
     labs(x = "", y = "Relative WIS") +
-    ggtitle("Relative WIS by weekday relative to baselinenowcast default model configuration") + # nolint
     guides(color = "none")
   return(p)
 }
 
-#' Get plot relative mean delay over time by weekday
-#'
-#' @param delay_dfs Data.frame of delay estimates both separately by weekday
-#'    and jointly, indexed by the weekday of the reference date.
-#' @param n_history_delay_filter Integer indicating how much historical data
-#'    to use to estimate the mean delay at each nowcast time. Default is `14`.
-#' @inheritParams get_plot_rel_wis_by_age_group
-#' @returns ggplot object
-#' @importFrom ggplot2 ggplot aes labs
-#'    facet_grid theme scale_fill_manual
-#'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
-#' @autoglobal
-#' @importFrom dplyr select filter rename mutate
-get_plot_rel_delay_t_by_wday <- function(delay_dfs,
-                                         n_history_delay_filter = 28,
-                                         fig_file_name = NULL,
-                                         fig_file_dir = file.path(
-                                           "output", "figs", "supp"
-                                         ),
-                                         save = TRUE) {
-  if (save && is.null(fig_file_name)) {
-    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
-  }
 
-  mean_delay_by_weekday_and_date <- delay_dfs |>
-    filter(
-      n_history_delay == n_history_delay_filter,
-      filter_ref_dates
-    ) |>
-    group_by(nowcast_date, weekday, weekday_name) |>
-    summarise(
-      mean_delay = sum(delay * delay_time)
-    )
-
-  mean_delay_all_weekdays <- delay_dfs |>
-    filter(
-      n_history_delay == n_history_delay_filter,
-      !filter_ref_dates
-    ) |>
-    group_by(nowcast_date) |>
-    summarise(
-      mean_delay_all = sum(delay * delay_time)
-    )
-
-
-  mean_delay_df <- mean_delay_by_weekday_and_date |>
-    left_join(mean_delay_all_weekdays, by = "nowcast_date") |>
-    mutate(rel_mean_delay = mean_delay / mean_delay_all)
-  plot_comps <- plot_components()
-  p <- ggplot(data = mean_delay_df) +
-    geom_line(aes(
-      x = ymd(nowcast_date), y = rel_mean_delay,
-      color = weekday_name,
-      linewidth = weekday_name
-    )) +
-    guides(linewidth = "none") +
-    geom_hline(aes(yintercept = 1), linetype = "dashed") +
-    get_plot_theme() +
-    scale_x_date( # Jan 2023, Feb 2023, etc.
-      limits = as.Date(c("2023-10-30", "2024-03-10")),
-      date_breaks = "1 week",
-      date_labels = "%b %Y"
-    ) +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      legend.position = "bottom"
-    ) +
-    scale_color_manual(
-      name = "Weekday",
-      values = plot_comps$weekday_colors
-    ) +
-    scale_linewidth_manual(
-      values = plot_comps$weekday_linewidth,
-      labels = NULL
-    ) +
-    scale_y_continuous(trans = "log10") +
-    guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5)
-    ) +
-    xlab("") +
-    ylab("Relative mean delay compared\nto average across all weekdays")
-
-  if (isTRUE(save)) {
-    dir_create(fig_file_dir)
-    ggsave(
-      plot = p,
-      filename = file.path(
-        fig_file_dir,
-        glue("{fig_file_name}.png")
-      ),
-      width = 12,
-      height = 8
-    )
-  }
-  return(p)
-}
 
 #' Get plot mean delay over time by weekday
 #'
@@ -439,7 +369,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     scale_x_date( # Jan 2023, Feb 2023, etc.
       limits = as.Date(c("2023-10-30", "2024-03-10")),
       date_breaks = "1 week",
-      date_labels = "%b %Y"
+      date_labels = " %d %b %Y"
     ) +
     theme(
       axis.text.x = element_text(angle = 45, hjust = 1),
@@ -454,7 +384,7 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
       labels = NULL
     ) +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5)
+      color = "none"
     ) +
     xlab("") +
     ylab("Mean delay over time")
@@ -522,7 +452,14 @@ get_plot_distrib_delays <- function(delay_dfs,
     ) +
     xlab("") +
     coord_cartesian(ylim = c(0, max(mean_delay_df$mean_delay))) +
-    ylab("Mean delay distribution by weekday")
+    ylab("Mean delay\ndistribution") +
+    guides(
+      fill = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 3
+      )
+    )
+
   return(p)
 }
 
@@ -581,7 +518,7 @@ get_plot_cdf_by_weekday <- function(delay_dfs) {
       labels = NULL
     ) +
     xlab("Delay (days)") +
-    ylab("Cumulative delay distribution") +
+    ylab("Cumulative delay\ndistribution") +
     get_plot_theme() +
     guides(
       color = "none",
@@ -625,7 +562,8 @@ make_panel_A_noro <- function(
   FFF
   "
 
-  panel_A_noro <- plot_noro_nowcasts_GAM +
+  panel_A_noro <- (plot_noro_nowcasts_GAM +
+    theme(plot.tag.position = c(0, 0.6))) +
     rel_wis_by_week_noro_GAM +
     plot_noro_nowcasts_enw +
     rel_wis_by_week_noro_enw +
@@ -633,11 +571,7 @@ make_panel_A_noro <- function(
     rel_wis_by_week_noro_bnc +
     plot_layout(
       design = fig_layout,
-      axes = "collect",
-      guides = "collect"
-    ) + theme(
-      legend.position = "top",
-      legend.justification = "center"
+      axes = "collect"
     )
 
   return(panel_A_noro)
@@ -658,7 +592,7 @@ make_panel_A_noro <- function(
 #' @autoglobal
 #' @importFrom glue glue
 #' @importFrom patchwork plot_layout plot_annotation
-#' @importFrom ggplot2 ggsave theme
+#' @importFrom ggplot2 ggsave theme wrap_plots
 #' @importFrom fs dir_create
 make_fig_noro <- function(panel_A_noro,
                           bar_chart_wis_noro,
@@ -681,8 +615,8 @@ make_fig_noro <- function(panel_A_noro,
   FFFGG
   "
 
-  fig_noro <- panel_A_noro +
-    bar_chart_wis_noro +
+  fig_noro <- wrap_plots(panel_A_noro) +
+    (bar_chart_wis_noro + theme(plot.tag.position = c(0, 0.6))) +
     rel_wis_by_weekday +
     wis_by_weekday +
     distrib_mean_delay_weekday +
@@ -695,12 +629,13 @@ make_fig_noro <- function(panel_A_noro,
     ) +
     plot_annotation(
       tag_levels = "A",
-      tag_suffix = ".", # adds a period after each letter
+      tag_suffix = "", # adds a period after each letter
       tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
-    legend.justification = "center"
+    legend.justification = "center",
+    plot.tag = element_text(size = 18)
   )
 
   dir_create(fig_file_dir)
@@ -717,6 +652,107 @@ make_fig_noro <- function(panel_A_noro,
     )
   }
   return(fig_noro)
+}
+
+#' Get plot relative mean delay over time by weekday
+#'
+#' @param delay_dfs Data.frame of delay estimates both separately by weekday
+#'    and jointly, indexed by the weekday of the reference date.
+#' @param n_history_delay_filter Integer indicating how much historical data
+#'    to use to estimate the mean delay at each nowcast time. Default is `14`.
+#' @inheritParams get_plot_rel_wis_by_age_group
+#' @returns ggplot object
+#' @importFrom ggplot2 ggplot aes labs
+#'    facet_grid theme scale_fill_manual
+#'    ggtitle element_blank scale_alpha_manual geom_bar guide_legend
+#' @autoglobal
+#' @importFrom dplyr select filter rename mutate
+get_plot_rel_delay_t_by_wday <- function(delay_dfs,
+                                         n_history_delay_filter = 28,
+                                         fig_file_name = NULL,
+                                         fig_file_dir = file.path(
+                                           "output", "figs", "supp"
+                                         ),
+                                         save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+
+  mean_delay_by_weekday_and_date <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      filter_ref_dates
+    ) |>
+    group_by(nowcast_date, weekday, weekday_name) |>
+    summarise(
+      mean_delay = sum(delay * delay_time)
+    )
+
+  mean_delay_all_weekdays <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      !filter_ref_dates
+    ) |>
+    group_by(nowcast_date) |>
+    summarise(
+      mean_delay_all = sum(delay * delay_time)
+    )
+
+
+  mean_delay_df <- mean_delay_by_weekday_and_date |>
+    left_join(mean_delay_all_weekdays, by = "nowcast_date") |>
+    mutate(rel_mean_delay = mean_delay / mean_delay_all)
+  plot_comps <- plot_components()
+  p <- ggplot(data = mean_delay_df) +
+    geom_line(aes(
+      x = ymd(nowcast_date), y = rel_mean_delay,
+      color = weekday_name,
+      linewidth = weekday_name
+    )) +
+    guides(linewidth = "none") +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    get_plot_theme() +
+    scale_x_date( # Jan 2023, Feb 2023, etc.
+      limits = as.Date(c("2023-10-30", "2024-03-10")),
+      date_breaks = "1 week",
+      date_labels = "%d %b %Y"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "top"
+    ) +
+    scale_color_manual(
+      name = "Weekday",
+      values = plot_comps$weekday_colors
+    ) +
+    scale_linewidth_manual(
+      values = plot_comps$weekday_linewidth,
+      labels = NULL
+    ) +
+    scale_y_continuous(trans = "log10") +
+    guides(
+      color = guide_legend(
+        title.position = "left",
+        title.hjust = 0.5,
+        nrow = 1
+      )
+    ) +
+    xlab("") +
+    ylab("Relative mean delay compared\nto average across all weekdays")
+
+  if (isTRUE(save)) {
+    dir_create(fig_file_dir)
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 12,
+      height = 8
+    )
+  }
+  return(p)
 }
 
 #' Get a plot of decomposed WIS by week for each model
@@ -801,10 +837,6 @@ get_plot_wis_over_time_noro <- function(
       values = plot_comps$model_colors
     ) +
     get_plot_theme() +
-    cowplot::background_grid(
-      minor = "none",
-      major = "none"
-    ) +
     theme(
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
@@ -819,7 +851,12 @@ get_plot_wis_over_time_noro <- function(
     ) +
     facet_grid(. ~ week_end_date, switch = "x") +
     labs(x = "Nowcast date", y = "WIS breakdown") +
-    ggtitle(glue::glue("WIS breakdown by nowcast date for all models")) # nolint
+    guides(
+      alpha = guide_legend(
+        title.position = "top", title.hjust = 0.5,
+        nrow = 3
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -957,10 +994,6 @@ get_plot_wis_by_weekday <- function(
       values = plot_comps$model_colors
     ) +
     get_plot_theme() +
-    cowplot::background_grid(
-      minor = "none",
-      major = "none"
-    ) +
     theme(
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
@@ -974,7 +1007,14 @@ get_plot_wis_by_weekday <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ weekday_name, switch = "x") +
-    labs(x = "Weekday", y = "WIS breakdown")
+    labs(x = "", y = "WIS") +
+    guides(
+      alpha = "none",
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top", title.hjust = 0.5
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -1067,16 +1107,16 @@ get_plot_cov_by_model_noro <- function(all_coverage,
       values = plot_comps$model_colors
     ) +
     scale_alpha_manual(
-      name = "Empirical coverage",
-      values = plot_comps$coverage_alpha
+      name = "Interval coverage",
+      values = plot_comps$coverage_alpha,
+      labels = c("90" = "90%", "50" = "50%")
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.90), linetype = "dashed") +
     labs(
       y = "Empirical coverage", x = "",
-      fill = "Model", alpha = "Interval"
-    ) +
-    ggtitle("Empirical coverage by model")
+      fill = "Model"
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -1174,16 +1214,16 @@ get_plot_cov_by_mod_wday_noro <- function(all_coverage,
       values = plot_comps$model_colors
     ) +
     scale_alpha_manual(
-      name = "Empirical coverage",
-      values = plot_comps$coverage_alpha
+      name = "Interval coverage",
+      values = plot_comps$coverage_alpha,
+      labels = c("90" = "90%", "50" = "50%")
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.90), linetype = "dashed") +
     labs(
       y = "Empirical coverage", x = "",
-      fill = "Model", alpha = "Interval"
-    ) +
-    ggtitle("Empirical coverage by model and weekday")
+      fill = "Model"
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(

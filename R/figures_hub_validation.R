@@ -321,7 +321,6 @@ get_plot_nowcasts_over_time <- function(combined_nowcasts,
       name = "Model",
       values = plot_colors$model_colors
     ) +
-    ggtitle(glue("Horizon: {-horizon_to_plot} days, strata: {age_group_to_plot} age group")) + # nolint
     xlab("") +
     ylab("7-day hospitalisation incidence") +
     guides(
@@ -581,7 +580,6 @@ get_plot_bar_chart_coverage <- function(
       x = "Empirical coverage", y = "",
       fill = ""
     ) +
-    ggtitle(glue::glue("Empirical coverage: {strata}")) +
     coord_flip() +
     get_plot_theme()
   if (isTRUE(save)) {
@@ -712,9 +710,7 @@ get_plot_mean_wis_by_horizon <- function(
       values = plot_comps$model_colors
     ) +
     get_plot_theme() +
-    labs(x = "Horizon (days)", y = "Mean WIS") +
-    ggtitle(glue::glue("Mean WIS by horizon: {strata}"))
-
+    labs(x = "Horizon (days)", y = "Mean WIS")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -790,8 +786,7 @@ get_plot_rel_wis_by_horizon <- function(
       name = "",
       values = plot_comps$model_colors
     ) +
-    labs(x = "Horizon (days)", y = "Relative WIS") +
-    ggtitle(glue::glue("Relative WIS by horizon: {strata} relative to {KIT_comparison_model}")) # nolint
+    labs(x = "Horizon (days)", y = "Relative WIS")
 
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
@@ -884,7 +879,6 @@ get_plot_coverage_by_horizon <- function(
       x = "Horizon(days)", y = "Empirical coverage",
       color = "Model"
     ) +
-    ggtitle(glue::glue("Empirical coverage by horizon: {strata}")) +
     get_plot_theme() +
     theme(legend.position = "bottom")
 
@@ -980,7 +974,6 @@ get_plot_coverage_by_age_group <- function(
       x = "Empirical coverage", y = "",
       fill = ""
     ) +
-    ggtitle("Empirical coverage by age group") +
     coord_flip() +
     get_plot_theme()
   if (isTRUE(save)) {

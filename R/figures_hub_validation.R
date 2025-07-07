@@ -603,7 +603,7 @@ get_plot_bar_chart_coverage <- function(
 #' @param scores_by_age_group Dataframe of the summarised scores by age group
 #'    and model
 #' @param KIT_comparison_model Character string indicating which of the KIT
-#'     models to compare to. Default is `"KIT simple nowcast"`.
+#'     models to compare to. Default is `"KIT simple nowcast revised"`.
 #' @param fig_file_dir Path to save figure. Default is
 #'    `file.path("output", "figs", "supp")`.
 #' @inheritParams make_fig_hub_validation

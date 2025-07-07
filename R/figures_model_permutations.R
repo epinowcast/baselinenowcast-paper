@@ -51,7 +51,6 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       bind_rows(mutate(nc_base, model_variation = {{ permutation_grouping }}))
   }
 
-  n_perms <- length(unique(nc_perms$model_variation_string))
   plot_colors <- plot_components()
   p <- ggplot(nc_perms) +
     geom_ribbon(
@@ -143,12 +142,11 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     ylab("7-day hospitalisation incidence") +
     guides(
       color = "none",
-      fill = "none",
+      fill = "none"
     ) +
     theme(
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA)
-      # axis.text.x = element_text(angle = 45, hjust = 1)
     )
 
   if (isTRUE(save)) {
@@ -639,7 +637,6 @@ get_plot_rel_decomposed_wis <- function(scores,
   plot_comps <- plot_components()
   p <- ggplot(rel_wis, aes(
     x = component, y = rel_score,
-    # fill = model_variation_string,
     color = model_variation_string,
     shape = component
   )) +
@@ -653,7 +650,6 @@ get_plot_rel_decomposed_wis <- function(scores,
     theme(
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA),
-      # axis.text.x = element_text(angle = 45, hjust = 1)
       axis.text.x = element_blank()
     ) +
     scale_color_manual(
@@ -1145,7 +1141,7 @@ make_panel_A_mps_2_ags <- function(
     rel_wis_over_time_mp_volume2 +
     plot_layout(
       design = fig_layout,
-      axes = "collect",
+      axes = "collect"
     )
   return(fig_panel_A)
 }
@@ -1166,7 +1162,7 @@ make_panel_A_mps_2_ags <- function(
 #'    Default is `TRUE`.
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom patchwork plot_layout plot_annotation
+#' @importFrom patchwork plot_layout plot_annotation wrap_plots
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 #' @returns ggplot object as a gridded panel
@@ -1183,19 +1179,6 @@ make_fig_model_perms <- function(
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
   fig_layout <- "
-  AABB
-  AABB
-  AACC
-  AACC
-  AADD
-  AAEE
-  AAEE
-  AAEE
-  AAEE
-  AAEE
-  AAEE
-  "
-  alt <- "
   AAABB
   AAABB
   AAACC
@@ -1218,7 +1201,7 @@ make_fig_model_perms <- function(
     rel_wis_by_horizon_mp + # D
     rel_decomp_wis_by_age_group + # E
     plot_layout(
-      design = alt,
+      design = fig_layout,
       axes = "collect",
       guides = "collect"
     ) +

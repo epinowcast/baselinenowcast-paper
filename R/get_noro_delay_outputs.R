@@ -40,14 +40,6 @@ get_noro_delay_outputs <- function(noro_df,
         max_delay = max_delay,
         n = 3
       )
-      reference_dates <- noro_df_one_weekday |>
-        filter(
-          reference_date <= nowcast_date
-        ) |>
-        distinct(reference_date) |>
-        arrange(reference_date) |>
-        pull()
-
       delay_df <- data.frame(
         delay = delay_pmf,
         delay_time = 0:(length(delay_pmf) - 1)

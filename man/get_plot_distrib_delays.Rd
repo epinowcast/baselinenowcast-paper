@@ -10,8 +10,8 @@ get_plot_distrib_delays(delay_dfs, n_history_delay_filter = 28)
 \item{delay_dfs}{Data.frame of delay estimates both separately by weekday
 and jointly, indexed by the weekday of the reference date.}
 
-\item{n_history_delay_filter}{Integer indicating how much historical data
-to use to estimate the mean delay at each nowcast time. Default is \code{14}.}
+\item{n_history_delay_filter}{Integer indicating which \code{n_history_delay}
+permutation to use. Default is \code{28}.}
 }
 \value{
 ggplot object

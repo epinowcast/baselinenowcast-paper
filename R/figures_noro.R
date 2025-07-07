@@ -85,7 +85,7 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
         angle = 45
       ),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA),
+      strip.background = element_rect(color = NA, fill = NA)
     ) +
     # nolint start
     scale_color_manual(
@@ -318,8 +318,8 @@ get_plot_rel_wis_by_weekday <- function(scores) {
 #'
 #' @param delay_dfs Data.frame of delay estimates both separately by weekday
 #'    and jointly, indexed by the weekday of the reference date.
-#' @param n_history_delay_filter Integer indicating how much historical data
-#'    to use to estimate the mean delay at each nowcast time. Default is `14`.
+#' @param n_history_delay_filter Integer indicating which `n_history_delay`
+#'    permutation to use. Default is `28`.
 #'
 #' @returns ggplot object
 #' @importFrom ggplot2 ggplot aes labs
@@ -591,8 +591,8 @@ make_panel_A_noro <- function(
 #' @returns ggplot
 #' @autoglobal
 #' @importFrom glue glue
-#' @importFrom patchwork plot_layout plot_annotation
-#' @importFrom ggplot2 ggsave theme wrap_plots
+#' @importFrom patchwork plot_layout plot_annotation wrap_plots
+#' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 make_fig_noro <- function(panel_A_noro,
                           bar_chart_wis_noro,
@@ -661,6 +661,7 @@ make_fig_noro <- function(panel_A_noro,
 #' @param n_history_delay_filter Integer indicating how much historical data
 #'    to use to estimate the mean delay at each nowcast time. Default is `14`.
 #' @inheritParams get_plot_rel_wis_by_age_group
+#' @inheritParams get_plot_mean_delay_t_by_wday
 #' @returns ggplot object
 #' @importFrom ggplot2 ggplot aes labs
 #'    facet_grid theme scale_fill_manual

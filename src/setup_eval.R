@@ -1,4 +1,5 @@
 library(dplyr)
+libraru(lubridate)
 source(file.path("src", "write_config.R"))
 
 write_config(

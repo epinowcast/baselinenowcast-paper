@@ -202,14 +202,14 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_rel_wis_by_age_group,
     command = get_plot_rel_wis_by_age_group(
-      scores_by_age_group2,
+      scores_by_age_groupr,
       fig_file_name = "rel_wis_by_age_group"
     )
   ),
   tar_target(
     name = plot_mean_wis_by_horizon_ntl,
     command = get_plot_mean_wis_by_horizon(
-      validation_scores2,
+      validation_scoresr,
       strata = "national",
       fig_file_name = "mean_wis_by_horizon_ntl"
     )
@@ -217,7 +217,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_mean_wis_by_horizon_ag,
     command = get_plot_mean_wis_by_horizon(
-      validation_scores2,
+      validation_scoresr,
       strata = "age groups",
       fig_file_name = "mean_wis_by_horizon_ag",
     )
@@ -225,7 +225,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_rel_wis_by_horizon_ntl,
     command = get_plot_rel_wis_by_horizon(
-      validation_scores2,
+      validation_scoresr,
       strata = "national",
       fig_file_name = "rel_wis_by_horizon_ntl"
     )
@@ -233,7 +233,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_rel_wis_by_horizon_ag,
     command = get_plot_rel_wis_by_horizon(
-      validation_scores2,
+      validation_scoresr,
       strata = "age groups",
       fig_file_name = "rel_wis_by_horizon_ag"
     )
@@ -241,7 +241,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_rel_wis_by_horizon_ag_revised,
     command = get_plot_rel_wis_by_horizon(
-      validation_scores,
+      validation_scoresr,
       strata = "age groups",
       KIT_comparison_model = "KIT simple nowcast revised",
       fig_file_name = "rel_wis_comp_revised_ag"
@@ -250,7 +250,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_rel_wis_by_horizon_ntl_revised,
     command = get_plot_rel_wis_by_horizon(
-      validation_scores,
+      validation_scoresr,
       strata = "national",
       KIT_comparison_model = "KIT simple nowcast revised",
       fig_file_name = "rel_wis_comp_revised_ntl"
@@ -259,7 +259,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = horiz_bar_chart_coverage_ntl,
     command = get_plot_bar_chart_coverage(
-      validation_coverage2,
+      validation_coverager,
       strata = "national",
       fig_file_name = "bar_chart_cov_ntl"
     )
@@ -267,7 +267,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = horiz_bar_chart_coverage_ag,
     command = get_plot_bar_chart_coverage(
-      validation_coverage2,
+      validation_coverager,
       strata = "age groups",
       fig_file_name = "bar_chart_cov_ag"
     )
@@ -275,7 +275,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_coverage_by_horizon_ntl,
     command = get_plot_coverage_by_horizon(
-      validation_coverage2,
+      validation_coverager,
       strata = "national",
       fig_file_name = "cov_by_horizon_ntl"
     )
@@ -283,7 +283,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_coverage_by_horizon_ag,
     command = get_plot_coverage_by_horizon(
-      validation_coverage2,
+      validation_coverager,
       strata = "age groups",
       fig_file_name = "cov_by_horizon_ag"
     )
@@ -291,7 +291,7 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = plot_coverage_by_age_group,
     command = get_plot_coverage_by_age_group(
-      validation_coverage2,
+      validation_coverager,
       fig_file_name = "cov_by_age_group"
     )
   ),

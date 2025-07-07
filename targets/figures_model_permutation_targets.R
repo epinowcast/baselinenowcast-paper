@@ -132,6 +132,26 @@ figures_model_permutation_targets <- list(
       plot_nowcasts_t_mp_60_79_rep_tri,
       rel_wis_over_time_mp_60_79_rep_tri,
       plot_nowcasts_t_mp_60_79_volume,
+      rel_wis_over_time_mp_60_79_volume,
+      fig_file_name = "model_permutation_comp_60_79",
+      fig_file_dir = file.path("output", "figs", "supp"),
+      save = TRUE
+    )
+  ),
+  tar_target(
+    name = panel_A_both_ags,
+    command = make_panel_A_mps_2_ags(
+      plot_nowcasts_t_mp_00_04_borrow,
+      rel_wis_over_time_mp_00_04_borrow,
+      plot_nowcasts_t_mp_00_04_rep_tri,
+      rel_wis_over_time_mp_00_04_rep_tri,
+      plot_nowcasts_t_mp_00_04_volume,
+      rel_wis_over_time_mp_00_04_volume,
+      plot_nowcasts_t_mp_60_79_borrow,
+      rel_wis_over_time_mp_60_79_borrow,
+      plot_nowcasts_t_mp_60_79_rep_tri,
+      rel_wis_over_time_mp_60_79_rep_tri,
+      plot_nowcasts_t_mp_60_79_volume,
       rel_wis_over_time_mp_60_79_volume
     )
   ),
@@ -192,6 +212,19 @@ figures_model_permutation_targets <- list(
       rel_wis_by_horizon_mp,
       rel_decomp_wis_by_age_group,
       fig_file_name = "fig_model_permutations",
+      fig_file_dir = file.path("output", "figs"),
+      save = TRUE
+    )
+  ),
+  tar_target(
+    name = fig_model_permutations_alt,
+    command = make_fig_model_perms(
+      panel_A_both_ags,
+      bar_chart_wis_by_mp,
+      bar_chart_coverage_mp,
+      rel_wis_by_horizon_mp,
+      rel_decomp_wis_by_age_group,
+      fig_file_name = "fig_model_permutations_2ags",
       fig_file_dir = file.path("output", "figs"),
       save = TRUE
     )

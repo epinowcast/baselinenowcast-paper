@@ -225,22 +225,20 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ### Model permutation study
 
-![Fig S8. Daily nowcasts overall from all age groups arrange in three facets (by row), with each showing the baseline validation model alongside variants from a specific permutation category: top row shows training data volume variations, middle row shows reporting triangle completeness variations, and bottom row shows borrowing strategy variations. Each model configuration has a consistent, distinct colour across all panels, with the baseline validation approach highlighted in black. Observed data are shown as solid lines with gray indicating data available at the nowcast date and red indicating evaluation data.Nowcasts are shown daily with a 14-day horizon.](../output/figs/supp/nowcasts_over_time_ntl.png){#figs8}
+![Fig S8. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs8}
 
-![Fig S9. Absolute WIS by nowcast horizon for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs9}
+![Fig S9. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs9}
 
-![Fig S10. Absolute WIS by age group for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_age_group.png){#figs10}
-
-![Fig S11. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs11}
+![Fig S10. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs10}
 
 ### Case study: UKHSA norovirus surveillance
 
-![Fig S12. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs12}
+![Fig S11. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs11}
 
-![Fig S13. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png){#figs13}
+![Fig S12. Absolute WIS by day of week for each model.](../output/figs/supp/wis_by_weekday.png){#figs12}
 
-![Fig S14. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs14}
+![Fig S13. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs13}
 
-![Fig S15. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs15}
+![Fig S14. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs14}
 
 ## References

@@ -135,12 +135,12 @@ utils::globalVariables(c(
   "age_group", # <get_plot_nowcasts_over_time_mp>
   "model_variation", # <get_plot_nowcasts_over_time_mp>
   "reference_date", # <get_plot_nowcasts_over_time_mp>
-  "q_0.5", # <get_plot_nowcasts_over_time_mp>
-  "model_variation_string", # <get_plot_nowcasts_over_time_mp>
   "q_0.25", # <get_plot_nowcasts_over_time_mp>
   "q_0.75", # <get_plot_nowcasts_over_time_mp>
+  "model_variation_string", # <get_plot_nowcasts_over_time_mp>
   "q_0.025", # <get_plot_nowcasts_over_time_mp>
   "q_0.975", # <get_plot_nowcasts_over_time_mp>
+  "q_0.5", # <get_plot_nowcasts_over_time_mp>
   "observed", # <get_plot_nowcasts_over_time_mp>
   "data_as_of", # <get_plot_nowcasts_over_time_mp>
   "age_group", # <get_plot_bar_chart_scores_mp>
@@ -217,7 +217,6 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_week_mp>
   "name", # <get_plot_wis_by_week_mp>
   "value", # <get_plot_wis_by_week_mp>
-  "rel_wis_over_time_mp", # <make_fig_model_perms>
   "nowcast_date", # <get_plot_mult_nowcasts_noro>
   "reference_date", # <get_plot_mult_nowcasts_noro>
   "q_0.05", # <get_plot_mult_nowcasts_noro>

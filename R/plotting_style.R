@@ -33,16 +33,16 @@ plot_components <- function() {
     "baselinenowcast" = "purple4",
     "base" = "purple4",
     "filter weekday small training volume" = "blue3",
-    "filter weekday large training volume" = "red3",
+    "filter weekday large training volume" = "maroon",
     "GAM" = "orange3",
     "epinowcast" = "green4",
     "baseline Mellor et al" = "gray",
     "baselinenowcast_model1" = "purple4",
     "baselinenowcast_model2" = "blue3",
-    "baselinenowcast_model3" = "red3",
+    "baselinenowcast_model3" = "maroon",
     "baselinenowcast default" = "purple4",
     "baselinenowcast weekday\nfilter small training volume" = "blue3",
-    "baselinenowcast weekday\nfilter large training volume" = "red3"
+    "baselinenowcast weekday\nfilter large training volume" = "maroon"
   )
   age_colors <- c(
     "00+" = "black",
@@ -79,8 +79,8 @@ plot_components <- function() {
     "Complete reporting triangle" = pal_mps[8],
     "Increased delay estimate" = pal_mps[1],
     "Increased uncertainty estimate" = pal_mps[2],
-    "Reduced delay estimate" = pal_mps[5],
-    "Reduced uncertainty estimate" = pal_mps[6],
+    "Reduced delay estimate" = "maroon",
+    "Reduced uncertainty estimate" = "palevioletred",
     "Delay:180,\nUncertainty:60" = pal_mps[1],
     "Delay:41,\nUncertainty:19" = pal_mps[5],
     "Delay:50,\nUncertainty:10" = pal_mps[6],

@@ -54,10 +54,6 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
   n_perms <- length(unique(nc_perms$model_variation_string))
   plot_colors <- plot_components()
   p <- ggplot(nc_perms) +
-    geom_line(aes(
-      x = reference_date, y = `q_0.5`,
-      color = model_variation_string
-    ), show.legend = FALSE) +
     geom_ribbon(
       aes(
         x = reference_date,
@@ -75,6 +71,14 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         fill = model_variation_string,
         alpha = "95%"
       )
+    ) +
+    geom_line(
+      aes(
+        x = reference_date, y = `q_0.5`,
+        color = model_variation_string
+      ),
+      show.legend = FALSE,
+      linewidth = 1
     ) +
     geom_line(
       aes(
@@ -99,6 +103,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         "50%" = 0.4
       ),
       guide = guide_legend(
+        nrow = 2,
         title.position = "top",
         override.aes = list(
           alpha = c(
@@ -143,6 +148,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
     theme(
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA)
+      # axis.text.x = element_text(angle = 45, hjust = 1)
     )
 
   if (isTRUE(save)) {
@@ -356,6 +362,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     xlab("") +
     guides(color = "none") +
     scale_y_continuous(trans = "log10") +
+    # theme( axis.text.x = element_text(angle = 45, hjust = 1)) +
     ylab("Relative WIS")
 
   return(p)
@@ -446,7 +453,8 @@ get_plot_coverage_by_mp <- function(all_coverage,
     ) +
     scale_alpha_manual(
       name = "Interval coverage",
-      values = plot_comps$coverage_alpha
+      values = plot_comps$coverage_alpha,
+      labels = c("50" = "50%", "95" = "95%")
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
@@ -620,7 +628,12 @@ get_plot_rel_decomposed_wis <- function(scores,
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
           TRUE ~ model_variation
-        )
+        ),
+      component = factor(component, levels = c(
+        "overprediction",
+        "dispersion",
+        "underprediction"
+      ))
     )
 
   plot_comps <- plot_components()
@@ -640,7 +653,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     theme(
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA),
-      # axis.text.x = element_text(angle = 45, hjust = 1),
+      # axis.text.x = element_text(angle = 45, hjust = 1)
       axis.text.x = element_blank()
     ) +
     scale_color_manual(
@@ -996,6 +1009,12 @@ get_plot_wis_by_week_mp <- function(
 #' @param rel_wis_over_time_mp_rep_tri underlay relative WIS
 #' @param plot_nowcasts_t_mp_volume larger nowcasts over time
 #' @param rel_wis_over_time_mp_volume underlay relative WIS
+#' @param fig_file_name Character string indicating name of the figure to be
+#'    saved as the file name
+#' @param fig_file_dir Path to save figure. Default is
+#'    `file.path("output", "figs")`.
+#' @param save Boolean indicating whether or not to save the figure to disk.
+#'    Default is `FALSE`.
 #'
 #' @returns patchwork ggplot object
 make_panel_A_model_perms <- function(
@@ -1004,7 +1023,13 @@ make_panel_A_model_perms <- function(
     plot_nowcasts_t_mp_rep_tri,
     rel_wis_over_time_mp_rep_tri,
     plot_nowcasts_t_mp_volume,
-    rel_wis_over_time_mp_volume) {
+    rel_wis_over_time_mp_volume,
+    fig_file_name,
+    fig_file_dir = file.path("output", "figs"),
+    save = FALSE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
   fig_layout <- "
   AAAA
   AAAA
@@ -1028,8 +1053,106 @@ make_panel_A_model_perms <- function(
       design = fig_layout,
       axes = "collect",
     )
+
+  if (isTRUE(save)) {
+    # Add tags and fill legend if saving as stand-alone
+    fig_panel_A <- (plot_nowcasts_t_mp_borrow +
+      theme(plot.tag.position = c(0, 0.75)) +
+      guides(fill = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        nrow = 4
+      ))) +
+      rel_wis_over_time_mp_borrow +
+      plot_nowcasts_t_mp_rep_tri +
+      rel_wis_over_time_mp_rep_tri +
+      plot_nowcasts_t_mp_volume +
+      rel_wis_over_time_mp_volume +
+      plot_layout(
+        design = fig_layout,
+        axes = "collect",
+        guides = "collect"
+      ) +
+      plot_annotation(
+        tag_levels = "A",
+        tag_sep = "" # no separator between tag levels
+      )
+    ggsave(
+      plot = fig_panel_A,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 16,
+      height = 20
+    )
+  }
   return(fig_panel_A)
 }
+
+#' Make a patchwork plot for panel A combining facets and underlays with two
+#'    age groups side by side
+#'
+#' @param plot_nowcasts_t_mp_borrow1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_borrow1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_rep_tri1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_rep_tri1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_volume1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_volume1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_borrow2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_borrow2 underlay relative WIS
+#' @param plot_nowcasts_t_mp_rep_tri2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_rep_tri2 underlay relative WIS
+#' @param plot_nowcasts_t_mp_volume2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_volume2 underlay relative WIS
+#'
+#' @returns patchwork ggplot object
+make_panel_A_mps_2_ags <- function(
+    plot_nowcasts_t_mp_borrow1,
+    rel_wis_over_time_mp_borrow1,
+    plot_nowcasts_t_mp_rep_tri1,
+    rel_wis_over_time_mp_rep_tri1,
+    plot_nowcasts_t_mp_volume1,
+    rel_wis_over_time_mp_volume1,
+    plot_nowcasts_t_mp_borrow2,
+    rel_wis_over_time_mp_borrow2,
+    plot_nowcasts_t_mp_rep_tri2,
+    rel_wis_over_time_mp_rep_tri2,
+    plot_nowcasts_t_mp_volume2,
+    rel_wis_over_time_mp_volume2) {
+  fig_layout <- "
+  AAGG
+  AAGG
+  BBHH
+  CCII
+  CCII
+  DDJJ
+  EEKK
+  EEKK
+  FFLL
+  "
+
+  fig_panel_A <- (plot_nowcasts_t_mp_borrow1 +
+    theme(plot.tag.position = c(0, 0.6))) +
+    rel_wis_over_time_mp_borrow1 +
+    plot_nowcasts_t_mp_rep_tri1 +
+    rel_wis_over_time_mp_rep_tri1 +
+    plot_nowcasts_t_mp_volume1 +
+    rel_wis_over_time_mp_volume1 +
+    (plot_nowcasts_t_mp_borrow2 +
+      theme(plot.tag.position = c(0, 0.6))) +
+    rel_wis_over_time_mp_borrow2 +
+    plot_nowcasts_t_mp_rep_tri2 +
+    rel_wis_over_time_mp_rep_tri2 +
+    plot_nowcasts_t_mp_volume2 +
+    rel_wis_over_time_mp_volume2 +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect",
+    )
+  return(fig_panel_A)
+}
+
 
 #' Make panel for main model permutation figure
 #'
@@ -1075,16 +1198,30 @@ make_fig_model_perms <- function(
   AAEE
   AAEE
   "
+  alt <- "
+  AAABB
+  AAABB
+  AAACC
+  AAACC
+  AAADD
+  AAAEE
+  AAAEE
+  AAAEE
+  AAAEE
+  AAAEE
+  AAAEE
+  "
 
-  wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time +
-    theme(plot.tag.position = c(0, 0.70)))
+
+  wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time)
+  # theme(plot.tag.position = c(0, 0.70)))
   fig_model_perm <- wrapped_panel_A + # A
-    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.7))) + # B
+    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.6))) + # B
     bar_chart_coverage_mp + # C
     rel_wis_by_horizon_mp + # D
     rel_decomp_wis_by_age_group + # E
     plot_layout(
-      design = fig_layout,
+      design = alt,
       axes = "collect",
       guides = "collect"
     ) +
@@ -1095,7 +1232,12 @@ make_fig_model_perms <- function(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
     legend.justification = "center",
-    plot.tag = element_text(size = 18)
+    plot.tag = element_text(size = 18),
+    plot.title.position = "plot", # Position title relative to plot area
+    plot.title = element_text(
+      hjust = 0.5, # Center the title
+      vjust = -4 # Move title down (negative moves down)
+    )
   )
 
   dir_create(fig_file_dir)
@@ -1107,7 +1249,7 @@ make_fig_model_perms <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 24,
+      width = 26,
       height = 20
     )
   }

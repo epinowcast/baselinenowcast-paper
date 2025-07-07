@@ -1044,7 +1044,7 @@ make_panel_A_model_perms <- function(
     rel_wis_over_time_mp_volume +
     plot_layout(
       design = fig_layout,
-      axes = "collect",
+      axes = "collect"
     )
 
   if (isTRUE(save)) {

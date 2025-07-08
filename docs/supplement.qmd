@@ -235,14 +235,16 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ![Fig S11. Absolute WIS over time (by week) for each model configuration. Colour by model configuration, decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_nowcast_week.png){#figs11}
 
+![Fig S12. Relative WIS over time across all age groups for each model configuration. Colours indicate model configuration. Horizontal dashed line indicates parity with the default configuration](../output/figs/supp/rel_wis_over_time_mp_all_ag.png){#figs12}
+
 ### UKHSA norovirus surveillance model comparison
 
-![Fig S12. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs12}
+![Fig S13. Absolute WIS over time (by week) for each model.](../output/figs/supp/wis_over_time_noro.png){#figs13}
 
-![Fig S13. Relative mean delay over time by weekday](../output/figs/supp/rel_mean_delay_over_time_noro.png){#figs13}
+![Fig S14. Relative mean delay over time by weekday](../output/figs/supp/rel_mean_delay_over_time_noro.png){#figs14}
 
-![Fig S14. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs14}
+![Fig S15. Empirical coverage at 50% and 90% prediction intervals for each model.](../output/figs/supp/noro_coverage.png){#figs15}
 
-![Fig S15. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs15}
+![Fig S16. Empirical coverage at 50% and 90% prediction intervals by day of week for each model.](../output/figs/supp/noro_cov_wday.png){#figs16}
 
 ## References

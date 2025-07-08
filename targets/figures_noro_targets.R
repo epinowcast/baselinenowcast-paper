@@ -3,7 +3,7 @@ figures_noro_targets <- list(
     name = plot_noro_nowcasts_GAM,
     command = get_plot_mult_nowcasts_noro(
       all_nowcasts = noro_nowcasts |>
-        filter(model %in% c("GAM", "baselinenowcast default")),
+        filter(model %in% c("GAM", "baselinenowcast base")),
       facet_title = "GAM"
     )
   ),
@@ -11,8 +11,16 @@ figures_noro_targets <- list(
     name = plot_noro_nowcasts_epinowcast,
     command = get_plot_mult_nowcasts_noro(
       all_nowcasts = noro_nowcasts |>
-        filter(model %in% c("epinowcast", "baselinenowcast default")),
+        filter(model %in% c("epinowcast", "baselinenowcast base")),
       facet_title = "epinowcast"
+    )
+  ),
+  tar_target(
+    name = plot_noro_nowcasts_Mellor_baseline,
+    command = get_plot_mult_nowcasts_noro(
+      all_nowcasts = noro_nowcasts |>
+        filter(model %in% c("baseline Mellor et al", "baselinenowcast base")),
+      facet_title = "baseline Mellor et al"
     )
   ),
   tar_target(
@@ -24,10 +32,18 @@ figures_noro_targets <- list(
     )
   ),
   tar_target(
+    name = rel_wis_by_week_noro_Mellor_baseline,
+    command = get_plot_rel_wis_over_time(
+      noro_scores |> filter(model %in% c(
+        "baseline Mellor et al", "baselinenowcast base"
+      ))
+    )
+  ),
+  tar_target(
     name = rel_wis_by_week_noro_GAM,
     command = get_plot_rel_wis_over_time(
       noro_scores |> filter(model %in% c(
-        "GAM", "baselinenowcast default"
+        "GAM", "baselinenowcast base"
       ))
     )
   ),
@@ -35,7 +51,7 @@ figures_noro_targets <- list(
     name = rel_wis_by_week_noro_epinowcast,
     command = get_plot_rel_wis_over_time(
       noro_scores |> filter(model %in% c(
-        "epinowcast", "baselinenowcast default"
+        "epinowcast", "baselinenowcast base"
       ))
     )
   ),
@@ -50,6 +66,8 @@ figures_noro_targets <- list(
   tar_target(
     name = panel_A_noro,
     command = make_panel_A_noro(
+      plot_noro_nowcasts_Mellor_baseline,
+      rel_wis_by_week_noro_Mellor_baseline,
       plot_noro_nowcasts_GAM,
       rel_wis_by_week_noro_GAM,
       plot_noro_nowcasts_epinowcast,

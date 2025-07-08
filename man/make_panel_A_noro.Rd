@@ -5,6 +5,8 @@
 \title{Make panel A norovirus figure}
 \usage{
 make_panel_A_noro(
+  plot_noro_nowcasts_baseline,
+  rel_wis_by_week_noro_baseline,
   plot_noro_nowcasts_GAM,
   rel_wis_by_week_noro_GAM,
   plot_noro_nowcasts_enw,
@@ -14,6 +16,10 @@ make_panel_A_noro(
 )
 }
 \arguments{
+\item{plot_noro_nowcasts_baseline}{nowcasts over time}
+
+\item{rel_wis_by_week_noro_baseline}{relative WIS}
+
 \item{plot_noro_nowcasts_GAM}{nowcasts over time}
 
 \item{rel_wis_by_week_noro_GAM}{relative WIS}

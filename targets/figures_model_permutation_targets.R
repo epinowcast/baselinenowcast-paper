@@ -125,6 +125,14 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
+    name = rel_wis_over_time_mp,
+    command = get_plot_rel_wis_over_time_all(
+      scores_mp,
+      strata = "age groups",
+      fig_file_name = "rel_wis_over_time_mp_all_ag"
+    )
+  ),
+  tar_target(
     name = panel_A_nowcasts_over_time_60_79,
     command = make_panel_A_model_perms(
       plot_nowcasts_t_mp_60_79_borrow,

@@ -184,6 +184,7 @@ utils::globalVariables(c(
   "baseline_underprediction", # <get_plot_rel_decomposed_wis>
   "baseline_overprediction", # <get_plot_rel_decomposed_wis>
   "baseline_dispersion", # <get_plot_rel_decomposed_wis>
+  "overall_rel_wis", # <get_plot_rel_decomposed_wis>
   "relative_underprediction", # <get_plot_rel_decomposed_wis>
   "relative_overprediction", # <get_plot_rel_decomposed_wis>
   "relative_dispersion", # <get_plot_rel_decomposed_wis>
@@ -217,6 +218,12 @@ utils::globalVariables(c(
   "dispersion", # <get_plot_wis_by_week_mp>
   "name", # <get_plot_wis_by_week_mp>
   "value", # <get_plot_wis_by_week_mp>
+  "age_group", # <get_plot_rel_wis_over_time_all>
+  "wis", # <get_plot_rel_wis_over_time_all>
+  "model_variation_string", # <get_plot_rel_wis_over_time_all>
+  "model_variation", # <get_plot_rel_wis_over_time_all>
+  "nowcast_date", # <get_plot_rel_wis_over_time_all>
+  "baseline_wis", # <get_plot_rel_wis_over_time_all>
   "nowcast_date", # <get_plot_mult_nowcasts_noro>
   "reference_date", # <get_plot_mult_nowcasts_noro>
   "q_0.05", # <get_plot_mult_nowcasts_noro>
@@ -280,11 +287,9 @@ utils::globalVariables(c(
   "mean_delay", # <get_plot_rel_delay_t_by_wday>
   "mean_delay_all", # <get_plot_rel_delay_t_by_wday>
   "rel_mean_delay", # <get_plot_rel_delay_t_by_wday>
-  "nowcast_date", # <get_plot_wis_over_time_noro>
-  "week", # <get_plot_wis_over_time_noro>
   "model", # <get_plot_wis_over_time_noro>
   "model_type", # <get_plot_wis_over_time_noro>
-  "week_end_date", # <get_plot_wis_over_time_noro>
+  "nowcast_date", # <get_plot_wis_over_time_noro>
   "overprediction", # <get_plot_wis_over_time_noro>
   "underprediction", # <get_plot_wis_over_time_noro>
   "dispersion", # <get_plot_wis_over_time_noro>

@@ -595,7 +595,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     filter(model_variation_string != "Baseline validation approach") |>
     left_join(baseline_scores, by = "age_group") |>
     mutate(
-      relative_wis = wis / pmax(baseline_wis, .Machine$double.eps),
+      overall_rel_wis = wis / pmax(baseline_wis, .Machine$double.eps),
       relative_underprediction = underprediction / pmax(
         baseline_underprediction, .Machine$double.eps
       ),
@@ -608,6 +608,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     ) |>
     select(
       age_group, model_variation_string, model_variation,
+      overall_rel_wis,
       relative_underprediction, relative_overprediction,
       relative_dispersion
     ) |>
@@ -635,12 +636,19 @@ get_plot_rel_decomposed_wis <- function(scores,
     )
 
   plot_comps <- plot_components()
-  p <- ggplot(rel_wis, aes(
-    x = component, y = rel_score,
-    color = model_variation_string,
-    shape = component
-  )) +
-    geom_point(size = 4) +
+  p <- ggplot(rel_wis) +
+    geom_point(aes(
+      x = component, y = rel_score,
+      color = model_variation_string,
+      shape = component
+    ), size = 4) +
+    geom_hline(
+      aes(
+        yintercept = overall_rel_wis,
+        color = model_variation_string
+      ),
+      linewidth = 1
+    ) +
     facet_grid(
       rows = vars(age_group),
       cols = vars(model_variation),
@@ -767,7 +775,17 @@ get_plot_wis_by_age_group_mp <- function(
       name = "WIS breakdown",
       values = plot_comps$score_alpha
     ) +
-    labs(x = "", y = "WIS")
+    labs(x = "", y = "WIS") +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      ),
+      alpha = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -864,7 +882,17 @@ get_plot_wis_by_horizon_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ horizon, switch = "x") +
-    labs(x = "Horizon (days)", y = "WIS breakdown")
+    labs(x = "Horizon (days)", y = "WIS breakdown") +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      ),
+      alpha = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -978,7 +1006,17 @@ get_plot_wis_by_week_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ week_end_date, switch = "x") +
-    labs(x = "Nowcast date", y = "WIS breakdown")
+    labs(x = "Nowcast date", y = "WIS breakdown") +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      ),
+      alpha = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -987,7 +1025,7 @@ get_plot_wis_by_week_mp <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 16,
+      width = 20,
       height = 8
     )
   }
@@ -1235,4 +1273,110 @@ make_fig_model_perms <- function(
   }
 
   return(fig_model_perm)
+}
+
+#' Get a line plot of the relative wis over time for each model permutation
+#'
+#' @inheritParams get_plot_bar_chart_scores_mp
+#' @inheritParams make_fig_model_perms
+#' @autoglobal
+#' @returns ggplot object
+#' @importFrom dplyr filter mutate left_join rename select
+#' @importFrom glue glue
+#' @importFrom scoringutils summarise_scores
+#' @importFrom ggplot2 aes ggplot labs theme_bw coord_flip geom_line
+#'    scale_color_manual geom_hline xlab ylab ggtitle scale_x_date
+get_plot_rel_wis_over_time_all <- function(scores,
+                                           strata,
+                                           fig_file_name,
+                                           fig_file_dir = file.path(
+                                             "output",
+                                             "figs",
+                                             "supp"
+                                           ),
+                                           save = TRUE) {
+  if (save && is.null(fig_file_name)) {
+    stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
+  }
+  plot_colors <- plot_components()
+  if (strata == "age groups") {
+    scores <- filter(scores, age_group != "00+")
+  } else if (strata == "national") {
+    scores <- filter(scores, age_group == "00+")
+  }
+
+
+  summarised_scores <- scores |>
+    summarise_scores(by = c(
+      "model_variation_string",
+      "model_variation",
+      "nowcast_date"
+    )) |>
+    select(wis, model_variation_string, model_variation, nowcast_date)
+
+  baseline_score <- summarised_scores |>
+    filter(model_variation_string == "Baseline validation approach") |>
+    rename(baseline_wis = wis) |>
+    select(baseline_wis, nowcast_date)
+  rel_wis <- summarised_scores |>
+    filter(model_variation_string != "Baseline validation approach") |>
+    left_join(baseline_score, by = "nowcast_date") |>
+    mutate(
+      rel_wis = wis / pmax(baseline_wis, .Machine$double.eps),
+      model_variation =
+        case_when(
+          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Borrow for delay and uncertainty estimation" ~
+            "Borrow for delay and\nuncertainty estimation",
+          model_variation == "Reporting triangle completeness" ~
+            "Reporting triangle\ncompleteness",
+          TRUE ~ model_variation
+        )
+    )
+
+  p <- ggplot(rel_wis) +
+    geom_line(aes(
+      x = nowcast_date, y = rel_wis,
+      color = model_variation_string
+    ), linewidth = 1) +
+    geom_hline(aes(yintercept = 1), linetype = "dashed") +
+    get_plot_theme() +
+    scale_x_date(
+      date_breaks = "1 month",
+      date_labels = "%b %Y"
+    ) +
+    facet_wrap(~model_variation, nrow = 3) +
+    scale_color_manual(
+      name = "Model permutation",
+      values = plot_colors$permutation_colors
+    ) +
+    xlab("") +
+    guides(color = guide_legend(
+      nrow = 3,
+      title.position = "top"
+    )) +
+    scale_y_continuous(trans = "log10") +
+    # theme( axis.text.x = element_text(angle = 45, hjust = 1)) +
+    ylab("Relative WIS") +
+    theme(
+      strip.placement = "outside",
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
+    )
+
+  dir_create(fig_file_dir)
+
+  if (isTRUE(save)) {
+    ggsave(
+      plot = p,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
+      width = 10,
+      height = 10
+    )
+  }
+
+  return(p)
 }

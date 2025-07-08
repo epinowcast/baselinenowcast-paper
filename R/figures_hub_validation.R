@@ -567,12 +567,13 @@ get_plot_bar_chart_coverage <- function(
       stat = "identity", position = "stack"
     ) +
     scale_fill_manual(
-      name = "",
+      name = "Model",
       values = plot_comps$model_colors
     ) +
     scale_alpha_manual(
       name = "Empirical coverage",
-      values = plot_comps$coverage_alpha
+      values = plot_comps$coverage_alpha,
+      labels = c("50" = "50%", "95" = "95%")
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.95), linetype = "dashed") +
@@ -639,7 +640,7 @@ get_plot_rel_wis_by_age_group <- function(
     geom_point(aes(
       x = age_group, y = rel_wis,
       fill = model
-    )) +
+    ), show.legend = FALSE) +
     scale_fill_manual(
       name = "",
       values = plot_comps$model_colors
@@ -648,8 +649,7 @@ get_plot_rel_wis_by_age_group <- function(
     scale_y_continuous(trans = "log", limits = c(0.66, 1.5)) +
     coord_flip() +
     get_plot_theme() +
-    labs(x = "", y = "Relative WIS") +
-    ggtitle(glue::glue("Relative WIS by age group relative to {KIT_comparison_model}")) # nolint
+    labs(x = "", y = "Relative WIS")
 
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
@@ -710,7 +710,8 @@ get_plot_mean_wis_by_horizon <- function(
       values = plot_comps$model_colors
     ) +
     get_plot_theme() +
-    labs(x = "Horizon (days)", y = "Mean WIS")
+    theme(legend.position = "bottom")
+  labs(x = "Horizon (days)", y = "Mean WIS", color = "Model")
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -778,7 +779,9 @@ get_plot_rel_wis_by_horizon <- function(
     mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps))
   plot_comps <- plot_components()
   p <- ggplot(relative_wis) +
-    geom_line(aes(x = horizon, y = rel_wis, color = model)) +
+    geom_line(aes(x = horizon, y = rel_wis, color = model),
+      show.legend = FALSE
+    ) +
     get_plot_theme() +
     geom_hline(aes(yintercept = 1), linetype = "dashed") +
     scale_y_continuous(trans = "log") +
@@ -871,7 +874,7 @@ get_plot_coverage_by_horizon <- function(
     ) +
     geom_hline(aes(yintercept = int_cont), linetype = "dashed") +
     scale_color_manual(
-      name = "",
+      name = "Model",
       values = plot_comps$model_colors
     ) +
     facet_wrap(~interval_range, scales = "free_y") +
@@ -953,7 +956,7 @@ get_plot_coverage_by_age_group <- function(
       stat = "identity", position = "stack"
     ) +
     scale_fill_manual(
-      name = "",
+      name = "Model",
       values = plot_comps$model_colors
     ) +
     facet_grid(. ~ age_group, switch = "x") +
@@ -966,7 +969,8 @@ get_plot_coverage_by_age_group <- function(
     ) +
     scale_alpha_manual(
       name = "Empirical coverage",
-      values = plot_comps$coverage_alpha
+      values = plot_comps$coverage_alpha,
+      labels = c("50" = "50%", "95" = "95%")
     ) +
     geom_hline(aes(yintercept = 0.50), linetype = "dashed") +
     geom_hline(aes(yintercept = 0.95), linetype = "dashed") +

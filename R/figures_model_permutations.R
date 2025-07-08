@@ -775,7 +775,17 @@ get_plot_wis_by_age_group_mp <- function(
       name = "WIS breakdown",
       values = plot_comps$score_alpha
     ) +
-    labs(x = "", y = "WIS")
+    labs(x = "", y = "WIS") +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      ),
+      alpha = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -872,7 +882,17 @@ get_plot_wis_by_horizon_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ horizon, switch = "x") +
-    labs(x = "Horizon (days)", y = "WIS breakdown")
+    labs(x = "Horizon (days)", y = "WIS breakdown") +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      ),
+      alpha = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -986,7 +1006,17 @@ get_plot_wis_by_week_mp <- function(
       values = plot_comps$score_alpha
     ) +
     facet_grid(. ~ week_end_date, switch = "x") +
-    labs(x = "Nowcast date", y = "WIS breakdown")
+    labs(x = "Nowcast date", y = "WIS breakdown") +
+    guides(
+      fill = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      ),
+      alpha = guide_legend(
+        nrow = 3,
+        title.position = "top"
+      )
+    )
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
@@ -995,7 +1025,7 @@ get_plot_wis_by_week_mp <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 16,
+      width = 20,
       height = 8
     )
   }
@@ -1318,13 +1348,17 @@ get_plot_rel_wis_over_time_all <- function(scores,
     facet_wrap(~model_variation, nrow = 3) +
     scale_color_manual(values = plot_colors$permutation_colors) +
     xlab("") +
-    guides(color = "none") +
+    guides(color = guide_legend(
+      nrow = 3,
+      title.position = "top"
+    )) +
     scale_y_continuous(trans = "log10") +
     # theme( axis.text.x = element_text(angle = 45, hjust = 1)) +
     ylab("Relative WIS") +
     theme(
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      legend.position = "bottom"
     )
 
   dir_create(fig_file_dir)

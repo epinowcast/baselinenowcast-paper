@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_sunday_breaks}
 \alias{get_sunday_breaks}
-\title{Get all the breaks for sundays}
+\title{Get all the breaks for Sundays}
 \usage{
 get_sunday_breaks(start_date, end_date)
 }
@@ -12,8 +12,8 @@ get_sunday_breaks(start_date, end_date)
 \item{end_date}{last date}
 }
 \value{
-vector of sunday dates
+vector of Sunday dates
 }
 \description{
-Get all the breaks for sundays
+Get all the breaks for Sundays
 }

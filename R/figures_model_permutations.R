@@ -1346,7 +1346,10 @@ get_plot_rel_wis_over_time_all <- function(scores,
       date_labels = "%b %Y"
     ) +
     facet_wrap(~model_variation, nrow = 3) +
-    scale_color_manual(values = plot_colors$permutation_colors) +
+    scale_color_manual(
+      name = "Model permutation",
+      values = plot_colors$permutation_colors
+    ) +
     xlab("") +
     guides(color = guide_legend(
       nrow = 3,

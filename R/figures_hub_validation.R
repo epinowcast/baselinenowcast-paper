@@ -571,7 +571,7 @@ get_plot_bar_chart_coverage <- function(
       values = plot_comps$model_colors
     ) +
     scale_alpha_manual(
-      name = "Empirical coverage",
+      name = "Interval coverage",
       values = plot_comps$coverage_alpha,
       labels = c("50" = "50%", "95" = "95%")
     ) +
@@ -706,7 +706,7 @@ get_plot_mean_wis_by_horizon <- function(
   p <- ggplot(scores_sum, aes(x = horizon, y = wis, color = model)) +
     geom_line() +
     scale_color_manual(
-      name = "",
+      name = "Model",
       values = plot_comps$model_colors
     ) +
     get_plot_theme() +
@@ -968,7 +968,7 @@ get_plot_coverage_by_age_group <- function(
       legend.title = element_blank()
     ) +
     scale_alpha_manual(
-      name = "Empirical coverage",
+      name = "Interval coverage",
       values = plot_comps$coverage_alpha,
       labels = c("50" = "50%", "95" = "95%")
     ) +

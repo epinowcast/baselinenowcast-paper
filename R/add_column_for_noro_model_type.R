@@ -12,7 +12,7 @@ add_column_for_noro_model_type <- function(df) {
       model_type = case_when(
         model %in% c(
           "base",
-          "baselinenowcast default",
+          "baselinenowcast base",
           "filter weekday large training volume",
           "baselinenowcast weekday\nfilter small training volume",
           "filter weekday small training volume",

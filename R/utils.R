@@ -10,3 +10,16 @@ quiet <- function(code) {
   on.exit(sink())
   return(suppressMessages(code))
 }
+
+#' Get all the breaks for sundays
+#'
+#' @param start_date first date
+#' @param end_date last date
+#'
+#' @returns vector of sunday dates
+get_sunday_breaks <- function(start_date, end_date) {
+  # Find first Sunday in range (wday 1 = Sunday when week_start = 7)
+  first_sunday <- start_date + (1 - wday(start_date, week_start = 7)) %% 7
+  sunday_dates <- seq(first_sunday, end_date, by = "1 week")
+  return(sunday_dates)
+}

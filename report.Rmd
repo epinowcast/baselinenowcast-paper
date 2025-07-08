@@ -380,6 +380,25 @@ scores_sum |>
   mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
   kable(caption = "Relative WIS compared to baseline Mellor et al")
 ```
+Scores compared to baselnenowcast default
+```{r, echo = FALSE}
+scores_sum <- scores_noro |>
+  scoringutils::summarise_scores(by = "model") |>
+  select(model, wis)
+
+baseline_comparison <- scores_sum |>
+  filter(model == "baselinenowcast base") |>
+  rename(comparison_wis = wis) |>
+  select(comparison_wis) |>
+  pull()
+
+scores_sum |>
+  filter(model != "baselinenowcast base") |>
+  mutate(comparison_wis = baseline_comparison) |>
+  mutate(rel_wis = wis / pmax(comparison_wis, .Machine$double.eps)) |>
+  kable(caption = "Relative WIS compared to baselinenowcast base")
+```
+
 
 Scores compared to epinowcast
 ```{r, echo = FALSE}

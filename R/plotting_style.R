@@ -36,7 +36,7 @@ plot_components <- function() {
     "filter weekday large training volume" = "maroon",
     "GAM" = "orange3",
     "epinowcast" = "green4",
-    "baseline Mellor et al" = "gray",
+    "baseline Mellor et al" = "navy",
     "baselinenowcast_model1" = "purple4",
     "baselinenowcast_model2" = "blue3",
     "baselinenowcast_model3" = "maroon",
@@ -55,11 +55,11 @@ plot_components <- function() {
   )
   weekday_colors <- c(
     "Mon" = pal_weekday[1],
-    "Tue" = pal_weekday[2],
-    "Wed" = pal_weekday[3],
-    "Thu" = pal_weekday[4],
-    "Fri" = pal_weekday[5],
-    "Sat" = pal_weekday[6],
+    "Tue" = pal_weekday[5],
+    "Wed" = pal_weekday[6],
+    "Thu" = pal_weekday[3],
+    "Fri" =  pal_weekday[2],
+    "Sat" = pal_weekday[4],
     "Sun" = pal_weekday[7],
     "All" = "black"
   )

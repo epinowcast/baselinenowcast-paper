@@ -287,11 +287,9 @@ utils::globalVariables(c(
   "mean_delay", # <get_plot_rel_delay_t_by_wday>
   "mean_delay_all", # <get_plot_rel_delay_t_by_wday>
   "rel_mean_delay", # <get_plot_rel_delay_t_by_wday>
-  "nowcast_date", # <get_plot_wis_over_time_noro>
-  "week", # <get_plot_wis_over_time_noro>
   "model", # <get_plot_wis_over_time_noro>
   "model_type", # <get_plot_wis_over_time_noro>
-  "week_end_date", # <get_plot_wis_over_time_noro>
+  "nowcast_date", # <get_plot_wis_over_time_noro>
   "overprediction", # <get_plot_wis_over_time_noro>
   "underprediction", # <get_plot_wis_over_time_noro>
   "dispersion", # <get_plot_wis_over_time_noro>

@@ -28,6 +28,6 @@ model_permutation_targets <- list(
   tar_target(
     name = coverage_mp,
     command = all_coverage_covid |>
-     derive_model_variation()
+      derive_model_variation()
   )
 )

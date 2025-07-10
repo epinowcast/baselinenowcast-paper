@@ -176,7 +176,7 @@ $$
 And substituting the probability mass function of the binomial distribution $f(x) = P[X = x| N = n] =\binom{n}{x} p^x(1-p)^{n-x}$ we get:
 
 $$
-\text{pr}(N = n | X = x) = \frac{\binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=1}^\infty \binom{1}{x}p^x(1-p)^{i-x}}
+\text{P}(N = n | X = x) = \frac{\binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=1}^\infty \binom{1}{x}p^x(1-p)^{i-x}}
 $$
 
 Plugging into $\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{P}(N = n | X = x) n$ we get the following (omitting terms for $n<x$, which are 0):
@@ -194,7 +194,7 @@ $$
 Both the numerator and the denominator are known convergent series, with solutions available in standard libraries like Mathematica. We then get:
 
 $$
-\mathbb{E}[N | X = x]  = \frac{(x + 1 -p)/p^2}{1/\pi} = \frac{x + 1 - p}{p}
+\mathbb{E}[N | X = x]  = \frac{(x + 1 -p)/p^2}{1/p} = \frac{x + 1 - p}{p}
 $$ This formula allows us to have a defined $\mathbb{E}[N | X = x]$ even when $X = 0$.
 
 ### Description of KIT simple nowcast implementation issue and revised nowcasts

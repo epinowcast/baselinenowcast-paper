@@ -39,10 +39,10 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
   )
 
 
-  nc_base <- filter(nc, model_variation == "Baseline validation")
+  nc_base <- filter(nc, model_variation == "Default")
 
   if (is.null(permutation_grouping)) {
-    nc_perms <- filter(nc, model_variation != "Baseline validation") |>
+    nc_perms <- filter(nc, model_variation != "Default") |>
       bind_rows(mutate(nc_base, model_variation = "Borrow for delay and uncertainty estimation")) |> # nolint
       bind_rows(mutate(nc_base, model_variation = "Reporting triangle completeness")) |> # nolint
       bind_rows(mutate(nc_base, model_variation = "Training volume"))
@@ -216,12 +216,12 @@ get_plot_bar_chart_scores_mp <- function(scores,
     )
   scores_base <- filter(
     scores_summary,
-    model_variation == "Baseline validation"
+    model_variation == "Default"
   )
-  # Make baseline validation approach be alongside all the others
+  # Make Default be alongside all the others
   scores_perms <- filter(
     scores_summary,
-    model_variation != "Baseline validation"
+    model_variation != "Default"
   ) |>
     bind_rows(mutate(scores_base,
       model_variation = "Borrow for delay and\nuncertainty estimation"
@@ -310,7 +310,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     scores <- filter(scores, model_variation %in%
       c(
         {{ permutation_grouping }},
-        "Baseline validation"
+        "Default"
       ))
   }
   if (!is.null(age_group_to_plot)) {
@@ -326,17 +326,17 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     select(wis, model_variation_string, model_variation, nowcast_date)
 
   baseline_score <- summarised_scores |>
-    filter(model_variation_string == "Baseline validation approach") |>
+    filter(model_variation_string == "Default") |>
     rename(baseline_wis = wis) |>
     select(baseline_wis, nowcast_date)
   rel_wis <- summarised_scores |>
-    filter(model_variation_string != "Baseline validation approach") |>
+    filter(model_variation_string != "Default") |>
     left_join(baseline_score, by = "nowcast_date") |>
     mutate(
       rel_wis = wis / pmax(baseline_wis, .Machine$double.eps),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Default" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
             "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
@@ -410,12 +410,12 @@ get_plot_coverage_by_mp <- function(all_coverage,
     )
   coverage_base <- filter(
     coverage_summarised,
-    model_variation == "Baseline validation"
+    model_variation == "Default"
   )
-  # Make baseline validation approach be alongside all the others
+  # Make Default be alongside all the others
   coverage_perms <- filter(
     coverage_summarised,
-    model_variation != "Baseline validation"
+    model_variation != "Default"
   ) |>
     bind_rows(mutate(coverage_base,
       model_variation = "Borrow for delay and\nuncertainty estimation"
@@ -504,17 +504,17 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
     )) |>
     select(model_variation, model_variation_string, horizon, wis)
   baseline_scores <- scores_sum |>
-    filter(model_variation_string == "Baseline validation approach") |>
+    filter(model_variation_string == "Default") |>
     rename(baseline_wis = wis) |>
     select(baseline_wis, horizon)
   rel_wis <- scores_sum |>
-    filter(model_variation_string != "Baseline validation approach") |>
+    filter(model_variation_string != "Default") |>
     left_join(baseline_scores, by = "horizon") |>
     mutate(
       relative_wis = wis / pmax(baseline_wis, .Machine$double.eps),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Default" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
             "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
@@ -580,7 +580,7 @@ get_plot_rel_decomposed_wis <- function(scores,
       underprediction, overprediction, dispersion
     )
   baseline_scores <- scores_sum |>
-    filter(model_variation_string == "Baseline validation approach") |>
+    filter(model_variation_string == "Default") |>
     rename(
       baseline_wis = wis,
       baseline_underprediction = underprediction,
@@ -592,7 +592,7 @@ get_plot_rel_decomposed_wis <- function(scores,
       baseline_overprediction, baseline_dispersion
     )
   rel_wis <- scores_sum |>
-    filter(model_variation_string != "Baseline validation approach") |>
+    filter(model_variation_string != "Default") |>
     left_join(baseline_scores, by = "age_group") |>
     mutate(
       overall_rel_wis = wis / pmax(baseline_wis, .Machine$double.eps),
@@ -621,7 +621,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     mutate(
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Default" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
             "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
@@ -1315,17 +1315,17 @@ get_plot_rel_wis_over_time_all <- function(scores,
     select(wis, model_variation_string, model_variation, nowcast_date)
 
   baseline_score <- summarised_scores |>
-    filter(model_variation_string == "Baseline validation approach") |>
+    filter(model_variation_string == "Default") |>
     rename(baseline_wis = wis) |>
     select(baseline_wis, nowcast_date)
   rel_wis <- summarised_scores |>
-    filter(model_variation_string != "Baseline validation approach") |>
+    filter(model_variation_string != "Default") |>
     left_join(baseline_score, by = "nowcast_date") |>
     mutate(
       rel_wis = wis / pmax(baseline_wis, .Machine$double.eps),
       model_variation =
         case_when(
-          model_variation == "Baseline validation" ~ "Baseline\nvalidation",
+          model_variation == "Default" ~ "Baseline\nvalidation",
           model_variation == "Borrow for delay and uncertainty estimation" ~
             "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~

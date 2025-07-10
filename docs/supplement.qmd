@@ -77,9 +77,7 @@ $$
 
 Subject to the constrain that $\sum \pi_i = 1$.
 
-![Visual description of the iterative “completing” of the reporting triangle, moving from left to right and bottom to top. In this cases, we are imputing \$x\_{t=6, d = 2}\$ and \$x\_{t=5, d= 2}\$ assuming that the ratio between \$x\_{t=1:4, d = 2}\$ (block top), and \$x\_{t=1:4, d=0:1}\$ (block top left) holds for for \$x\_{t=5:6, d = 2}\$ (block bottom) and \$x\_{t=5:6, d = 0:1}\$ (block bottom left). In this example, \$\\hat{x}\_{t=6, d = 1}\$ has already been imputed using the same approach, and we treat it as known going forward. This process is repeated across the reporting triangle to estimate all values outlined in the dashed lines.](schematic_fig.png){#fig1} <!--Noting that this caption should probably be written to refer back to theta and pi_d. My understanding is that theta is basically block top/ block top left, and we get block bottom by assuming the equivalence of  block top/block top left = block bottom/ block bottom left. -->
-
-The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle in Figure \@ref(fig1) above.
+The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle (see Figure 1.1).
 
 The intuition behind the multiplicative method is the assumption that the values at each delay $d$ for the recent times, will consist of the same proportion of the values previously reported for earlier times. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums, $\theta_d$, is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.
 
@@ -211,21 +209,21 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ![Fig. S1 Validation of baseline nowcasting model using German COVID-19 data compared to real-time KIT simple nowcast. A. Illustration of the nowcasting task from 5 nowcast dates throughout the study period. Nowcasts from our baseline model (purple) and the KIT simple nowcast model plotted against eventually observed values aggregated across all age groups, coloured by model. Observed data are shown as solid lines with gray indicating data available at the nowcast date and red indicating the final evaluation data. Dashed vertical lines indicate the date of the nowcasts. Shading indicates prediction intervals of each nowcast. Nowcasts are shown from horizons 0 to -28 days. B. Overall performance comparison between models aggregated across performance in individual age strata, with decomposed WIS (dispersion, overprediction, underprediction) displayed as stacked bar charts with different shading for direct comparison. C. Performance over time, displaying daily mean WIS scores summarised across age strata and 28 horizon days, coloured by model. D. Performance by age group, showing WIS scores across different age groups on the x-axis with grouped bars for both models and stacked shaded components displaying the decomposition of scores. E. Mean reporting delay over time, visualised as multiple coloured lines representing each age group, with the national average shown as a thicker black line. Mean reporting delays were calculated using the last 40 reference dates, corresponding to the maximum delay, for each nowcast date and age group. F: Delay distribution presented as cumulative distribution functions (CDFs), with overlaid curves for each age group and the national average highlighted as a thicker black line.](../output/figs/supp/fig_hub_validation_KIT_real_time.png){#figs1}
 
-![Fig. S2 Empirical coverage of baselinenowcast method and real-time KIT simple nowcast at 50% and 95% prediction intervals. Shading indicates prediction intervals, colors indicate model.](../output/figs/supp/bar_chart_cov_ag_rt.png){#figs5}
+![Fig. S2 Empirical coverage of baselinenowcast method and real-time KIT simple nowcast at 50% and 95% prediction intervals. Shading indicates prediction intervals, colours indicate model.](../output/figs/supp/bar_chart_cov_ag_rt.png){#figs5}
 
 ### German Nowcast Hub validation additional figures
 
 ![Fig. S3 Relative WIS by age group of baselinenowcast compared to KIT simple nowcast revised. Vertical line at 1.0 indicates parity with KIT simple nowcast revised.](../output/figs/supp/rel_wis_by_age_group.png){#figs3}
 
-![Fig. S4 Mean WIS by nowcast horizon for each model. Colors indicate models.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs4}
+![Fig. S4 Mean WIS by nowcast horizon for each model. colours indicate models.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs4}
 
 ![Fig. S5 Relative WIS of baselinenowcast horizon compared to KIT simple nowcast revised.](../output/figs/supp/rel_wis_by_horizon_ag.png)
 
-![Fig. S6 Empirical coverage at 50% and 95% prediction intervals. Shading indicates prediction intervals, color indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/bar_chart_cov_ag.png){#figs6}
+![Fig. S6 Empirical coverage at 50% and 95% prediction intervals. Shading indicates prediction intervals, colour indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/bar_chart_cov_ag.png){#figs6}
 
-![Fig.S7 Empirical coverage at 50% and 95% prediction intervals by horizon for each model. Colors indicate models, horizontal lines indicate the target prediction intervals in each subplot.](../output/figs/supp/cov_by_horizon_ag.png){#figs7}
+![Fig.S7 Empirical coverage at 50% and 95% prediction intervals by horizon for each model. colours indicate models, horizontal lines indicate the target prediction intervals in each subplot.](../output/figs/supp/cov_by_horizon_ag.png){#figs7}
 
-![Fig S8. Empirical coverage at 50% and 95% prediction intervals by age group for each model. Shading indicates prediction intervals, color indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/cov_by_age_group.png){#figs8}
+![Fig S8. Empirical coverage at 50% and 95% prediction intervals by age group for each model. Shading indicates prediction intervals, colour indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/cov_by_age_group.png){#figs8}
 
 ### Model permutation study
 
@@ -239,12 +237,12 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ### UKHSA norovirus surveillance model comparison
 
-![Fig S13. Absolute WIS over time (by week) for each model. Color indicates model, shading indicates WIS broken down by dispersion, overprediction, and underprediction.](../output/figs/supp/wis_over_time_noro.png){#figs13}
+![Fig S13. Absolute WIS over time (by week) for each model. colour indicates model, shading indicates WIS broken down by dispersion, overprediction, and underprediction.](../output/figs/supp/wis_over_time_noro.png){#figs13}
 
-![Fig S14. Relative mean delay over time by weekday. Colors indicate weekday. Horizontal dashed line at 1 indicates parity with the delay across all weekdays.](../output/figs/supp/rel_mean_delay_over_time_noro.png){#figs14}
+![Fig S14. Relative mean delay over time by weekday. colours indicate weekday. Horizontal dashed line at 1 indicates parity with the delay across all weekdays.](../output/figs/supp/rel_mean_delay_over_time_noro.png){#figs14}
 
-![Fig S15. Empirical coverage at 50% and 90% prediction intervals for each model. Color indicates model, shading indicates prediction interval coverage, horizontal dashed lines indicate target prediction intervals.](../output/figs/supp/noro_coverage.png){#figs15}
+![Fig S15. Empirical coverage at 50% and 90% prediction intervals for each model. colour indicates model, shading indicates prediction interval coverage, horizontal dashed lines indicate target prediction intervals.](../output/figs/supp/noro_coverage.png){#figs15}
 
-![Fig S16. Empirical coverage at 50% and 90% prediction intervals by day of week for each model. Colors indicate model, shading indicates prediction interval coverage, horizontal dashed lines indicate target prediction intervals.](../output/figs/supp/noro_cov_wday.png){#figs16}
+![Fig S16. Empirical coverage at 50% and 90% prediction intervals by day of week for each model. colours indicate model, shading indicates prediction interval coverage, horizontal dashed lines indicate target prediction intervals.](../output/figs/supp/noro_cov_wday.png){#figs16}
 
 ## References

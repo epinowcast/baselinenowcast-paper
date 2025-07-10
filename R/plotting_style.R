@@ -31,6 +31,7 @@ plot_components <- function() {
     "KIT simple nowcast" = "darkorange",
     "KIT simple nowcast revised" = "darkgreen",
     "baselinenowcast" = "purple4",
+    "Default" = "purple4",
     "base" = "purple4",
     "filter weekday small training volume" = "blue3",
     "filter weekday large training volume" = "maroon",
@@ -75,6 +76,7 @@ plot_components <- function() {
   )
   permutation_colors <- c(
     "Baseline validation approach" = "purple4",
+    "Default" = "purple4",
     "Borrowed estimates from all age groups" = pal_mps[4],
     "Complete reporting triangle" = pal_mps[8],
     "Increased delay estimate" = pal_mps[1],
@@ -87,12 +89,7 @@ plot_components <- function() {
     "Delay:60,\nUncertainty:180" = pal_mps[2]
   )
 
-  permutation_linetype <- c(
-    "Baseline validation" = "solid",
-    "Training volume" = "dotted",
-    "Reporting triangle completeness" = "dotdash",
-    "Borrow for delay and uncertainty estimation" = "longdash"
-  )
+
   age_linewidth <- c(
     "00+" = 2,
     "00-04" = 1,
@@ -122,7 +119,6 @@ plot_components <- function() {
       score_alpha = score_alpha,
       coverage_alpha = coverage_alpha,
       permutation_colors = permutation_colors,
-      permutation_linetype = permutation_linetype,
       weekday_colors = weekday_colors,
       weekday_linewidth = weekday_linewidth
     )

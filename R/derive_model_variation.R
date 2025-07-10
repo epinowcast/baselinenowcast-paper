@@ -17,7 +17,7 @@ derive_model_variation <- function(df) {
         training_volume == 120 & !borrow & !partial_rep_tri ~
           "Reporting triangle completeness",
         training_volume == 120 & !borrow & partial_rep_tri ~
-          "Baseline validation",
+          "Default",
         training_volume == 120 & borrow & partial_rep_tri ~
           "Borrow for delay and uncertainty estimation",
         .default = "Other"
@@ -30,8 +30,8 @@ derive_model_variation <- function(df) {
           "Complete reporting triangle",
         "Borrow for delay and uncertainty estimation" ~
           "Borrowed estimates from all age groups",
-        "Baseline validation" ~
-          "Baseline validation approach",
+        "Default" ~
+          "Default",
         .default = model_variation
       ),
       model_variation_string = case_when(
@@ -50,7 +50,7 @@ derive_model_variation <- function(df) {
   df_w_helpers$model_variation_string <- factor(
     df_w_helpers$model_variation_string,
     levels = c(
-      "Baseline validation approach",
+      "Default",
       "Borrowed estimates from all age groups",
       "Complete reporting triangle",
       "Increased delay estimate",

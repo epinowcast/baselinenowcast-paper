@@ -16,6 +16,8 @@ output:
 
 This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. In slight variation of the chain ladder method @Friedland2010, it uses preliminary case counts and empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout. In our description we assume that time steps correspond to days, but they could also be weeks, months or any other unit.
 
+See the _Default Settings_ section in the main text methods for a description of the default behavior of the method within the `baselinenowcast` package.
+
 ### Notation
 
 We denote by $X_{t,d}, d = 0, .., D$ the number of cases occurring on day $t$ which appear in the dataset with a delay of $d$ days. For example, a delay $d = 0$ means that a case occurring on day $t$ arrived in the dataset on day $t$. We only consider cases reported within a maximum delay $D$. The number of cases reporting for time $t$ with a delay of at most $d$ can be written as:
@@ -140,6 +142,7 @@ To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ 
 
 We first obtain "vintage'' reporting triangles of the raw reporting triangle (i.e., before pre-processing) to replicate the data which would have been available as of times $s^* = t^*-1, ..., t^*-M$, i.e., the last $M$ days on which nowcasts could have been generated. This simply corresponds to the stepwise omission of all entries with $t + d > s^*$, which for each $s^*$ corresponds to a diagonal from the bottom left to the top right. The same pre-processing step as in Section [Preprocessing of the reporting triangle](#preprocessing) is applied to each vintage reporting triangle.
 
+
 #### Generation of retrospective point nowcast matrices
 
 For each of the $M$ vintage reporting triangles, i.e., $s^* = t^*-1,, ..., t^*-M$, we apply the method described above to estimate a delay distribution and generate a point nowcast matrix. To indicate the data version on which it is based, its entries are denoted by
@@ -151,6 +154,7 @@ $$
 for $t = s^* - D + 1, \dots, s^*$ and $d = s^* - t + 1, \dots D$.
 
 Note that estimation is again based on the last $N$ rows of the respective reporting triangle, which must consequently contain at least $M + N$ rows in total.
+
 
 #### Fit a negative binomial observation model to past nowcast errors (per nowcast horizon)
 

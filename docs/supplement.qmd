@@ -16,6 +16,8 @@ output:
 
 This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. It uses preliminary case count and their delays in the form of reporting triangles, and uses empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout.
 
+See the _Default Settings_ section in the main text methods for a description of the default behavior of the method within the `baselinenowcast` package.
+
 ### Notation
 
 We denote $X_{t,d}, d = 0, .., D$ as the number of cases occurring on time $t$ which appear in the dataset with a delay of $d$. For example, a delay $d = 0$ means that a case occurring on day $t$ arrived in the dataset on day $t$, or on what is considered to be the first possible report date in practice. We only consider cases reporting within a maximum delay $D$. The number of cases reporting for time $t$ with a delay of at most $d$ can be written as:
@@ -107,7 +109,7 @@ To estimate the uncertainty in the nowcasts, we use past nowcast errors. In this
 
 We describe a method which generates retrospective reporting triangles to replicate what would have been available as of times$s^* = t^*-1, ..., t^*-M$ to generate $M$ retrospective reporting triangles.
 
-To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been availbale as of each $s^*$, to generate $M$ retrospective reporting triangles.
+To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $M$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been available as of each $s^*$, to generate $M$ retrospective reporting triangles.
 
 #### Generation of retrospective point nowcast matrices
 
@@ -117,7 +119,7 @@ Thus in order to estimate uncertainty using $N$ reference times, the total train
 
 #### Fit predicted point nowcast vectors and observed counts to a negative binomial observation model at each forecast horizon
 
-We quantify the uncertainty in the component of the target that corresponds to the counts that are still to be added. The default in the package assumes that the target is the final count at each reference time, summed across reporting delays, however, for the COVID-19 case study, the target is defined as the 7-day rolling sum of the counts at reference time, and therefore the uncertainty is quantified in the component of this quantity that has yet to be observed as of each reference time.
+We quantify the uncertainty in the component of the target that corresponds to the counts that are still to be added. The default in the package assumes that the target is the final count at each reference time, summed across reporting delays, however, for the COVID-19 case study, the target is defined as the 7-day rolling sum of the counts at reference time, and therefore the uncertainty is quantified in the component of this quantity that has yet to be observed as of each reference time. For the norovirus case study, the default, which estimates the final reported cases at each specimen collection date, is used.
 
 At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function, for the retrospective nowcast $\hat{X}_{s^*,d}$ and the truncated observed component $x_{t= s^*,d}$. We define the component of the retrospective nowcast that is predicted as of $s^*$, but observed as of $t^*$ as:
 
@@ -144,6 +146,7 @@ X_{t^*-j, >d} \sim NegBin(\mu = \hat{X}_{t^*-j, >d}, \phi = \phi(j))
 $$
 
 We can sample for any number of draws, and then use the draws to compute any desired quantiles to summarize the outputs.
+
 
 ### Zero-handling approximation {#zero-handling-approximation}
 

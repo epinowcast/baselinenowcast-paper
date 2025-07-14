@@ -109,7 +109,7 @@ To estimate the uncertainty in the nowcasts, we use past nowcast errors. In this
 
 We describe a method which generates retrospective reporting triangles to replicate what would have been available as of times$s^* = t^*-1, ..., t^*-M$ to generate $M$ retrospective reporting triangles.
 
-To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $m$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been available as of each $s^*$, to generate $M$ retrospective reporting triangles.
+To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $M$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been available as of each $s^*$, to generate $M$ retrospective reporting triangles.
 
 #### Generation of retrospective point nowcast matrices
 

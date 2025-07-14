@@ -20,9 +20,9 @@ This model was initially developed as a reference model for the COVID-19 hospita
 
 We denote by $X_{t,d}, d = 0, .., D$ the number of cases occurring on day $t$ which appear in the dataset with a delay of $d$ days. For example, a delay $d = 0$ means that a case occurring on day $t$ arrived in the dataset on day $t$. We only consider cases reported within a maximum delay $D$. The number of cases reporting for time $t$ with a delay of at most $d$ can be written as:
 
-$$X_{t, \le d} = \sum_{i=0}^d X_{t,i} $$
-
-{#eq:Xltd}
+$$
+X_{t, \le d} = \sum_{i=0}^d X_{t,i}
+$$ {#eq-Xltd}
 
 A special case of this is the "final" number of reported cases at time $t$, denoted by
 
@@ -70,23 +70,23 @@ If a complete reporting matrix is available, estimating the discrete-time delay 
 
 $$
 \hat{\pi}_d= \frac{\sum_{t=t^*-N+1}^{t=t^*} x_{t,d}}{\sum_{t=t^*-N+1}^{t=t^*} x_{t}},
-$$ {#eq:pi_d}
+$$ {#eq-pi_d}
 
 which is simply the relative frequency of a delay of $d$ days among all cases in the reporting matrix.
 
 #### Estimating the delay from a reporting triangle
 
-In the case where $t^*$ is the present day, such that only a reporting triangle with missing entries is available, the estimator $\hat{\pi}_d$ from @ref(eq:pi_d) can only be evaluated after discarding all data from the last $D-1$ time points. In order to use these partial observations, we use a different representation of the delay distribution via terms of the form
+In the case where $t^*$ is the present day, such that only a reporting triangle with missing entries is available, the estimator $\hat{\pi}_d$ from @ref(eq-pi_d) can only be evaluated after discarding all data from the last $D-1$ time points. In order to use these partial observations, we use a different representation of the delay distribution via terms of the form
 
 $$
 \theta_d = \frac{\pi_d}{\pi_{\le d-1}}
-$$ {#eq:theta_d}
+$$ {#eq-theta_d}
 
-for $d = 1, \dots, D$. Here, in analogy to @ref(eq:Xtled) we write
+for $d = 1, \dots, D$. Here, in analogy to @ref(eq-Xtled) we write
 
 $$
 \pi_{\le d-1} = \sum_{d'=0}^{d-1} \pi_d.
-$$ {#eq:pi_less_than_d}
+$$ {#eq-pi_less_than_d}
 
 The $\theta_d$ can be estimated via
 
@@ -170,11 +170,9 @@ with independence assumed across the different $s^*$. This, however, is not dire
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \sim \text{NegBin}\left[\sum_{d = j + 1}^{\min(D, t^* - s^*)} \hat{x}_{s^* - j, d}, \phi_j \right].
 $$ {#eq-negbin2}
 
-Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with
-$$
+Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with $$
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \ | \ X_{s^* - j, > j} \sim \text{Bin}\left[X_{s^* - j, > j}, \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} \pi_{d}\right) / \pi_{> j} \right],
-$$
-we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
+$$ we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
 
 ```{=html}
 <!--

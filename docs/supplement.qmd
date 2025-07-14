@@ -170,9 +170,11 @@ with independence assumed across the different $s^*$. This, however, is not dire
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \sim \text{NegBin}\left[\sum_{d = j + 1}^{\min(D, t^* - s^*)} \hat{x}_{s^* - j, d}, \phi_j \right].
 $$ {#eq-negbin2}
 
-Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with $$
+Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with
+$$
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \ | \ X_{s^* - j, > j} \sim \text{Bin}\left[X_{s^* - j, > j}, \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} \pi_{d}\right) / \pi_{> j} \right],
-$$ we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
+$$
+we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
 
 ```{=html}
 <!--

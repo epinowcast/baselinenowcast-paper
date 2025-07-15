@@ -14,27 +14,29 @@ output:
 
 ## Mathematical model
 
-This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. It uses preliminary case count and their delays in the form of reporting triangles, and uses empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout.
+This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. In slight variation of the chain ladder method @Friedland2010, it uses preliminary case counts and empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout. In our description we assume that time steps correspond to days, but they could also be weeks, months or any other unit.
 
 See the _Default Settings_ section in the main text methods for a description of the default behavior of the method within the `baselinenowcast` package.
 
 ### Notation
 
-We denote $X_{t,d}, d = 0, .., D$ as the number of cases occurring on time $t$ which appear in the dataset with a delay of $d$. For example, a delay $d = 0$ means that a case occurring on day $t$ arrived in the dataset on day $t$, or on what is considered to be the first possible report date in practice. We only consider cases reporting within a maximum delay $D$. The number of cases reporting for time $t$ with a delay of at most $d$ can be written as:
-
-$$X_{t, \le d} = \sum_{i=0}^d X_{t,i} $$
-
-A special case of this is the "final" number of reported cases at time $t$, $X_t$:
+We denote by $X_{t,d}, d = 0, .., D$ the number of cases occurring on day $t$ which appear in the dataset with a delay of $d$ days. For example, a delay $d = 0$ means that a case occurring on day $t$ arrived in the dataset on day $t$. We only consider cases reported within a maximum delay $D$. The number of cases reporting for time $t$ with a delay of at most $d$ can be written as:
 
 $$
-X_t = X_{t, \le D} = \sum_{i=0}^D X_{t,i}
+X_{t, \le d} = \sum_{i=0}^d X_{t,i}
+$$ {#eq-Xltd}
+
+A special case of this is the "final" number of reported cases at time $t$, denoted by
+
+$$
+X_t = X_{t, \le D} = \sum_{i=0}^D X_{t,i}.
 $$
 
-Conversely, for delays less than the maximum delay $d < D$, we defined $X_{t,>d}$ by
+For delays $d < D$ we moreover define the notation
 
 $$X_{t,>d} = \sum_{i = d+1} ^{D} X_{t,i}$$
 
-representing the number of cases still missing after $d$ delay. We refer to $X_t$ to describe a random variable, $x_t$ for the corresponding observation, and $\hat{x}_t$ for an estimated/imputed value. The matrix of $x_{t,d}$ available at a given time $t^*$ is referred to as a reporting matrix. In the case where all $t+d>t^*$ have yet to be observed (e.g. $t^*$ is the current time), this reporting matrix is referred to as the reporting triangle, with all values in the bottom right corner of the triangle being missing, except for the first entry at $x_{t=t*, d = 0}$.
+representing the number of cases still missing after $d$ days of delay. In the following we use uppercase letters ($X_t$) for random variables, lower case ($x_t$) for the corresponding observations, and hats ($\hat{x}_t$) for estimated / imputed values. The matrix $\mathbf{x}$ with entries $x_{t,d}, t = 1, \dots, t^*, d = 1, \dots, D$ is referred to as the *reporting matrix*:
 
 |   | $d = 0$ | $d = 1$ | $d=2$ | $...$ | $d= D-1$ | $d= D$ |
 |-----------|-----------|-----------|-----------|-----------|-----------|-----------|
@@ -42,167 +44,232 @@ representing the number of cases still missing after $d$ delay. We refer to $X_t
 | $t=2$ | $x_{2,0}$ | $x_{2,1}$ | $x_{2,2}$ | $...$ | $x_{2,D-1}$ | $x_{2, D}$ |
 | $t=3$ | $x_{3,0}$ | $x_{3,1}$ | $x_{3,2}$ | $...$ | $x_{3,D-1}$ | $x_{3, D}$ |
 | $...$ | $...$ | $...$ | $...$ | $...$ | $...$ | $...$ |
-| $t=t^*-1$ | $x_{t^*-1,0}$ | $x_{t^*-1,1}$ | $x_{t^*-1,,2}$ | $...$ | $x_{t^*-1,,D-1}$ | $x_{t^*-1,D}$ |
+| $t=t^*-2$ | $x_{t^*-2,0}$ | $x_{t^*-2,1}$ | $x_{t^*-2,2}$ | $...$ | $x_{t^*-2,D- 1}$ | $x_{t^*-2,D}$ |
+| $t=t^*-1$ | $x_{t^*-1,0}$ | $x_{t^*-1,1}$ | $x_{t^*-1,2}$ | $...$ | $x_{t^*-1,D-1}$ | $x_{t^*-1,D}$ |
 | $t=t^*$ | $x_{t^*,0}$ | $x_{t^*,1}$ | $x_{t^*,2}$ | $...$ | $x_{t^*,D-1}$ | $x_{t^*, D}$ |
+
+In the case where $t^*$ corresponds to the present date, all entries with $t+d>t^*$ have yet to be observed and are thus still missing. As the available entries at its bottom form a triangle, this incomplete reporting matrix is referred to as the *reporting triangle*.
+
+|           |               |               |               |       |     |     |
+|-----------|---------------|---------------|---------------|-------|-----|-----|
+| $t=t^*-2$ | $x_{t^*-2,0}$ | $x_{t^*-2,1}$ | $x_{t^*-2,2}$ | $...$ |     |     |
+| $t=t^*-1$ | $x_{t^*-1,0}$ | $x_{t^*-1,1}$ |               | $...$ |     |     |
+| $t=t^*$   | $x_{t^*,0}$   |               |               | $...$ |     |     |
+
+### Pre-processing of the reporting triangle {#preprocessing}
+
+All of the following steps require that the reporting triangle only has non-negative entries. In practice this is not necessarily the case. For instance, if the reporting triangle has been computed from increments in subsequent data snapshots, occasional downward corrections due to data entrance issues can cause negative entries. We therefore apply a pre-processing step to re-distribute negative entries across neighbouring cells with positive entries.
+
+**Describe here how this is done in the package?**
 
 ### Delay distribution estimation
 
-#### Estimate of the delay distribution from a reporting matrix
+In this section we detail how we estimate the reporting delay distribution based on the last $N$ rows of a reporting matrix or triangle, the default being $N = 1.5\times D$.
 
-We can use a reporting matrix to compute an empirical estimate of the delay distribution, $\pi_d$. The empirical delay distribution, $\pi_d$ can be computed directly from the reporting matrix $X$ using the latest $N$ reference times via:
+#### Estimating the delay distribution from a reporting matrix
+
+If a complete reporting matrix is available, estimating the discrete-time delay distribution $\pi_d, d = 0, \dots, D$ is straightforward. Using the last $N$ rows of the reporting matrix $\mathbf{x}$, we compute
 
 $$
-\pi_d= \frac{\sum_{t=t^*-N+1}^{t=t^*} X_{t,d}}{\sum_{d'=0}^{D} \sum_{t=t^*-N+1}^{t=t^*} X_{t,d'}}
-$$ {#eq:pi_d}
+\hat{\pi}_d= \frac{\sum_{t=t^*-N+1}^{t=t^*} x_{t,d}}{\sum_{t=t^*-N+1}^{t=t^*} x_{t}},
+$$ {#eq-pi_d}
 
-Where the numerator is the sum of all the observations across reference times $t$ for a particular delay $d$ of interest, and the denominator is the sum across all reference times $t$ and indexed delays in the reporting matrix $d'$.
+which is simply the relative frequency of a delay of $d$ days among all cases in the reporting matrix.
 
-#### Multiplicative model
+#### Estimating the delay from a reporting triangle
 
-In the case where we have missing values in the bottom right (i.e. we have a reporting triangle), the estimator $\pi_d$ can only be evaluated as written in \@ref(eq:pi_d) after discarding all data from the last $D-1$ time points. In order to use the partial information contained in the most recent $D-1$ time points, we use a different representation of the delay distribution via terms of the form:
+In the case where $t^*$ is the present day, such that only a reporting triangle with missing entries is available, the estimator $\hat{\pi}_d$ from @ref(eq-pi_d) can only be evaluated after discarding all data from the last $D-1$ time points. In order to use these partial observations, we use a different representation of the delay distribution via terms of the form
 
 $$
 \theta_d = \frac{\pi_d}{\pi_{\le d-1}}
-$$ {#eq:theta_d}
+$$ {#eq-theta_d}
 
-Where
-
-$$
-\pi_{\le d-1} = \sum_{d'=0}^{d-1} \pi_d
-$$ {#eq:pi_less_than_d}
-
-These $\theta_d$ can be estimated via the equation above \@ref(eq:theta_d) and translated to $\pi_1,...,\pi_D$ via the recursion
+for $d = 1, \dots, D$. Here, in analogy to @ref(eq-Xtled) we write
 
 $$
-\pi_{\leq d} = (1+\theta_d)\pi_{\leq d-1}
-$$
+\pi_{\le d-1} = \sum_{d'=0}^{d-1} \pi_d.
+$$ {#eq-pi_less_than_d}
 
-Subject to the constrain that $\sum \pi_i = 1$.
-
-The method requires at least one observation, at delay $d=0$ for the most recent reference time, located at the bottom left of the reporting triangle (see Figure 1.1).
-
-The intuition behind the multiplicative method is the assumption that the values at each delay $d$ for the recent times, will consist of the same proportion of the values previously reported for earlier times. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums, $\theta_d$, is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.
-
-The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d). It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows. The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.
-
-### Point nowcast generation
-
-To obtain a point nowcast matrix from a reporting triangle and any arbitrary delay PMF, $\pi_d$, we need to estimate the expected total number of eventual observed cases $\hat{x}_t$, for each reference time $t$. Let $x_{\leq t^*-t}$ be the sum over all delays $d$ that have already been observed (up until $t^*-t$), such that $x_{\leq t^*-t} =\sum_{d=1}^{d=t^*-t} x_{t,d}$ and $\pi_{\leq t^*-t}$ be the cumulative sum of the delay distribution, $\pi_d$ up until $d = t^*-t$ such that $\pi_{\leq t^*-t}= \sum_{d=1}^{d=t^*-t} \pi_d$. It can be shown (See [Zero-handling](#zero-handling-approximation) below) that the expected value of $X_t$, the total number of reported cases on reference time $t$, can be written as:
+The $\theta_d$ can be estimated via
 
 $$
-E(X_t | x_{\leq t^*-t}, \pi_{\leq t^*-t}) = \hat{x}_t = \frac{x_{\leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\pi_{\leq t^*-t}}
+\hat{\theta}_d = \frac{\sum_{t=t^* - N + 1}^{t^*-d} x_{t, d}}{\sum_{t= t^* - N + 1}^{t^*-d} x_{t, \leq d - 1}},
 $$
 
-Then we can compute the missing elements of the point nowcast matrix $\hat{x}_{t,d}$ directly using the $d$th element of $\pi_d$
+and translated to estimates $\hat{\pi}_0,..., \hat{\pi}_D$ via the recursion
 
 $$
-\hat{x}_{t,d} = \pi_d \times \hat{x}_t
+\hat{\pi}_{\leq d} = (1+\hat{\theta}_d)\hat{\pi}_{\leq d-1}
 $$
 
-Where the expected count at timepoint $t$ with delay $d$ is the product of the the expected total count, $\hat{x}_t$ and the proportion expected at that particular delay $d$, $\pi_d$. We will use the individual elements of the point nowcast matrix, $\hat{x}_{t,d}$ for uncertainty quantification.
+subject to the constrain that $\sum_{d = 0}^D \pi_d = 1$.
+
+We note that this method is equivalent to the so-called chainladder method @Friedland2010, merely adapted to our notation in terms of reporting triangles (rather than *development triangles* as used in accounting).
+
+<!-- The intuition behind the multiplicative method is the assumption that the values at each delay $d$ for the recent times, will consist of the same proportion of the values previously reported for earlier times. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums, $\theta_d$, is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.-->
+
+<!-- The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d). It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows. The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.-->
+
+### Point nowcast generation {#point-nowcast-generation}
+
+We now address the computation of a point nowcasts, i.e., expected total daily case numbers $\hat{x}_t, t = t^* - D + 1, t^*$. These are based on the reporting triangle, more specifically the preliminary totals $x_{t, \leq t^* - t}$, and the estimated delay distribution, $\hat{\pi}_d, d = 0, \dots, D$. In the following we will denote the current day $t^*$ as the nowcast date, and the days $t = t^* - D, \dots, t^*$ as the reference dates. The difference $j = t^* - t$ will be called the *horizon*.
+
+An intuitive approach, used in @Wolffram2023 and the standard chain ladder technique, is to simply inflate the current total for a reference date $t$ by the inverse of the respective probability of observation up to time $t^*$,
+
+$$
+\hat{x}_t =\frac{x_{t, \leq t^*-t}}{\pi_{\leq t^*-t}}.
+$$
+
+This, however, is not well-behaved if no cases at $t$ have been observed yet, i.e., $x_{t, \leq t^* - t} = 0$. Then $\hat{x}_t$ is likewise zero, which yields problems in our uncertainty quantification method (see next section). Motivated by a Bayesian argument (see [Zero-handling](#zero-handling-approximation) below) we therefore use the expression
+
+$$
+\hat{x}_t = \frac{x_{t, \leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\hat{\pi}_{t, \leq t^*-t}}
+$$ {#eq-correction}
+
+instead. This yields essentially identical results for large $x_{t, \leq t^* - t}$, but produces positive $\hat{x}_t$ even for preliminary zero values $x_{t, \leq t^* - t} = 0$.
+
+For our uncertainty quantification scheme we require not only estimated totals $\hat{x}_t$, but all entries $\hat{x}_{t,d}$ of a point nowcast matrix. For $t = t^* - D + 1, \dots, t^*, d > t^* - t$ these are obtained as
+
+$$
+\hat{x}_{t,d} = \hat{\pi}_d \times \hat{x}_t.
+$$
 
 ### Uncertainty quantification
 
-To estimate the uncertainty in the nowcasts, we use past nowcast errors. In this analysis, we assume a negative binomial observation model.
+To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ past nowcasting time points, the default being $M = 1.5\times D$. In this analysis, we assume a negative binomial observation model.
 
 #### Generation of retrospective reporting triangles
 
-We describe a method which generates retrospective reporting triangles to replicate what would have been available as of times$s^* = t^*-1, ..., t^*-M$ to generate $M$ retrospective reporting triangles.
+We first obtain "vintage'' reporting triangles of the raw reporting triangle (i.e., before pre-processing) to replicate the data which would have been available as of times $s^* = t^*-1, ..., t^*-M$, i.e., the last $M$ days on which nowcasts could have been generated. This simply corresponds to the stepwise omission of all entries with $t + d > s^*$, which for each $s^*$ corresponds to a diagonal from the bottom left to the top right. The same pre-processing step as in Section [Preprocessing of the reporting triangle](#preprocessing) is applied to each vintage reporting triangle.
 
-To generate the set of $M$ reporting triangles, we work backwards from most recent to oldest, removing the last $M$ rows of the current reporting triangle, to generate $M$ truncated reporting triangles. We then subsequently remove values which would not have been available as of each $s^*$, to generate $M$ retrospective reporting triangles.
 
 #### Generation of retrospective point nowcast matrices
 
-From the $M$ reporting triangles, we apply the method described above to estimate a delay distribution using the $N$ preceding reference times and generate a point nowcast for each retrospective reporting triangle, to generate $M$ point nowcasts.
+For each of the $M$ vintage reporting triangles, i.e., $s^* = t^*-1,, ..., t^*-M$, we apply the method described above to estimate a delay distribution and generate a point nowcast matrix. To indicate the data version on which it is based, its entries are denoted by
 
-Thus in order to estimate uncertainty using $N$ reference times, the total training volume must meet or exceed $N+M$ so that the oldest retrospective nowcast dataset at $s^* = t^*-M$ can use $N$ reference times for its point nowcast.
+$$
+\hat{x}_{t, d}(s^*)
+$$
 
-#### Fit predicted point nowcast vectors and observed counts to a negative binomial observation model at each forecast horizon
+for $t = s^* - D + 1, \dots, s^*$ and $d = s^* - t + 1, \dots D$.
 
-We quantify the uncertainty in the component of the target that corresponds to the counts that are still to be added. The default in the package assumes that the target is the final count at each reference time, summed across reporting delays, however, for the COVID-19 case study, the target is defined as the 7-day rolling sum of the counts at reference time, and therefore the uncertainty is quantified in the component of this quantity that has yet to be observed as of each reference time. For the norovirus case study, the default, which estimates the final reported cases at each specimen collection date, is used.
+Note that estimation is again based on the last $N$ rows of the respective reporting triangle, which must consequently contain at least $M + N$ rows in total.
 
+
+#### Fit a negative binomial observation model to past nowcast errors (per nowcast horizon)
+
+A point nowcast based on the reporting triangle from time $s^*$ can also be written as
+
+$$
+\hat{x}_{t}(s^*) = x_{t, \leq s^* - t} + \hat{x}_{t, > s^* - t}(s^*).
+$$
+
+Obviously only the second term has some associated uncertainty, while the first is already known at time $s^*$. To quantify this uncertainty for given nowcast horizon $0 \leq j \leq D$, our idea is to assemble the $\hat{x}_{s^* - j, > j}(s^*)$ and $x_{s^* - j,> j}$ for $s^* = t^* - M, \dots, t^* - 1$. We then estimate the overdispersion parameter $\phi_j$ of a negative binomial distribution
+
+$$
+X_{s^* - j, > j} \sim \text{NegBin}[\hat{x}_{s^* - j, > j}(s^*), \phi_j],
+$$ {#eq-negbin}
+
+with independence assumed across the different $s^*$. This, however, is not directly feasible as again some of the $x_{s^* - j, > j}$ are not yet observed at time $t^*$. We could discard these instances, but this would considerably reduce our number of available observations. We therefore use partial observations as available at time $t^*$ and assume $$
+\left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \sim \text{NegBin}\left[\sum_{d = j + 1}^{\min(D, t^* - s^*)} \hat{x}_{s^* - j, d}, \phi_j \right].
+$$ {#eq-negbin2}
+
+Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with
+$$
+\left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \ | \ X_{s^* - j, > j} \sim \text{Bin}\left[X_{s^* - j, > j}, \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} \pi_{d}\right) / \pi_{> j} \right],
+$$
+we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
+
+```{=html}
+<!--
 At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function, for the retrospective nowcast $\hat{X}_{s^*,d}$ and the truncated observed component $x_{t= s^*,d}$. We define the component of the retrospective nowcast that is predicted as of $s^*$, but observed as of $t^*$ as:
-
 $$
 \hat{X}_{s^*-j}(s^* >d) = \sum_{d=0}^{D} \hat{X}_{s^*-j,d} \times I(s^*-j+d \leq t^*)
 $$ and likewise the corresponding component that has been observed as of $t^*$ for each retrospective nowcast time $s^*$ as: $$
 x_{s^*-j}(s^*> d) = \sum_{d=0}^{D} x_{s^*-j,d} \times I(s^*-j+d \leq t^*)
 $$
-
-This generates $M$ pairs of predicted nowcast vectors and corresponding later observed nowcast vectors for each forecast horizon $j = 1, ..., D$. We assume that the later observed nowcasts vectors $x_{s^*-j, >d}$ follow a negative binomial observation model with a mean of $\hat{X}_{s^*-j}(s^*-j)$ <!-- Leaving in the +0.1 for now because we still use this to estimate, need to discuss, I now do not think we need it because the mean will never be 0-->
-
+This generates $M$ pairs of predicted nowcast vectors and corresponding later observed nowcast vectors for each forecast horizon $j = 1, ..., D$. We assume that the later observed nowcasts vectors $x_{s^*-j, >d}$ follow a negative binomial observation model with a mean of $\hat{X}_{s^*-j}(s^*-j)$ Leaving in the +0.1 for now because we still use this to estimate, need to discuss, I now do not think we need it because the mean will never be 0
 $$
 x_{s^*-j} | \hat{X}_{s^*-j}(j) \sim \text{NegBin}(\mu = \hat{X}_{s^*-j}(s^*-j) + 0.1, disp= \phi_j)
 $$ for all $s^* = 1, ..., M$.
-
 We add a small number (0.1) to the mean to avoid an ill-defined negative binomial. This generates a vector of negative binomial dispersion parameters indexed starting at forecast horizon $j=1$.
+--->
+```
 
 ### Probabilistic nowcast generation
 
-Using the dispersion parameters for each forecast horizon, $\phi_j,$ for $j = 1,...D$, we can generate probabilistic nowcast matrices by drawing samples from the negative binomial for the sum over the still missing counts:
+Predictive distributions for $X_{t^*}, \dots, X_{t^* - D + 1}$ are obtained by combining our point nowcasts with the estimated overdispersion parameters in a simple plug-in fashion. Specifically, we set
+
+$$
+X_{t, > t^* - t} \sim \text{NegBin}(\hat{x}_{t, > t^* - t}, \phi_{t^* - t}).
+$$
+
+The predictive distribution for $X_{t}$ then results by shifting this distribution by the already known value $x_{t, \leq t^* - t}$.
+
+```{=html}
+<!--
+
+Using the dispersion parameters $\phi_j,$ for each forecast horizon $j = 1,...D$, we can generate probabilistic nowcast matrices by drawing samples from the negative binomial for the sum over the still missing counts:
 
 $$
 X_{t^*-j, >d} \sim NegBin(\mu = \hat{X}_{t^*-j, >d}, \phi = \phi(j))
 $$
 
 We can sample for any number of draws, and then use the draws to compute any desired quantiles to summarize the outputs.
+-->
+```
 
+### Zero-handling strategy {#zero-handling-approximation}
 
-### Zero-handling approximation {#zero-handling-approximation}
-
-In order to produce a nowcast for a specific reference date, we use the number of already observed cases, $x_{t,\leq_d}$ and the delay PMF, $\pi$ to estimate the expected final count of cases $X_{t} = \sum_{d=1}^D X_{t,d}$. We will assume a simple binomial reporting model to derive an approximation for the expectation $E(X_t | X_{t, \leq d},\pi_\leq d)$.
-
-For notational simplicity, we will refer to $X_{t}$ as $N$, to indicate the random variable for the total number of final cases at a particular reference time $t$, and $X_{t,d}$ as $X$ to indicate the random variable for the number of cases at a particular reference time $t$ and delay $d$.
-
-We will denote the CDF of the delay distribution at a particular delay $d$, $\sum_{d=0}^d \pi_d$ simply by $p$.
-
-However, this simple calculation is undefined when the number of already observed cases is 0.
-
-The following derivation addresses this practical issue based on assumptions about the underlying distributions for which the observed cases at each reference time and reporting delay are drawn from.\
-
-Our problem boils down to the following. If we assume that: $$
-X | N \sim Bin(N, p)
-$$ with $p$ known and an improper discrete uniform prior on $N$: $$
-\text{P}(N= n) \propto C \text{ for n = 0, 1, 2, ...}
-$$ We are then interested in: $$
-\mathbb{E}[N | X = x]
-$$ This can be written out as: $$
-\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{P}(N = n | X = x) n
-$$ Applying Bayes Theorem we have: $$
-\text{P}(N = n | X = x)  = \frac{\text{P}(X = x | N = n) \text{P}(N=n)}{\sum_{i=0}^{\infty}\text{P}( X = x | N= i) \text{P}(N = i)}
-$$ Because $\text{P}(N=n) \propto C$ this simplifies to:
+As mentioned in [Point nowcast generation](#point-nowcast-generation), we use a modified point nowcasts to deal with zero values in preliminary counts. We here motivate this approach from a Bayesian perspective. To this end we assume that
 
 $$
-\text{P}(N = n | X = x)  = \frac{\text{P}(X = x | N = n)}{\sum_{i=0}^{\infty}\text{P}( X = x | N= i)}
-$$
-
-And substituting the probability mass function of the binomial distribution $f(x) = P[X = x| N = n] =\binom{n}{x} p^x(1-p)^{n-x}$ we get:
+X_{t, \leq d} \ \mid X_t \sim \text{Bin}\left(X_t, \sum_{d = 0}^d \pi_t\right).
+$$ We are now interested in the conditional expectation
 
 $$
-\text{P}(N = n | X = x) = \frac{\binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=1}^\infty \binom{1}{x}p^x(1-p)^{i-x}}
+\mathbb{E}(X_t \ \mid X_{t, \leq d})
 $$
 
-Plugging into $\mathbb{E}[N | X = x] = \sum_{n=0}^{\infty}\text{P}(N = n | X = x) n$ we get the following (omitting terms for $n<x$, which are 0):
+in this binomial subsampling problem. We will derive it under the improper prior distribution
 
 $$
-\mathbb{E}[N | X = x] = \sum_{n=x}^{\infty}n \frac{\binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}p^x(1-p)^{i-x}}
+X_t \sim \text{DiscreteUniform}(0, 1, 2, \dots).
 $$
 
-Which is equivalent to:
+For notational simplicity and readability for the following, we substitute $N = X_{t}$, $Y = X_{t, \geq d}$ and $p = \sum_{d = 0}^D \pi_d$ and are thus looking for $\mathbb{E}(N | Y = y)$ if $Y \sim \text{Bin}(N, p)$ with a discrete uniform prior on $N$. This expectation can be written out as: $$
+\mathbb{E}(N \ | \ Y = y) = \sum_{n=0}^{\infty}\text{Pr}(N = n | Y = y) \times n
+$$ {#eq-expectation} Applying Bayes Theorem we have $$
+\text{Pr}(N = n \ |\ Y = y)  = \frac{\text{Pr}(Y = y \ | \ N = n) \times \text{Pr}(N=n)}{\sum_{i=0}^{\infty}\text{Pr}( Y = y \ |\ N= i) \times \text{Pr}(N = i)}.
+$$ Because $\text{Pr}(N=n)$ is a constant this simplifies to $$
+\text{Pr}(N = n \ |\ Y = y)  = \frac{\text{Pr}(Y = y \ |\ N = n)}{\sum_{i=0}^{\infty}\text{Pr}( Y = y \ |\ N= i)}.
+$$ Now substituting the probability mass function of the binomial distribution $$
+\text{Pr}(Y = y\ |\ N = n) =\binom{n}{y} p^y(1-p)^{n-y}
+$$ we get $$
+\text{Pr}(N = n \ |\ Y = y) = \frac{\binom{n}{y} p^y(1-p)^{n-y}}{\sum_{i=1}^\infty \binom{1}{y}p^y(1-p)^{i-y}}
+$$
+
+Plugging this into \ref{#eq-expectation} we get the following (omitting terms for $n<y$, which are 0):
 
 $$
-\mathbb{E}[N | X = x] =  \frac{\sum_{n=x}^{\infty}n \binom{n}{x} p^x(1-p)^{n-x}}{\sum_{i=x}^\infty \binom{i}{x}p^x(1-p)^{i-x}}
+\mathbb{E}(N \ |\ Y = y) = \sum_{n=y}^{\infty}n \frac{\binom{n}{y} p^y(1-p)^{n-y}}{\sum_{i=y}^\infty \binom{i}{y}p^y(1-p)^{i-y}}
 $$
 
-Both the numerator and the denominator are known convergent series, with solutions available in standard libraries like Mathematica. We then get:
+This is equivalent to
 
 $$
-\mathbb{E}[N | X = x]  = \frac{(x + 1 -p)/p^2}{1/p} = \frac{x + 1 - p}{p}
-$$ This formula allows us to have a defined $\mathbb{E}[N | X = x]$ even when $X = 0$.
+\mathbb{E}(N \ | \ Y = y) =  \frac{\sum_{n=y}^{\infty}n \binom{n}{y} p^y(1-p)^{n-y}}{\sum_{i=y}^\infty \binom{i}{y}p^y(1-p)^{i-y}}.
+$$
+
+Both the numerator and the denominator are known convergent series, with solutions available in standard libraries like Mathematica @Mathematica2024. We then get
+
+$$
+\mathbb{E}(N \ |\ Y = y)  = \frac{(y + 1 -p)/p^2}{1/p} = \frac{y + 1 - p}{p},
+$$ which corresponds to the corrected point estimate provided in equation @eq-correction.
 
 ### Description of KIT simple nowcast implementation issue and revised nowcasts
 
-When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a later observed value – which has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
+When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a later observed value ??? which has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
 
 In order to validate our `baselinenowcast` method against a revised version with the bug fixed, we regenerated the nowcasts using the pre-processed reporting triangle in the German Nowcast Hub repository [@hospitalization_nowcast_hub_2025] and generated retrospective nowcasts, referring to these in the main text and supplement as the KIT simple nowcast revised.
 

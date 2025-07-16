@@ -77,13 +77,13 @@ which is simply the relative frequency of a delay of $d$ days among all cases in
 
 #### Estimating the delay from a reporting triangle
 
-In the case where $t^*$ is the present day, such that only a reporting triangle with missing entries is available, the estimator $\hat{\pi}_d$ from @ref(eq-pi_d) can only be evaluated after discarding all data from the last $D-1$ time points. In order to use these partial observations, we use a different representation of the delay distribution via terms of the form
+In the case where $t^*$ is the present day, such that only a reporting triangle with missing entries is available, the estimator $\hat{\pi}_d$ from @eq-pi_d can only be evaluated after discarding all data from the last $D-1$ time points. In order to use these partial observations, we use a different representation of the delay distribution via terms of the form
 
 $$
 \theta_d = \frac{\pi_d}{\pi_{\le d-1}}
 $$ {#eq-theta_d}
 
-for $d = 1, \dots, D$. Here, in analogy to @ref(eq-Xtled) we write
+for $d = 1, \dots, D$. Here, in analogy to @eq-Xltd we write
 
 $$
 \pi_{\le d-1} = \sum_{d'=0}^{d-1} \pi_d.

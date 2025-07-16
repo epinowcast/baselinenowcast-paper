@@ -3,8 +3,9 @@ title: "Supplement: A baseline method for nowcasting count data"
 authors: "To be updated"
 format: docx
 editor: visual
-date: 2025-04-16
+date: 2025-07-16
 bibliography: ref.bib
+csl: vancouver.csl
 output:
   bookdown::docx:
     fig_caption: yes
@@ -14,9 +15,9 @@ output:
 
 ## Mathematical model
 
-This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. In slight variation of the chain ladder method @Friedland2010, it uses preliminary case counts and empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout. In our description we assume that time steps correspond to days, but they could also be weeks, months or any other unit.
+Our approach is based on the reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. In slight variation of the chain ladder method @Friedland2010, it uses preliminary case counts and empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout. In our description we assume that time steps correspond to days, but they could also be weeks, months or any other unit.
 
-See the *Default Settings* section in the main text methods for a description of the default behavior of the method within the `baselinenowcast` package.
+See the *Default Settings* section in the main text methods for a description of the default behaviour of the method within the `baselinenowcast` package.
 
 ### Notation
 
@@ -39,7 +40,7 @@ $$X_{t,>d} = \sum_{i = d+1} ^{D} X_{t,i}$$
 representing the number of cases still missing after $d$ days of delay. In the following we use uppercase letters ($X_t$) for random variables, lower case ($x_t$) for the corresponding observations, and hats ($\hat{x}_t$) for estimated / imputed values. The matrix $\mathbf{x}$ with entries $x_{t,d}, t = 1, \dots, t^*, d = 1, \dots, D$ is referred to as the *reporting matrix*:
 
 |   | $d = 0$ | $d = 1$ | $d=2$ | $...$ | $d= D-1$ | $d= D$ |
-|----|----|----|----|----|----|----|
+|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
 | $t=1$ | $x_{1,0}$ | $x_{1,1}$ | $x_{1,2}$ | $...$ | $x_{1,D-1}$ | $x_{1, D}$ |
 | $t=2$ | $x_{2,0}$ | $x_{2,1}$ | $x_{2,2}$ | $...$ | $x_{2,D-1}$ | $x_{2, D}$ |
 | $t=3$ | $x_{3,0}$ | $x_{3,1}$ | $x_{3,2}$ | $...$ | $x_{3,D-1}$ | $x_{3, D}$ |
@@ -60,11 +61,9 @@ In the case where $t^*$ corresponds to the present date, all entries with $t+d>t
 
 All of the following steps require that the reporting triangle only has non-negative entries. In practice this is not necessarily the case. For instance, if the reporting triangle has been computed from increments in subsequent data snapshots, occasional downward corrections due to data entrance issues can cause negative entries. We therefore apply a pre-processing step to re-distribute negative entries across neighbouring cells with positive entries.
 
-**Describe here how this is done in the package?**
-
 ### Delay distribution estimation
 
-In this section we detail how we estimate the reporting delay distribution based on the last $N$ rows of a reporting matrix or triangle, the default being $N = 1.5\times D$.
+In this section we detail how we estimate the reporting delay distribution based on the last $N$ rows of a reporting matrix or triangle. See the Methods: Overview section in the main text for more details on the package default for the number of reference times used for delay estimation.
 
 #### Estimating the delay distribution from a reporting matrix
 
@@ -104,15 +103,11 @@ $$
 
 subject to the constrain that $\sum_{d = 0}^D \pi_d = 1$.
 
-We note that this method is equivalent to the so-called chainladder method @Friedland2010, merely adapted to our notation in terms of reporting triangles (rather than *development triangles* as used in accounting).
-
-<!-- The intuition behind the multiplicative method is the assumption that the values at each delay $d$ for the recent times, will consist of the same proportion of the values previously reported for earlier times. To fill in the missing values for each column $d$, we sum over the rectangle of completely observed reference dates for all $d-1$ columns (block top left) and sum over the column of completely observed reference dates for all of the entries in column $d$ (block left). The ratio of these two sums, $\theta_d$, is assumed to be the same in the missing entries in column $d$, so we use the entries observed up to $d-1$ for each incomplete reference date (block bottom left), and scale by this ratio to get the missing entries in column $d$. This process is repeated for each delay from $d$ up to the maximum delay $D$. At each iteration an additional reference time entry is computed as the delay $d$ increases.-->
-
-<!-- The delay distribution is estimated from the filled in reporting matrix per \@ref(eq:pi_d). It is worth noting that the resulting imputed values in the bottom right of the reporting triangle do not have an effect on the delay distribution, as they are chosen such that they correspond almost precisely to the distribution seen in the combination of the complete and partial rows. The slight imprecision is due to the additional component incorporated to handle 0s in observations of $x_{t>t^*-d, d}$. See [Zero-handling](#zero-handling-approximation) for further details.-->
+We note that this method is equivalent to the so-called chainladder method @Friedland2010, adapted to our notation in terms of reporting triangles (rather than *development triangles* as used in accounting).
 
 ### Point nowcast generation {#point-nowcast-generation}
 
-We now address the computation of a point nowcasts, i.e., expected total daily case numbers $\hat{x}_t, t = t^* - D + 1, t^*$. These are based on the reporting triangle, more specifically the preliminary totals $x_{t, \leq t^* - t}$, and the estimated delay distribution, $\hat{\pi}_d, d = 0, \dots, D$. In the following we will denote the current day $t^*$ as the nowcast date, and the days $t = t^* - D, \dots, t^*$ as the reference dates. The difference $j = t^* - t$ will be called the *horizon*.
+We now address the computation of a point nowcast, i.e., expected total daily case numbers $\hat{x}_t, t = t^* - D + 1, t^*$. These are based on the reporting triangle, more specifically the preliminary totals $x_{t, \leq t^* - t}$, and the estimated delay distribution, $\hat{\pi}_d, d = 0, \dots, D$. In the following we will denote the current day $t^*$ as the nowcast date, and the days $t = t^* - D, \dots, t^*$ as the reference dates. The difference $j = t^* - t$ will be called the *horizon*.
 
 An intuitive approach, used in @Wolffram2023 and the standard chain ladder technique, is to simply inflate the current total for a reference date $t$ by the inverse of the respective probability of observation up to time $t^*$,
 
@@ -136,11 +131,11 @@ $$
 
 ### Uncertainty quantification
 
-To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ past nowcasting time points, the default being $M = 1.5\times D$. In this analysis, we assume a negative binomial observation model.
+To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ past nowcasting time points. See the Methods: Overview section for more details on the default settings used in the package to define the number of $M$ past nowcasting time points used.
 
 #### Generation of retrospective reporting triangles
 
-We first obtain "vintage'' reporting triangles of the raw reporting triangle (i.e., before pre-processing) to replicate the data which would have been available as of times $s^* = t^*-1, ..., t^*-M$, i.e., the last $M$ days on which nowcasts could have been generated. This simply corresponds to the stepwise omission of all entries with $t + d > s^*$, which for each $s^*$ corresponds to a diagonal from the bottom left to the top right. The same pre-processing step as in Section [Preprocessing of the reporting triangle](#preprocessing) is applied to each vintage reporting triangle.
+We first obtain "vintage'' reporting triangles of the raw reporting triangle (i.e., before pre-processing) to replicate the data which would have been available as of times $s^* = t^*-1, ..., t^*-M$, i.e., the last $M$ days on which nowcasts could have been generated. This simply corresponds to the stepwise omission of all entries with $t + d > s^*$, which for each $s^*$ is a diagonal from the bottom left to the top right. The same pre-processing step as in Section [Preprocessing of the reporting triangle](#preprocessing) is applied to each vintage reporting triangle.
 
 #### Generation of retrospective point nowcast matrices
 
@@ -162,7 +157,7 @@ $$
 \hat{x}_{t}(s^*) = x_{t, \leq s^* - t} + \hat{x}_{t, > s^* - t}(s^*).
 $$
 
-Obviously only the second term has some associated uncertainty, while the first is already known at time $s^*$. To quantify this uncertainty for given nowcast horizon $0 \leq j \leq D$, our idea is to assemble the $\hat{x}_{s^* - j, > j}(s^*)$ and $x_{s^* - j,> j}$ for $s^* = t^* - M, \dots, t^* - 1$. We then estimate the overdispersion parameter $\phi_j$ of a negative binomial distribution
+Only the second term has some associated uncertainty, while the first is already known at time $s^*$. To quantify this uncertainty for given nowcast horizon $0 \leq j \leq D$, we assemble the $\hat{x}_{s^* - j, > j}(s^*)$ and $x_{s^* - j,> j}$ for $s^* = t^* - M, \dots, t^* - 1$. If all observations were complete, we would then estimate the overdispersion parameter $\phi_j$ of a negative binomial distribution
 
 $$
 X_{s^* - j, > j} \sim \text{NegBin}[\hat{x}_{s^* - j, > j}(s^*), \phi_j],
@@ -176,22 +171,6 @@ Here, the use of a constant dispersion parameter $\phi_j$ despite some of the va
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \ | \ X_{s^* - j, > j} \sim \text{Bin}\left[X_{s^* - j, > j}, \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} \pi_{d}\right) / \pi_{> j} \right],
 $$ we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
 
-```{=html}
-<!--
-At each retrospective nowcast time $s^*$, we compute the predicted and corresponding observed nowcast at each forecast horizon $j = 1, ..., D$ by summing across the reporting delays for all delays $d$ that have been observed as of time $t^*$, as indicated below by the indicator function, for the retrospective nowcast $\hat{X}_{s^*,d}$ and the truncated observed component $x_{t= s^*,d}$. We define the component of the retrospective nowcast that is predicted as of $s^*$, but observed as of $t^*$ as:
-$$
-\hat{X}_{s^*-j}(s^* >d) = \sum_{d=0}^{D} \hat{X}_{s^*-j,d} \times I(s^*-j+d \leq t^*)
-$$ and likewise the corresponding component that has been observed as of $t^*$ for each retrospective nowcast time $s^*$ as: $$
-x_{s^*-j}(s^*> d) = \sum_{d=0}^{D} x_{s^*-j,d} \times I(s^*-j+d \leq t^*)
-$$
-This generates $M$ pairs of predicted nowcast vectors and corresponding later observed nowcast vectors for each forecast horizon $j = 1, ..., D$. We assume that the later observed nowcasts vectors $x_{s^*-j, >d}$ follow a negative binomial observation model with a mean of $\hat{X}_{s^*-j}(s^*-j)$ Leaving in the +0.1 for now because we still use this to estimate, need to discuss, I now do not think we need it because the mean will never be 0
-$$
-x_{s^*-j} | \hat{X}_{s^*-j}(j) \sim \text{NegBin}(\mu = \hat{X}_{s^*-j}(s^*-j) + 0.1, disp= \phi_j)
-$$ for all $s^* = 1, ..., M$.
-We add a small number (0.1) to the mean to avoid an ill-defined negative binomial. This generates a vector of negative binomial dispersion parameters indexed starting at forecast horizon $j=1$.
---->
-```
-
 ### Probabilistic nowcast generation
 
 Predictive distributions for $X_{t^*}, \dots, X_{t^* - D + 1}$ are obtained by combining our point nowcasts with the estimated overdispersion parameters in a simple plug-in fashion. Specifically, we set
@@ -201,19 +180,6 @@ X_{t, > t^* - t} \sim \text{NegBin}(\hat{x}_{t, > t^* - t}, \phi_{t^* - t}).
 $$
 
 The predictive distribution for $X_{t}$ then results by shifting this distribution by the already known value $x_{t, \leq t^* - t}$.
-
-```{=html}
-<!--
-
-Using the dispersion parameters $\phi_j,$ for each forecast horizon $j = 1,...D$, we can generate probabilistic nowcast matrices by drawing samples from the negative binomial for the sum over the still missing counts:
-
-$$
-X_{t^*-j, >d} \sim NegBin(\mu = \hat{X}_{t^*-j, >d}, \phi = \phi(j))
-$$
-
-We can sample for any number of draws, and then use the draws to compute any desired quantiles to summarize the outputs.
--->
-```
 
 ### Zero-handling strategy {#zero-handling-approximation}
 
@@ -265,7 +231,7 @@ $$ which corresponds to the corrected point estimate provided in equation @eq-co
 
 ### Description of KIT simple nowcast implementation issue and revised nowcasts
 
-When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a later observed value ??? which has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
+When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a value that in some cases is eventually observed, rather than beign excluded as they should have been. This has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
 
 In order to validate our `baselinenowcast` method against a revised version with the bug fixed, we regenerated the nowcasts using the pre-processed reporting triangle in the German Nowcast Hub repository [@hospitalization_nowcast_hub_2025] and generated retrospective nowcasts, referring to these in the main text and supplement as the KIT simple nowcast revised.
 

@@ -16,7 +16,7 @@ output:
 
 This model was initially developed as a reference model for the COVID-19 hospitalisation nowcast challenge in Germany in 2021 and 2022 @Wolffram2023. In slight variation of the chain ladder method @Friedland2010, it uses preliminary case counts and empirical delay distributions to estimate yet-to-be-observed cases. Probabilistic nowcasts are generated using a negative binomial model with means from the point nowcast and dispersion parameters estimated from past nowcast errors. Below, we describe the mathematical details of each component of the model, starting with a definition of the notation used throughout. In our description we assume that time steps correspond to days, but they could also be weeks, months or any other unit.
 
-See the _Default Settings_ section in the main text methods for a description of the default behavior of the method within the `baselinenowcast` package.
+See the *Default Settings* section in the main text methods for a description of the default behavior of the method within the `baselinenowcast` package.
 
 ### Notation
 
@@ -39,7 +39,7 @@ $$X_{t,>d} = \sum_{i = d+1} ^{D} X_{t,i}$$
 representing the number of cases still missing after $d$ days of delay. In the following we use uppercase letters ($X_t$) for random variables, lower case ($x_t$) for the corresponding observations, and hats ($\hat{x}_t$) for estimated / imputed values. The matrix $\mathbf{x}$ with entries $x_{t,d}, t = 1, \dots, t^*, d = 1, \dots, D$ is referred to as the *reporting matrix*:
 
 |   | $d = 0$ | $d = 1$ | $d=2$ | $...$ | $d= D-1$ | $d= D$ |
-|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+|----|----|----|----|----|----|----|
 | $t=1$ | $x_{1,0}$ | $x_{1,1}$ | $x_{1,2}$ | $...$ | $x_{1,D-1}$ | $x_{1, D}$ |
 | $t=2$ | $x_{2,0}$ | $x_{2,1}$ | $x_{2,2}$ | $...$ | $x_{2,D-1}$ | $x_{2, D}$ |
 | $t=3$ | $x_{3,0}$ | $x_{3,1}$ | $x_{3,2}$ | $...$ | $x_{3,D-1}$ | $x_{3, D}$ |
@@ -142,7 +142,6 @@ To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ 
 
 We first obtain "vintage'' reporting triangles of the raw reporting triangle (i.e., before pre-processing) to replicate the data which would have been available as of times $s^* = t^*-1, ..., t^*-M$, i.e., the last $M$ days on which nowcasts could have been generated. This simply corresponds to the stepwise omission of all entries with $t + d > s^*$, which for each $s^*$ corresponds to a diagonal from the bottom left to the top right. The same pre-processing step as in Section [Preprocessing of the reporting triangle](#preprocessing) is applied to each vintage reporting triangle.
 
-
 #### Generation of retrospective point nowcast matrices
 
 For each of the $M$ vintage reporting triangles, i.e., $s^* = t^*-1,, ..., t^*-M$, we apply the method described above to estimate a delay distribution and generate a point nowcast matrix. To indicate the data version on which it is based, its entries are denoted by
@@ -154,7 +153,6 @@ $$
 for $t = s^* - D + 1, \dots, s^*$ and $d = s^* - t + 1, \dots D$.
 
 Note that estimation is again based on the last $N$ rows of the respective reporting triangle, which must consequently contain at least $M + N$ rows in total.
-
 
 #### Fit a negative binomial observation model to past nowcast errors (per nowcast horizon)
 
@@ -174,11 +172,9 @@ with independence assumed across the different $s^*$. This, however, is not dire
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \sim \text{NegBin}\left[\sum_{d = j + 1}^{\min(D, t^* - s^*)} \hat{x}_{s^* - j, d}, \phi_j \right].
 $$ {#eq-negbin2}
 
-Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with
-$$
+Here, the use of a constant dispersion parameter $\phi_j$ despite some of the values in the fitting procedure being yet incomplete is justified by the fact that the negative binomial distribution is closed to binomial subsampling, with the overdispersion parameter preserved. If equation @eq-negbin holds in combination with $$
 \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} X_{s^* - j, d} \right) \ | \ X_{s^* - j, > j} \sim \text{Bin}\left[X_{s^* - j, > j}, \left(\sum_{d = j + 1}^{\min(D, t^* - s^*)} \pi_{d}\right) / \pi_{> j} \right],
-$$
-we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
+$$ we thus obtain @eq-negbin2. Estimated dispersion parameters $\hat{\phi}_0, \dots, \hat{\phi}_D$ are obtained by maximum likelihood estimation.
 
 ```{=html}
 <!--

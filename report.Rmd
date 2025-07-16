@@ -64,6 +64,19 @@ rel_wis_rev <- scores_sum |>
   ) |>
   select(relative_wis, relative_to, model)
 ```
+Percent contribution to WIS by age group
+```{r, echo = FALSE}
+validation_scores |>
+  filter(age_group != "00+") |>
+  filter(model == "baselinenowcast") |>
+  summarise_scores(by = "age_group") |>
+  mutate(
+    total_wis = sum(wis),
+    pct_contribution = wis / total_wis,
+    mean_wis = mean(wis)
+  ) |>
+  kable(caption = "WIS percent contribution by age group")
+```
 Overall relative WIS: national
 ```{r, echo = FALSE}
 scores_sum <- validation_scores |>

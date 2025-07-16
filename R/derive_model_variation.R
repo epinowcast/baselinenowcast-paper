@@ -36,13 +36,9 @@ derive_model_variation <- function(df) {
       ),
       model_variation_string = case_when(
         n_history_delay == 41 & n_history_uncertainty == 19 ~
-          "Reduced delay estimate",
-        n_history_delay == 50 & n_history_uncertainty == 10 ~
-          "Reduced uncertainty estimate",
-        n_history_delay == 60 & n_history_uncertainty == 180 ~
-          "Increased uncertainty estimate",
-        n_history_delay == 180 & n_history_uncertainty == 60 ~
-          "Increased delay estimate",
+          "50% reduced training volume",
+        n_history_delay == 120 & n_history_uncertainty == 120 ~
+          "200% increased training volume",
         TRUE ~ model_variation_string
       )
     )
@@ -53,10 +49,8 @@ derive_model_variation <- function(df) {
       "Default",
       "Borrowed estimates from all age groups",
       "Complete reporting triangle",
-      "Increased delay estimate",
-      "Increased uncertainty estimate",
-      "Reduced delay estimate",
-      "Reduced uncertainty estimate"
+      "200% increased training volume",
+      "50% reduced training volume"
     )
   )
 

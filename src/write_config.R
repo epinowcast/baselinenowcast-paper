@@ -149,35 +149,21 @@ create_pairwise_variations <- function(df_base_covid,
   params_bool <- c("borrow", "partial_rep_tri")
 
   # Loop through each numeric parameter
-  for (i in seq_along(params)) {
-    param_i <- params[i]
-    # Create pairwise variations
-    for (j in seq_along(multipliers)) {
-      mult <- multipliers[j]
-      # Create a copy of the base dataframe
-      df_variation <- df_base_covid
-      df_variation[["n_history"]] <- df_base_covid[["n_history"]] * mult
-      # Apply multiplier to parameter i
-      # Somewhat complicated logic here, essentially we want for each parameter
-      # to put all the extra training data on either delay or uncertainty
-      # (depending on which is specified). However, for `n_history_delay`,
-      # the minimum must be max_delay+1 so we need to shuffle accordingly.
-      if (param_i == "n_history_delay") {
-        df_variation[["n_history_delay"]] <- max(
-          (df_variation[["n_history"]] - df_variation[["n_history_uncertainty"]]), # nolint
-          max_delay + 1
-        )
-        df_variation[["n_history_uncertainty"]] <- df_variation[["n_history"]] - df_variation[["n_history_delay"]] # nolint
-      } else {
-        df_variation[["n_history_uncertainty"]] <- max(10, df_variation[["n_history"]] - df_variation[["n_history_delay"]]) # nolint
-        df_variation[["n_history_delay"]] <- df_variation[["n_history"]] - df_variation[["n_history_uncertainty"]]
-      }
-      df_variation[[param_i]]
-      if (i == 1 && j == 1) {
-        df_long <- bind_rows(df_base_covid, df_variation)
-      } else {
-        df_long <- bind_rows(df_long, df_variation)
-      }
+  # Create pairwise variations
+  for (j in seq_along(multipliers)) {
+    mult <- multipliers[j]
+    # Create a copy of the base dataframe
+    df_variation <- df_base_covid
+    df_variation[["n_history"]] <- df_base_covid[["n_history"]] * mult
+    df_variation[["n_history_delay"]] <- max(
+      df_variation[["n_history_delay"]] * mult,
+      max_delay + 1
+    )
+    df_variation[["n_history_uncertainty"]] <- df_variation[["n_history"]] - df_variation[["n_history_delay"]] # nolint
+    if (j == 1) {
+      df_long <- bind_rows(df_base_covid, df_variation)
+    } else {
+      df_long <- bind_rows(df_long, df_variation)
     }
   }
 

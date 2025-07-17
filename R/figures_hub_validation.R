@@ -448,7 +448,6 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
       color = age_group,
       linewidth = age_group
     )) +
-    guides(linewidth = "none") +
     get_plot_theme() +
     scale_x_date(
       date_breaks = "1 month",
@@ -465,7 +464,12 @@ get_plot_mean_delay_over_time <- function(delays_over_time) {
     xlab("") +
     ylab("Mean delay over time") +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5)
+      linewidth = "none",
+      color = guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        override.aes = list(linewidth = 2)
+      )
     )
 
   return(p)
@@ -498,7 +502,7 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
     ylab("Cumulative delay distribution") +
     get_plot_theme() +
     guides(
-      color = guide_legend(title.position = "top", title.hjust = 0.5)
+      color = "none"
     )
 
 

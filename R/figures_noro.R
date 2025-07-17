@@ -403,7 +403,8 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
     guides(
       color = guide_legend(
         title.position = "top", title.hjust = 0.5,
-        nrow = 3
+        nrow = 3,
+        override.aes = list(linewidth = 2)
       )
     ) +
     xlab("") +

@@ -64,6 +64,19 @@ rel_wis_rev <- scores_sum |>
   ) |>
   select(relative_wis, relative_to, model)
 ```
+Percent contribution to WIS by age group
+```{r, echo = FALSE}
+validation_scores |>
+  filter(age_group != "00+") |>
+  filter(model == "baselinenowcast") |>
+  summarise_scores(by = "age_group") |>
+  mutate(
+    total_wis = sum(wis),
+    pct_contribution = wis / total_wis,
+    mean_wis = mean(wis)
+  ) |>
+  kable(caption = "WIS percent contribution by age group")
+```
 Overall relative WIS: national
 ```{r, echo = FALSE}
 scores_sum <- validation_scores |>
@@ -197,7 +210,7 @@ sum_scores <- scores_mp |>
   summarise_scores(by = "model_variation_string")
 
 default_scores <- sum_scores |>
-  filter(model_variation_string == "Baseline validation approach") |>
+  filter(model_variation_string == "Default") |>
   mutate(default_wis = wis) |>
   select(default_wis)
 default_wis <- default_scores$default_wis[1]
@@ -214,7 +227,7 @@ sum_scores <- scores_mp |>
   summarise_scores(by = c("model_variation_string", "age_group"))
 
 default_scores <- sum_scores |>
-  filter(model_variation_string == "Baseline validation approach") |>
+  filter(model_variation_string == "Default") |>
   mutate(default_wis = wis) |>
   select(default_wis, age_group)
 
@@ -232,7 +245,7 @@ sum_scores |>
   filter(!model_variation_string %in% c(
     "Borrowed estimates from all age groups",
     "Complete reporting triangle",
-    "Baseline validation approach"
+    "Default"
   )) |>
   kable(caption = "Model permutations training volume: relative scores by age group")
 sum_scores |>
@@ -242,7 +255,7 @@ sum_scores |>
   filter(!model_variation_string %in% c(
     "Borrowed estimates from all age groups",
     "Complete reporting triangle",
-    "Baseline validation approach"
+    "Default"
   )) |>
   summarise(
     min_rel_wis = min(rel_wis),
@@ -308,7 +321,7 @@ sum_scores <- scores_mp |>
   summarise_scores(by = c("model_variation_string", "horizon"))
 
 default_scores <- sum_scores |>
-  filter(model_variation_string == "Baseline validation approach") |>
+  filter(model_variation_string == "Default") |>
   mutate(default_wis = wis) |>
   select(default_wis, horizon)
 

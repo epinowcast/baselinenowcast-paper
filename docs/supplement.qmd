@@ -183,7 +183,7 @@ The predictive distribution for $X_{t}$ then results by shifting this distributi
 
 ### Zero-handling strategy {#zero-handling-approximation}
 
-As mentioned in [Point nowcast generation](#point-nowcast-generation), we use a modified point nowcasts to deal with zero values in preliminary counts. We here motivate this approach from a Bayesian perspective. To this end we assume that
+As mentioned in [Point nowcast generation](#point-nowcast-generation), we use a modified point nowcasts to deal with zero values in preliminary counts. We here motivate this approach from a Bayesian perspective, based on the work of @Morgenstern2025. To this end we assume that
 
 $$
 X_{t, \leq d} \ \mid X_t \sim \text{Bin}\left(X_t, \sum_{d = 0}^d \pi_t\right).

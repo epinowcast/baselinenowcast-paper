@@ -276,7 +276,7 @@ get_plot_bar_chart_scores_mp <- function(scores,
       fill = guide_legend(
         title.position = "top",
         title.hjust = 0.5,
-        nrow = 4
+        nrow = 3
       )
     )
   return(p)
@@ -1163,23 +1163,29 @@ make_panel_A_mps_2_ags <- function(
   FFLL
   "
 
-  fig_panel_A <- (plot_nowcasts_t_mp_borrow1 +
-    theme(plot.tag.position = c(0, 0.6))) +
-    rel_wis_over_time_mp_borrow1 +
-    plot_nowcasts_t_mp_rep_tri1 +
-    rel_wis_over_time_mp_rep_tri1 +
-    plot_nowcasts_t_mp_volume1 +
-    rel_wis_over_time_mp_volume1 +
-    (plot_nowcasts_t_mp_borrow2 +
-      theme(plot.tag.position = c(0, 0.6))) +
-    rel_wis_over_time_mp_borrow2 +
-    plot_nowcasts_t_mp_rep_tri2 +
-    rel_wis_over_time_mp_rep_tri2 +
-    plot_nowcasts_t_mp_volume2 +
-    rel_wis_over_time_mp_volume2 +
+  fig_panel_A <- (plot_nowcasts_t_mp_borrow1 + labs(tag = " A i") +
+    theme(plot.tag.position = c(0, 0.7))) +
+    (rel_wis_over_time_mp_borrow1 + labs(tag = "ii")) +
+    (plot_nowcasts_t_mp_rep_tri1 + labs(tag = "iii")) +
+    (rel_wis_over_time_mp_rep_tri1 + labs(tag = "iv")) +
+    (plot_nowcasts_t_mp_volume1 + labs(tag = "v")) +
+    (rel_wis_over_time_mp_volume1 + labs(tag = "vi") +
+      theme(plot.tag.position = c(-0.01, 1))) +
+    (plot_nowcasts_t_mp_borrow2 + labs(tag = "vii") +
+      theme(plot.tag.position = c(0, 0.7))) +
+    (rel_wis_over_time_mp_borrow2 + labs(tag = "viii")) +
+    (plot_nowcasts_t_mp_rep_tri2 + labs(tag = "ix")) +
+    (rel_wis_over_time_mp_rep_tri2 + labs(tag = "x")) +
+    (plot_nowcasts_t_mp_volume2 + labs(tag = "xi")) +
+    (rel_wis_over_time_mp_volume2 + labs(tag = "xii") +
+      theme(plot.tag.position = c(-0.01, 1))) +
     plot_layout(
       design = fig_layout,
       axes = "collect"
+    ) +
+    plot_annotation(
+      tag_levels = "I",
+      tag_sep = "" # no separator between tag levels
     )
   return(fig_panel_A)
 }
@@ -1233,19 +1239,16 @@ make_fig_model_perms <- function(
 
   wrapped_panel_A <- wrap_plots(panel_A_nowcasts_over_time)
   # theme(plot.tag.position = c(0, 0.70)))
-  fig_model_perm <- wrapped_panel_A + # A
-    (bar_chart_wis_by_mp + theme(plot.tag.position = c(0, 0.6))) + # B
-    bar_chart_coverage_mp + # C
-    rel_wis_by_horizon_mp + # D
-    rel_decomp_wis_by_age_group + # E
+  fig_model_perm <- (wrapped_panel_A + labs(tag = "A")) + # A
+    (bar_chart_wis_by_mp + labs(tag = "B") +
+      theme(plot.tag.position = c(0, 0.6))) + # B
+    (bar_chart_coverage_mp + labs(tag = "C")) + # C
+    (rel_wis_by_horizon_mp + labs(tag = "D")) + # D
+    (rel_decomp_wis_by_age_group + labs(tag = "E")) + # E
     plot_layout(
       design = fig_layout,
       axes = "collect",
       guides = "collect"
-    ) +
-    plot_annotation(
-      tag_levels = "A",
-      tag_sep = "" # no separator between tag levels
     ) & theme(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),

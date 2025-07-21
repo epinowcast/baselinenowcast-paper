@@ -19,6 +19,9 @@ permutations run locally}
 \item{days_to_eval}{Integer indicating the number of days before the nowcast
 date to evaluate against.}
 
+\item{eval_timeframe}{Integer indicating the number of days after the
+nowcast date to evaluate the nowcasts.}
+
 \item{synthetic_data}{Boolean indicating whether to use the synthetic or
 or real data. Default is \code{TRUE}.}
 

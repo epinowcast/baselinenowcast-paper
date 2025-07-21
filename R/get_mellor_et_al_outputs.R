@@ -4,6 +4,8 @@
 #'    permutations run locally
 #' @param days_to_eval Integer indicating the number of days before the nowcast
 #'    date to evaluate against.
+#' @param eval_timeframe Integer indicating the number of days after the
+#'    nowcast date to evaluate the nowcasts.
 #' @param synthetic_data Boolean indicating whether to use the synthetic or
 #'    or real data. Default is `TRUE`.
 #' @param model_names Vector of character strings indicating the names of the
@@ -18,7 +20,7 @@ get_mellor_et_al_outputs <- function(
     eval_timeframe,
     synthetic_data = TRUE,
     model_names = c("epinowcast", "gam", "baseline_prevweek")) {
-  if (isTRUE(sythetic_data)) {
+  if (isTRUE(synthetic_data)) {
     prefix <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast-baselinenowcast/refs/heads/initial-port/outputs/data/" # nolint
   } else {
     prefix <- file.path("output", "data", "noro")

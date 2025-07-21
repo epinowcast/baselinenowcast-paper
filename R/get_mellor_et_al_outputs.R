@@ -4,10 +4,10 @@
 #'    permutations run locally
 #' @param days_to_eval Integer indicating the number of days before the nowcast
 #'    date to evaluate against.
-#' @param local_load Boolean indicating whether or not to load data from local
-#'    or from GitHub. Default is FALSE which loads from GitHub.
-#' @param synthetic_data Boolean indicating whether to use the synthetic or\
-#'    or real data. Default is `synthetic`.
+#' @param eval_timeframe Integer indicating the number of days after the
+#'    nowcast date to evaluate the nowcasts.
+#' @param synthetic_data Boolean indicating whether to use the synthetic or
+#'    or real data. Default is `TRUE`.
 #' @param model_names Vector of character strings indicating the names of the
 #'    models to include within the file names. Defaults are the three different
 #'    models `c("epinowcast", "gam", "baseline_prev_week")`.
@@ -17,13 +17,13 @@
 get_mellor_et_al_outputs <- function(
     data_from_bnc,
     days_to_eval,
-    local_load = FALSE,
+    eval_timeframe,
     synthetic_data = TRUE,
     model_names = c("epinowcast", "gam", "baseline_prevweek")) {
-  if (isTRUE(local_load)) {
-    prefix <- file.path("output", "data", "noro")
-  } else {
+  if (isTRUE(synthetic_data)) {
     prefix <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast-baselinenowcast/refs/heads/initial-port/outputs/data/" # nolint
+  } else {
+    prefix <- file.path("output", "data", "noro")
   }
   if (isTRUE(synthetic_data)) {
     data_type <- "synthetic"
@@ -31,6 +31,9 @@ get_mellor_et_al_outputs <- function(
     data_type <- "original"
   }
 
+  # Note that this will use the data as originally loaded. If synthetic data
+  # is true, need to make sure synthetic data was loaded in
+  # `load_data_targets.R`
   just_data <- data_from_bnc |>
     distinct(nowcast_date, reference_date, observed, data_as_of) |>
     mutate(

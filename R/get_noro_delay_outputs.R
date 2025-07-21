@@ -2,6 +2,7 @@
 #'
 #' @inheritParams run_noro_nowcast_pipeline
 #' @importFrom cli cli_abort
+#' @importFrom baselinenowcast get_delay_estimate
 #' @returns Data.frame of delays with metadata
 get_noro_delay_outputs <- function(noro_df,
                                    nowcast_date,
@@ -35,10 +36,9 @@ get_noro_delay_outputs <- function(noro_df,
       # Here we estimate the delay pmf using the last 3 rows,
       # since each row has 1 and then 7, 7, days of data
       # and we want the latest delay
-      delay_pmf <- get_delay_estimate(
-        reporting_triangle = triangle,
-        max_delay = max_delay,
-        n = 3
+      triangle_trunc <- triangle[(nrow(triangle) - 2):nrow(triangle), ]
+      delay_pmf <- colSums(triangle_trunc, na.rm = TRUE) / sum(triangle_trunc,
+        na.rm = TRUE
       )
       delay_df <- data.frame(
         delay = delay_pmf,

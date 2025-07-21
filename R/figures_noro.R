@@ -447,35 +447,73 @@ get_plot_distrib_delays <- function(delay_dfs,
       "Sun"
     )
   )
+
+  mean_delay_by_weekday <- delay_dfs |>
+    filter(
+      n_history_delay == n_history_delay_filter,
+      filter_ref_dates
+    ) |>
+    group_by(weekday, weekday_name, nowcast_date) |>
+    summarise(
+      mean_delay = sum(delay * delay_time)
+    ) |>
+    group_by(weekday, weekday_name) |>
+    summarise(
+      mean_delay = mean(mean_delay)
+    )
+  mean_delay_by_weekday$weekday_name <- factor(mean_delay_by_weekday$weekday_name, # nolint
+    levels = c(
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    )
+  )
+
   plot_comps <- plot_components()
   p <- ggplot(data = mean_delay_df) +
     geom_violin(aes(
       x = weekday_name, y = mean_delay,
       fill = weekday_name
-    )) +
+    ), alpha = 0.5) +
     geom_jitter(
       aes(
         x = weekday_name,
-        y = mean_delay
+        y = mean_delay,
+        color = weekday_name
       ),
       width = 0.1, # Control horizontal spread
-      alpha = 0.8, # Make points semi-transparent
+      alpha = 1, # Make points semi-transparent
       size = 0.8 # Point size
+    ) +
+    geom_point(
+      data = mean_delay_by_weekday,
+      aes(x = weekday_name, y = mean_delay),
+      size = 3,
+      shape = "triangle",
+      color = "black"
     ) +
     get_plot_theme() +
     theme(
       axis.text.x = element_text(angle = 45, hjust = 1),
       legend.position = "bottom"
     ) +
+    scale_color_manual(
+      name = "Weekday",
+      values = plot_comps$weekday_colors
+    ) +
     scale_fill_manual(
       name = "Weekday",
       values = plot_comps$weekday_colors
     ) +
     xlab("") +
-    coord_cartesian(ylim = c(0, max(mean_delay_df$mean_delay))) +
+    # coord_cartesian(ylim = c(0, max(mean_delay_df$mean_delay))) +
     ylab("Mean delay\ndistribution") +
     guides(
-      fill = "none"
+      fill = "none", color = "none"
     )
 
   return(p)

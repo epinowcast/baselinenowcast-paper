@@ -2,6 +2,7 @@
 #'
 #' @inheritParams run_noro_nowcast_pipeline
 #' @importFrom cli cli_abort
+#' @importFrom baselinenowcast get_delay_estimate
 #' @returns Data.frame of delays with metadata
 get_noro_delay_outputs <- function(noro_df,
                                    nowcast_date,

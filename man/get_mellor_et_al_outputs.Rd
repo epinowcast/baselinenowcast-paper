@@ -7,7 +7,7 @@
 get_mellor_et_al_outputs(
   data_from_bnc,
   days_to_eval,
-  local_load = FALSE,
+  eval_timeframe,
   synthetic_data = TRUE,
   model_names = c("epinowcast", "gam", "baseline_prevweek")
 )
@@ -19,11 +19,8 @@ permutations run locally}
 \item{days_to_eval}{Integer indicating the number of days before the nowcast
 date to evaluate against.}
 
-\item{local_load}{Boolean indicating whether or not to load data from local
-or from GitHub. Default is FALSE which loads from GitHub.}
-
-\item{synthetic_data}{Boolean indicating whether to use the synthetic or\
-or real data. Default is \code{synthetic}.}
+\item{synthetic_data}{Boolean indicating whether to use the synthetic or
+or real data. Default is \code{TRUE}.}
 
 \item{model_names}{Vector of character strings indicating the names of the
 models to include within the file names. Defaults are the three different

@@ -329,6 +329,7 @@ utils::globalVariables(c(
   "delay", # <get_eval_data_from_long_df>
   "age_group", # <get_eval_data_from_long_df>
   "count", # <get_eval_data_from_long_df>
+  "sythetic_data", # <get_mellor_et_al_outputs>
   "nowcast_date", # <get_mellor_et_al_outputs>
   "reference_date", # <get_mellor_et_al_outputs>
   "observed", # <get_mellor_et_al_outputs>

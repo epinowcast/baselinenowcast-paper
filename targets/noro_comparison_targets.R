@@ -5,8 +5,9 @@ noro_comparison_targets <- list(
     name = mellor_model_nowcasts,
     command = get_mellor_et_al_outputs(
       days_to_eval = config$noro$days_to_eval,
+      eval_timeframe = config$noro$eval_timeframe,
       data_from_bnc = all_nowcasts_noro,
-      local_load = TRUE
+      synthetic_data = FALSE # set to TRUE to use public data
     )
   ),
   tar_target(
@@ -14,12 +15,13 @@ noro_comparison_targets <- list(
     command = get_mellor_et_al_outputs(
       data_from_bnc = all_nowcasts_noro,
       days_to_eval = config$noro$days_to_eval,
+      eval_timeframe = config$noro$eval_timeframe,
       model_names = c(
         "baselinenowcast_model1",
         "baselinenowcast_model2",
         "baselinenowcast_model3"
       ),
-      local_load = TRUE
+      synthetic_data = FALSE # set to TRUE to use public data
     )
   ),
   tar_target(

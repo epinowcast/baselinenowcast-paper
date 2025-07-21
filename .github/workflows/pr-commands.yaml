@@ -62,6 +62,12 @@ jobs:
       - name: Style
         run: Rscript -e 'styler::style_pkg()'
 
+      - name: Install Air
+        uses: posit-dev/setup-air@v1
+
+      - name: Check
+        run: air format . --check
+
       - name: commit
         run: |
           git config --local user.name "$GITHUB_ACTOR"

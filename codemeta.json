@@ -296,8 +296,7 @@
     "11": {
       "@type": "SoftwareApplication",
       "identifier": "baselinenowcast",
-      "name": "baselinenowcast",
-      "sameAs": "https://github.com/baselinenowcast=epinowcast/baselinenowcast"
+      "name": "baselinenowcast"
     },
     "12": {
       "@type": "SoftwareApplication",
@@ -385,7 +384,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1544.883KB",
+  "fileSize": "1588.514KB",
   "releaseNotes": "https://github.com/epinowcast/baselinenowcast-paper/blob/master/NEWS.md",
   "readme": "https://github.com/epinowcast/baselinenowcast-paper/blob/main/README.md"
 }

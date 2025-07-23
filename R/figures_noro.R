@@ -713,7 +713,8 @@ make_fig_noro <- function(panel_A_noro,
         glue("{fig_file_name}.png")
       ),
       width = 24,
-      height = 24
+      height = 24,
+      dpi = 300
     )
   }
   return(fig_noro)

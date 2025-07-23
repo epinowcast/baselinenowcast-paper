@@ -1071,7 +1071,8 @@ make_fig_hub_validation <- function(
         glue("{fig_file_name}.png")
       ),
       width = 24,
-      height = 16
+      height = 16,
+      dpi = 300
     )
   }
 

@@ -1271,7 +1271,8 @@ make_fig_model_perms <- function(
         glue("{fig_file_name}.png")
       ),
       width = 26,
-      height = 20
+      height = 20,
+      dpi = 300
     )
   }
 

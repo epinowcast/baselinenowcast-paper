@@ -626,14 +626,21 @@ make_panel_A_noro <- function(
   "
 
   panel_A_noro <- (plot_noro_nowcasts_baseline +
-    theme(plot.tag.position = c(0, 0.6))) +
-    rel_wis_by_week_noro_baseline +
-    plot_noro_nowcasts_GAM +
-    rel_wis_by_week_noro_GAM +
-    plot_noro_nowcasts_enw +
-    rel_wis_by_week_noro_enw +
-    plot_noro_nowcasts_bnc +
-    rel_wis_by_week_noro_bnc +
+    theme(plot.tag.position = c(-0.01, 0.6))) +
+    (rel_wis_by_week_noro_baseline +
+       theme(plot.tag.position = c(-0.01, 1))) +
+    (plot_noro_nowcasts_GAM +
+       theme(plot.tag.position = c(-0.01, 1))) +
+    (rel_wis_by_week_noro_GAM +
+       theme(plot.tag.position = c(-0.01, 1))) +
+    (plot_noro_nowcasts_enw +
+       theme(plot.tag.position = c(-0.01, 1))) +
+    (rel_wis_by_week_noro_enw +
+       theme(plot.tag.position = c(-0.01, 1))) +
+    (plot_noro_nowcasts_bnc +
+       theme(plot.tag.position = c(-0.01, 1))) +
+    (rel_wis_by_week_noro_bnc +
+       theme(plot.tag.position = c(-0.01, 1))) +
     plot_layout(
       design = fig_layout,
       axes = "collect"

@@ -196,6 +196,19 @@ rel_wis |>
   kable(caption = "Min and max relative WIS by age group")
 ```
 
+Coverage by model
+```{r}
+validation_coverage |>
+  group_by(model, interval_range) |>
+  summarise(empirical_coverage = sum(interval_coverage) / n()) |>
+  filter(interval_range %in% c(50, 95)) |>
+  pivot_wider(
+    names_from = interval_range,
+    values_from = empirical_coverage
+  ) |>
+  kable(caption = "Model validation: coverage summary")
+```
+
 # Model permutation results
 ```{r, echo = FALSE}
 scores_mp |>

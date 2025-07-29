@@ -34,32 +34,32 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = validation_scoresr,
     command = validation_scores |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = combined_nowcastsr,
     command = combined_nowcasts |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = validation_coverager,
     command = validation_coverage |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = scores_by_age_groupr,
     command = scores_by_age_group |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = scores_over_time_agr,
     command = scores_over_time_ag |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = scores_over_time_ntlr,
     command = scores_over_time_ntl |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   # Subplots for Supp Figure Hub validation vs KIT real-time ---------------------------
   tar_target(
@@ -306,7 +306,7 @@ figures_hub_validation_targets <- list(
 
   # Make panels---------------------------------------------------------
   tar_target(
-    name = fig_hub_validation_real_time,
+    name = fig_hub_validation_original,
     command = make_fig_hub_validation(
       plot_nowcast_illustration,
       horiz_bar_chart_sum_scores_ag,
@@ -314,7 +314,7 @@ figures_hub_validation_targets <- list(
       bar_chart_scores_by_age_group,
       plot_mean_delay_over_time_by_age,
       plot_mean_cdf_delay_by_age,
-      fig_file_name = "fig_hub_validation_KIT_real_time",
+      fig_file_name = "fig_hub_validation_KIT_original",
       fig_file_dir = file.path("output", "figs", "supp"),
       save = TRUE
     )

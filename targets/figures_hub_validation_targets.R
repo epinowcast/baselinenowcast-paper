@@ -34,32 +34,32 @@ figures_hub_validation_targets <- list(
   tar_target(
     name = validation_scoresr,
     command = validation_scores |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = combined_nowcastsr,
     command = combined_nowcasts |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = validation_coverager,
     command = validation_coverage |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = scores_by_age_groupr,
     command = scores_by_age_group |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = scores_over_time_agr,
     command = scores_over_time_ag |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   tar_target(
     name = scores_over_time_ntlr,
     command = scores_over_time_ntl |>
-      filter(model != "KIT simple nowcast")
+      filter(model != "KIT simple nowcast original")
   ),
   # Subplots for Supp Figure Hub validation vs KIT real-time ---------------------------
   tar_target(

@@ -31,7 +31,7 @@ plot_components <- function() {
   pal_mps <- brewer.pal(12, "Paired")
   # nolint start
   model_colors <- c(
-    "KIT simple nowcast" = "darkorange",
+    "KIT simple nowcast original" = "darkorange",
     "KIT simple nowcast revised" = "darkgreen",
     "baselinenowcast" = "purple4",
     "Default" = "purple4",

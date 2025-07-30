@@ -63,7 +63,7 @@ is borrowed from another strata.}
 
 \item{partial_rep_tri}{Boolean indicating whether or not a partially
 complete reporting triangle is used or the latest complete triangle is
-used.}
+use}
 
 \item{age_group}{Character string indicating the age group.}
 

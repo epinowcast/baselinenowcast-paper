@@ -8,6 +8,7 @@ gen_covid_nowcast_targets <- list(
       age_group_to_nowcast = age_group_to_nowcast,
       borrow = borrow,
       partial_rep_tri = partial_rep_tri,
+      weekday_filter = weekday_filter,
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
       eval_timeframe = config$covid$eval_timeframe,

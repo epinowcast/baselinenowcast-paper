@@ -4,8 +4,7 @@ kit_nowcast_targets <- list(
   tar_target(
     name = kit_nowcast_url,
     command = get_kit_nowcast_url(
-      # prefix = config$covid$KIT_nowcast_url_prefix,
-      prefix = "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/refs/heads/main/data-processed_retrospective/KIT-simple_nowcast_original",
+      prefix = config$covid$KIT_nowcast_url_prefix,
       nowcast_date = nowcast_dates_covid
     )
   ),

@@ -88,7 +88,8 @@ write_config <- function(noro_nowcast_dates = NULL,
       n_history_delay = round(0.5 * base_n_history),
       n_history_uncertainty = round(0.5 * base_n_history),
       borrow = base_borrow,
-      partial_rep_tri = partial_rep_tri
+      partial_rep_tri = partial_rep_tri,
+      weekday_filter = FALSE
     )
   # result_df should be 7* length of df_base_covid
   if (permutations_covid) {
@@ -146,7 +147,7 @@ create_pairwise_variations <- function(df_base_covid,
                                        max_delay = max_delay) {
   # Original parameters
   params <- c("n_history_delay", "n_history_uncertainty")
-  params_bool <- c("borrow", "partial_rep_tri")
+  params_bool <- c("borrow", "partial_rep_tri", "weekday_filter")
 
   # Loop through each numeric parameter
   # Create pairwise variations

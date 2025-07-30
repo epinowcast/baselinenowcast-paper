@@ -117,7 +117,8 @@ mapped_covid <- tar_map(
     n_history_delay = config$covid$n_history_delay,
     n_history_uncertainty = config$covid$n_history_uncertainty,
     borrow = config$covid$borrow,
-    partial_rep_tri = config$covid$partial_rep_tri
+    partial_rep_tri = config$covid$partial_rep_tri,
+    weekday_filter = config$covid$weekday_filter
   ),
   # 1. Generate nowcasts and aggregate (baselinenowcast pipeline)
   # 2. Save quantiled nowcasts for visualisation

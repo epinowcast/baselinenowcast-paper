@@ -24,7 +24,7 @@
 #'    is borrowed from another strata.
 #' @param partial_rep_tri Boolean indicating whether or not a partially
 #'    complete reporting triangle is used or the latest complete triangle is
-#'    used.
+#'    use
 #' @param age_group Character string indicating the age group.
 #' @param quantiles Vector of quantiles to generate.
 #' @param fun_to_aggregate Function to apply across the `k` reference dates,

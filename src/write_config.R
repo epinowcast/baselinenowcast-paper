@@ -126,6 +126,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       n_history_dispersion = result_df |> pull(n_history_uncertainty) |> as.vector(),
       borrow = result_df |> pull(borrow) |> as.vector(),
       partial_rep_tri = result_df |> pull(partial_rep_tri) |> as.vector(),
+      weekday_filter = result_df |> pull(weekday_filter) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),

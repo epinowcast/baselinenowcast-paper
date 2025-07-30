@@ -76,15 +76,15 @@ run_covid_nowcast_pipeline <- function(
         long_df_all_strata$reference_date
       ) == weekday_nums[i], ]
 
-      triangle1day <- get_triangle(
-        long_df = long_df_all_strata_1day,
+      triangle1wday <- get_triangle(
+        long_df = long_df_all_strata_1wday,
         nowcast_date = nowcast_date,
         max_delay = max_delay,
         age_group = age_group_to_nowcast,
         partial_rep_tri = TRUE
       )
-      triangle_for_delay1day <- get_triangle(
-        long_df = long_df_all_strata_1day,
+      triangle_for_delay1wday <- get_triangle(
+        long_df = long_df_all_strata_1wday,
         nowcast_date = nowcast_date,
         max_delay = max_delay,
         age_group = ifelse(borrow, "00+", age_group_to_nowcast),
@@ -98,13 +98,20 @@ run_covid_nowcast_pipeline <- function(
       )
       point_nowcast_mat1wday <- apply_delay(
         rep_tri_to_nowcast = triangle1day,
-        delay_pmf = delay_pmf
+        delay_pmf = delay_pmf1wday
+      )
+      first_struct_val <- sum(!is.na(triangle1wday[nrow(triangle1wday), ]))
+      reps_of_7 <- floor((ncol(triangle1wday) - first_struct_val) / 7)
+      last_struct_val <- (ncol(triangle1wday) - first_struct_val) %% 7
+      this_structure <- c(
+        first_struct_val,
+        rep(7, reps_of_7)
       )
       disp_params1day <- estimate_uncertainty(
-        triangle_for_uncertainty = triangle1day,
+        triangle_for_uncertainty = triangle1wday,
         n_history_uncertainty = floor(n_history_uncertainty / 7),
         n_history_delay = floor(n_history_delay / 7),
-        structure = c(1, 7),
+        structure = this_structure,
         fun_to_aggregate = sum,
         k = 1 # This is where I am a bit confused but I think it should be 1
       )

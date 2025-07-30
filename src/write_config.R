@@ -11,7 +11,7 @@ write_config <- function(noro_nowcast_dates = NULL,
   # Use the august 8th data, as is in the paper
   covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
   # Lock to specific commit for KIT nowcasts
-  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/refs/heads/main/data-processed_retrospective/KIT-simple_nowcast_original"
+  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/refs/heads/main/data-processed_retrospective/KIT-simple_nowcast_original"
   # point to the bug fixed quantiles, locking in on specific commit
   KIT_nowcast_revised_url_prefix <- "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/refs/heads/main/data-processed_retrospective/KIT-simple_nowcast_revised"
   if (is.null(noro_nowcast_dates)) {

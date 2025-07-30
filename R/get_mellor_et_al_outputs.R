@@ -21,7 +21,7 @@ get_mellor_et_al_outputs <- function(
     synthetic_data = TRUE,
     model_names = c("epinowcast", "gam", "baseline_prevweek")) {
   if (isTRUE(synthetic_data)) {
-    prefix <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast-baselinenowcast/refs/heads/initial-port/outputs/data/" # nolint
+    prefix <- "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast-baselinenowcast/main/outputs/data/" # nolint
   } else {
     prefix <- file.path("output", "data", "noro")
   }

@@ -35,12 +35,12 @@ scores_sum <- validation_scores |>
   summarise_scores(by = "model")
 
 comparison_score_rt <- scores_sum |>
-  filter(model == "KIT simple nowcast original") |>
+  filter(model == "original KIT simple nowcast") |>
   rename(KIT_rt_wis = wis) |>
   select(KIT_rt_wis)
 
 comparison_score_rev <- scores_sum |>
-  filter(model == "KIT simple nowcast revised") |>
+  filter(model == "revised KIT simple nowcast") |>
   rename(KIT_rev_wis = wis) |>
   select(KIT_rev_wis)
 
@@ -50,7 +50,7 @@ rel_wis <- scores_sum |>
   mutate(
     relative_wis = wis / pmax(KIT_rt_wis, .Machine$double.eps),
     strata = "age groups",
-    relative_to = "KIT simple nowcast original"
+    relative_to = "original KIT simple nowcast"
   ) |>
   select(relative_wis, relative_to, model)
 
@@ -60,7 +60,7 @@ rel_wis_rev <- scores_sum |>
   mutate(
     relative_wis = wis / pmax(KIT_rev_wis, .Machine$double.eps),
     strata = "age groups",
-    relative_to = "KIT simple nowcast revised"
+    relative_to = "revised KIT simple nowcast"
   ) |>
   select(relative_wis, relative_to, model)
 ```
@@ -84,12 +84,12 @@ scores_sum <- validation_scores |>
   summarise_scores(by = "model")
 
 comparison_score_rt <- scores_sum |>
-  filter(model == "KIT simple nowcast original") |>
+  filter(model == "original KIT simple nowcast") |>
   rename(KIT_rt_wis = wis) |>
   select(KIT_rt_wis)
 
 comparison_score_rev <- scores_sum |>
-  filter(model == "KIT simple nowcast revised") |>
+  filter(model == "revised KIT simple nowcast") |>
   rename(KIT_rev_wis = wis) |>
   select(KIT_rev_wis)
 
@@ -99,7 +99,7 @@ rel_wis_ntl <- scores_sum |>
   mutate(
     relative_wis = wis / pmax(KIT_rt_wis, .Machine$double.eps),
     strata = "national",
-    relative_to = "KIT simple nowcast original"
+    relative_to = "original KIT simple nowcast"
   ) |>
   select(relative_wis, relative_to, model)
 
@@ -109,7 +109,7 @@ rel_wis_rev_ntl <- scores_sum |>
   mutate(
     relative_wis = wis / pmax(KIT_rev_wis, .Machine$double.eps),
     strata = "national",
-    relative_to = "KIT simple nowcast revised"
+    relative_to = "revised KIT simple nowcast"
   ) |>
   select(relative_wis, relative_to, model)
 ```
@@ -172,7 +172,7 @@ scores_sum <- validation_scores |>
   summarise_scores(by = c("model", "age_group"))
 
 comparison_score_rt <- scores_sum |>
-  filter(model == "KIT simple nowcast revised") |>
+  filter(model == "revised KIT simple nowcast") |>
   rename(KIT_rt_wis = wis) |>
   select(KIT_rt_wis, age_group)
 
@@ -182,7 +182,7 @@ rel_wis <- scores_sum |>
   mutate(
     relative_wis = wis / pmax(KIT_rt_wis, .Machine$double.eps),
     strata = "age groups",
-    relative_to = "KIT simple nowcast original"
+    relative_to = "original KIT simple nowcast"
   ) |>
   select(relative_wis, relative_to, age_group, model)
 

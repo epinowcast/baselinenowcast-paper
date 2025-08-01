@@ -51,6 +51,9 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       bind_rows(mutate(nc_base, model_variation = {{ permutation_grouping }}))
   }
 
+  nc_perms <- nc_perms |>
+    mutate(facet_title = glue::glue("{age_group}: {model_variation}"))
+
   plot_colors <- plot_components()
   p <- ggplot(nc_perms) +
     geom_ribbon(
@@ -112,7 +115,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         )
       )
     ) +
-    facet_wrap(~model_variation, nrow = 3) +
+    facet_wrap(~facet_title, nrow = 3) +
     get_plot_theme() +
     scale_x_date(
       date_breaks = "1 month",
@@ -361,7 +364,8 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     guides(color = "none") +
     scale_y_continuous(trans = "log10") +
     # theme( axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ylab("Relative WIS")
+    ylab("Relative WIS") +
+    theme(axis.title.y = element_text(size = 16))
 
   return(p)
 }
@@ -1165,20 +1169,23 @@ make_panel_A_mps_2_ags <- function(
 
   fig_panel_A <- (plot_nowcasts_t_mp_borrow1 + labs(tag = " A i") +
     theme(plot.tag.position = c(0, 0.7))) +
-    (rel_wis_over_time_mp_borrow1 + labs(tag = "ii")) +
+    (rel_wis_over_time_mp_borrow1 + labs(tag = "ii") +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
     (plot_nowcasts_t_mp_rep_tri1 + labs(tag = "iii")) +
-    (rel_wis_over_time_mp_rep_tri1 + labs(tag = "iv")) +
+    (rel_wis_over_time_mp_rep_tri1 + labs(tag = "iv") +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
     (plot_nowcasts_t_mp_volume1 + labs(tag = "v")) +
     (rel_wis_over_time_mp_volume1 + labs(tag = "vi") +
-      theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
     (plot_nowcasts_t_mp_borrow2 + labs(tag = "vii") +
-      theme(plot.tag.position = c(0, 0.7))) +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
     (rel_wis_over_time_mp_borrow2 + labs(tag = "viii")) +
     (plot_nowcasts_t_mp_rep_tri2 + labs(tag = "ix")) +
-    (rel_wis_over_time_mp_rep_tri2 + labs(tag = "x")) +
+    (rel_wis_over_time_mp_rep_tri2 + labs(tag = "x") +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
     (plot_nowcasts_t_mp_volume2 + labs(tag = "xi")) +
     (rel_wis_over_time_mp_volume2 + labs(tag = "xii") +
-      theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
     plot_layout(
       design = fig_layout,
       axes = "collect"

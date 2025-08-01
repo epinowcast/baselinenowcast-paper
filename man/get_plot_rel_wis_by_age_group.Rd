@@ -6,7 +6,7 @@
 \usage{
 get_plot_rel_wis_by_age_group(
   scores_by_age_group,
-  KIT_comparison_model = "KIT simple nowcast revised",
+  KIT_comparison_model = "revised KIT simple nowcast",
   fig_file_name = NULL,
   fig_file_dir = file.path("output", "figs", "supp"),
   save = TRUE

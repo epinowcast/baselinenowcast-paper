@@ -171,7 +171,7 @@ run_covid_nowcast_pipeline <- function(
     mutate(time = seq_len(nrow(point_nowcast_mat)))
 
   # Recompute delay_pmf using only the max_delay+1
-  delay_pmf_recent <- get_delay_estimate(
+  delay_pmf_recent <- estimate_delay(
     reporting_triangle = triangle_for_delay,
     max_delay = max_delay,
     n = max_delay + 1

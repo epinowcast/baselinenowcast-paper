@@ -14,15 +14,15 @@
 #'    is `sum`.
 #' @param k Integer indicating window size for the aggregate function to
 #'   operate over, default is `7`.
-#' @importFrom baselinenowcast truncate_triangles generate_triangles
-#'   generate_pt_nowcast_mat_list estimate_dispersion
+#' @importFrom baselinenowcast truncate_triangles fill_triangles
+#'   construct_triangles estimate_uncertainty
 #' @returns Vector of dispersion parameters
-estimate_uncertainty <- function(triangle_for_uncertainty,
-                                 n_history_uncertainty,
-                                 n_history_delay,
-                                 structure = 1,
-                                 fun_to_aggregate = sum,
-                                 k = 7) {
+estimate_uncertainty_wrapper <- function(triangle_for_uncertainty,
+                                         n_history_uncertainty,
+                                         n_history_delay,
+                                         structure = 1,
+                                         fun_to_aggregate = sum,
+                                         k = 7) {
   # Input validation
   if (!is.matrix(triangle_for_uncertainty)) {
     stop("triangle_for_uncertainty must be a matrix", call. = FALSE)
@@ -45,20 +45,20 @@ estimate_uncertainty <- function(triangle_for_uncertainty,
     n = n_history_uncertainty
   )
 
-  retro_rts <- generate_triangles(
-    trunc_rep_tri_list = truncated_rts,
+  retro_rts <- construct_triangles(
+    truncated_reporting_triangles = truncated_rts,
     structure = structure
   )
 
-  retro_nowcasts <- generate_pt_nowcast_mat_list(
-    reporting_triangle_list = retro_rts,
+  retro_nowcasts <- fill_triangles(
+    retro_reporting_triangles = retro_rts,
     n = n_history_delay
   )
 
-  disp_params <- estimate_dispersion(
-    pt_nowcast_mat_list = retro_nowcasts,
-    trunc_rep_tri_list = truncated_rts,
-    reporting_triangle_list = retro_rts,
+  disp_params <- estimate_uncertainty(
+    point_nowcast_matrices = retro_nowcasts,
+    truncated_reporting_triangles = truncated_rts,
+    retro_reporting_triangles = retro_rts,
     fun_to_aggregate = fun_to_aggregate,
     k = k
   )

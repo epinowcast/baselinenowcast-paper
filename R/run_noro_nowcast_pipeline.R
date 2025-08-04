@@ -23,7 +23,7 @@
 #' @importFrom zoo rollsum rollapply
 #' @importFrom lubridate wday
 #' @importFrom tibble tibble
-#' @importFrom baselinenowcast get_nowcast_draws get_delay_estimate apply_delay
+#' @importFrom baselinenowcast sample_predictions estimate_delay apply_delay
 #' @importFrom lubridate ymd days
 #' @importFrom scoringutils as_forecast_sample transform_forecasts log_shift
 #'    as_forecast_quantile
@@ -142,18 +142,18 @@ get_noro_nowcast <- function(
     select(-reference_date, -nowcast_date) |>
     as.matrix()
 
-  delay_pmf <- get_delay_estimate(
+  delay_pmf <- estimate_delay(
     reporting_triangle = triangle,
     max_delay = max_delay,
     n = min(nrow(triangle), n_history_delay)
   )
 
   point_nowcast_mat <- apply_delay(
-    rep_tri_to_nowcast = triangle,
+    reporting_triangle = triangle,
     delay_pmf = delay_pmf
   )
 
-  disp_params <- estimate_uncertainty(
+  disp_params <- estimate_uncertainty_wrapper(
     triangle_for_uncertainty = triangle,
     n_history_uncertainty = n_history_uncertainty,
     n_history_delay = n_history_delay,
@@ -162,7 +162,7 @@ get_noro_nowcast <- function(
     k = 1
   )
 
-  nowcast_draws_df <- get_nowcast_draws(
+  nowcast_draws_df <- sample_predictions(
     point_nowcast_matrix = point_nowcast_mat,
     reporting_triangle = triangle,
     dispersion = disp_params,

@@ -1178,7 +1178,7 @@ make_panel_A_mps_2_ags <- function(
     (rel_wis_over_time_mp_volume1 + labs(tag = "vi") +
       theme(plot.tag.position = c(-0.01, 1.01))) +
     (plot_nowcasts_t_mp_borrow2 + labs(tag = "vii") +
-      theme(plot.tag.position = c(-0.01, 1.01))) +
+      theme(plot.tag.position = c(-0.01, 0.7))) +
     (rel_wis_over_time_mp_borrow2 + labs(tag = "viii")) +
     (plot_nowcasts_t_mp_rep_tri2 + labs(tag = "ix")) +
     (rel_wis_over_time_mp_rep_tri2 + labs(tag = "x") +

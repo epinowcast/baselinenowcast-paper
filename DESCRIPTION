@@ -32,7 +32,6 @@ Depends:
 Imports:
   dplyr,
   ggplot2,
-  patchwork,
   zoo,
   readr,
   epinowcast,

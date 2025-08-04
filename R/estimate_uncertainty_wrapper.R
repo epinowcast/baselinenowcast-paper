@@ -55,7 +55,7 @@ estimate_uncertainty_wrapper <- function(triangle_for_uncertainty,
     n = n_history_delay
   )
 
-  disp_params <- estimate_uncertainty(
+  disp_params <- baselinenowcast::estimate_uncertainty(
     point_nowcast_matrices = retro_nowcasts,
     truncated_reporting_triangles = truncated_rts,
     retro_reporting_triangles = retro_rts,

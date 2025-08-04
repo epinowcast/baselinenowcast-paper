@@ -29,7 +29,7 @@
 #' @param quantiles Vector of quantiles to generate.
 #' @param fun_to_aggregate Function to apply across the `k` reference dates,
 #'    default is `sum`.
-#' @param k Width of reference dates to apply transform to, default is `1`
+#' @param k Width of reference dates to apply transform to, default is `7`
 #' @autoglobal
 #' @importFrom dplyr filter mutate left_join select rename
 #' @importFrom baselinenowcast sample_predictions

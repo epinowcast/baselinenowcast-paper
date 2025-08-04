@@ -257,7 +257,7 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ![Fig S8. Empirical coverage at 50% and 95% prediction intervals by age group for each model. Shading indicates prediction intervals, colour indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/cov_by_age_group.png){#figs8}
 
-### Model permutation study
+### Analysis of the performance of different method specifications
 
 ![Fig S9. Absolute WIS by nowcast horizon for each model configuration. Colour indicates model configuration, shading indicates WIS decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs9}
 

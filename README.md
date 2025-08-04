@@ -14,14 +14,14 @@ This README is organized into the following sections:
 |[`targets`](targets) | The folder containing the files of targets lists grouped by their outputs. |
 |[`input`](input) | Contains the configuration file to specify the evaluation runs. |
 |[`R`](R) | Functions needed to generate targets. |
-|[`docs`](docs) | Files neede to generate the supplement plus a rendered version of the latest Supplement. |
+|[`docs`](docs) | Files needed to generate the supplement plus a rendered version of the latest Supplement. |
 |[`report.Rmd`](report.Rmd) | Report containing tables with all the summary metrics needed to write the main text results. |
 
 ## Data sources
 
 ### Raw data used to produce nowcasts generated in this code-base
 The pre-processed reporting triangle used to generate the German COVID-19 nowcasts is available at https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
-The synthetic data that can be used to generate norovirus nowcasts for England from UKHSA is available at "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv".
+The synthetic data that can be used to generate norovirus nowcasts for England from UKHSA (United Kingdon Health Security Agency) is available at "https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv".
 
 We note that for the norovirus nowcasts, all outputs were produced by co-authors at UKHSA.
 Nowcasts and the data used to evaluate them were run within UKHSA with outputs shared with us.

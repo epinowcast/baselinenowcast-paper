@@ -34,7 +34,7 @@
 #' @param k Width of reference dates to apply transform to, default is `7`
 #' @autoglobal
 #' @importFrom dplyr filter mutate left_join select rename
-#' @importFrom baselinenowcast sample_predictions
+#' @importFrom baselinenowcast sample_nowcasts
 #' @importFrom lubridate ymd days
 #' @importFrom scoringutils as_forecast_sample transform_forecasts log_shift
 #'    as_forecast_quantile
@@ -58,7 +58,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
                                   quantiles,
                                   fun_to_aggregate = sum,
                                   k = 7) {
-  nowcast_draws_df <- sample_predictions(
+  nowcast_draws_df <- sample_nowcasts(
     point_nowcast_matrix = point_nowcast_matrix,
     reporting_triangle = reporting_triangle,
     dispersion = dispersion,

@@ -45,9 +45,30 @@ EDA_plot_targets <- list(
           partial_rep_tri == TRUE
         ),
       final_summed_data = final_eval_data_covid_7d,
-      nowcast_dates_to_plot = c("2021-12-01", "2022-02-01", "2022-04-01"),
+      nowcast_dates_to_plot = c("2021-11-22", "2021-12-29", "2022-01-30",
+      "2022-02-27"),
       pathogen = "Covid 7 day",
       title = "baselinenowcast nowcasts"
+    )
+  ),
+  # Make sure the weekday filter is performing reasonably
+  tar_target(name = plot_weekday_filter_nowcasts,
+    command = get_plot_mult_nowcasts(
+      all_nowcasts = all_nowcasts_covid |>
+        filter(
+          age_group == "00+",
+          model == "base",
+          n_history_delay == 60,
+          n_history_uncertainty == 60,
+          borrow == FALSE,
+          partial_rep_tri == TRUE
+         )|>
+        mutate(model = ifelse(weekday_filter, "Weekday filter", "Default")),
+      final_summed_data = final_eval_data_covid_7d,
+      nowcast_dates_to_plot = c("2021-11-22", "2021-12-29", "2022-01-30",
+                                "2022-02-27"),
+      pathogen = "Covid 7 day",
+      title = "baselinenowcast nowcast comparison: Weekday filter vs Default"
     )
   ),
   tar_target(

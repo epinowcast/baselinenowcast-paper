@@ -35,6 +35,7 @@ plot_components <- function() {
     "KIT simple nowcast revised" = "darkgreen",
     "baselinenowcast" = "purple4",
     "Default" = "purple4",
+    "Weekday filter" = "skyblue",
     "base" = "purple4",
     "filter weekday small training volume" = "blue3",
     "filter weekday large training volume" = "maroon",

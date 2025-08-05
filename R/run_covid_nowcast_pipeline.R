@@ -296,7 +296,8 @@ run_covid_nowcast_pipeline <- function(
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
       borrow = borrow,
-      partial_rep_tri = partial_rep_tri
+      partial_rep_tri = partial_rep_tri,
+      weekday_filter = weekday_filter
     )
 
 
@@ -317,6 +318,7 @@ run_covid_nowcast_pipeline <- function(
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
       borrow = borrow,
+      weekday_filter = weekday_filter,
       partial_rep_tri = partial_rep_tri
     ) |>
     left_join(eval_data_7d, by = c("reference_date", "age_group"))
@@ -336,6 +338,7 @@ run_covid_nowcast_pipeline <- function(
       "n_history_delay",
       "n_history_uncertainty",
       "borrow",
+      "weekday_filter",
       "partial_rep_tri"
     )
   )

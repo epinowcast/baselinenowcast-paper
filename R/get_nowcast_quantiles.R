@@ -95,7 +95,8 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
       "n_history_delay",
       "n_history_uncertainty",
       "borrow",
-      "partial_rep_tri"
+      "partial_rep_tri",
+      "weekday_filter"
     ),
     observed = "observed",
     predicted = "total_count",

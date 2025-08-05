@@ -1,6 +1,6 @@
 # Baseline nowcasting methods for handling delays in epidemiological data
-This repository contains the code to generate the results of analysing the nowcasts produced by the [`baselinenowcast`](https://github.com/epinowcast/baselinenowcast) R package applied to case studies in German COVID-19 data and norovirus data from UKHSA.
-Please see that package's GitHub repository for a mathematical description of the method and details on how to install the package and use it to generate nowcasts.
+This repository contains the code to generate the results of analysing the nowcasts produced by the [`baselinenowcast`](https://github.com/epinowcast/baselinenowcast) R package applied to case studies on German COVID-19 data and norovirus data from UKHSA.
+Please see the `baselinenowcast` package's GitHub repository for a mathematical description of the method and details on how to install the package and use it to generate nowcasts.
 
 This README is organized into the following sections:
 - [Project structure](#project-structure) describing the contents of this repository

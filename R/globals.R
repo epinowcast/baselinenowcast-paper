@@ -351,7 +351,6 @@ utils::globalVariables(c(
   "delay", # <get_rep_tri_from_long_df>
   "count", # <get_rep_tri_from_long_df>
   "long_df_all_strata_1day", # <run_covid_nowcast_pipeline>
-  "triangle_for_delay1wday", # <run_covid_nowcast_pipeline>
   "reference_date", # <run_covid_nowcast_pipeline>
   "age_group", # <run_covid_nowcast_pipeline>
   "time", # <run_covid_nowcast_pipeline>

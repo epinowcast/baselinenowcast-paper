@@ -34,7 +34,7 @@
 #'    arrange
 #' @importFrom zoo rollsum rollapply
 #' @importFrom tibble tibble
-#' @importFrom baselinenowcast get_nowcast_draws get_delay_estimate apply_delay
+#' @importFrom baselinenowcast sample_predictions estimate_delay apply_delay
 #' @importFrom lubridate ymd days
 #' @importFrom scoringutils as_forecast_sample transform_forecasts log_shift
 #'    as_forecast_quantile
@@ -90,14 +90,13 @@ run_covid_nowcast_pipeline <- function(
         age_group = ifelse(borrow, "00+", age_group_to_nowcast),
         partial_rep_tri = partial_rep_tri
       )
-
-      delay_pmf1wday <- get_delay_estimate(
+      delay_pmf1wday <- estimate_delay(
         reporting_triangle = triangle_for_delay1wday,
         max_delay = max_delay,
         n = floor(n_history_delay / 7)
       )
       point_nowcast_mat1wday <- apply_delay(
-        rep_tri_to_nowcast = triangle1day,
+        reporting_triangle = triangle1day,
         delay_pmf = delay_pmf1wday
       )
       first_struct_val <- sum(!is.na(triangle1wday[nrow(triangle1wday), ]))
@@ -107,7 +106,7 @@ run_covid_nowcast_pipeline <- function(
         first_struct_val,
         rep(7, reps_of_7)
       )
-      disp_params1day <- estimate_uncertainty(
+      disp_params1day <- estimate_uncertainty_wrapper(
         triangle_for_uncertainty = triangle1wday,
         n_history_uncertainty = floor(n_history_uncertainty / 7),
         n_history_delay = floor(n_history_delay / 7),
@@ -171,7 +170,7 @@ run_covid_nowcast_pipeline <- function(
       partial_rep_tri = partial_rep_tri
     )
 
-    delay_pmf <- get_delay_estimate(
+    delay_pmf <- estimate_delay(
       reporting_triangle = triangle_for_delay,
       max_delay = max_delay,
       n = n_history_delay
@@ -182,7 +181,7 @@ run_covid_nowcast_pipeline <- function(
       delay_pmf = delay_pmf
     )
 
-    disp_params <- estimate_uncertainty(
+    disp_params <- estimate_uncertainty_wrapper(
       triangle_for_uncertainty = triangle_for_delay,
       n_history_uncertainty = n_history_uncertainty,
       n_history_delay = n_history_delay,
@@ -275,7 +274,7 @@ run_covid_nowcast_pipeline <- function(
     mutate(time = seq_len(nrow(point_nowcast_mat)))
 
   # Recompute delay_pmf using only the max_delay+1
-  delay_pmf_recent <- get_delay_estimate(
+  delay_pmf_recent <- estimate_delay(
     reporting_triangle = triangle_for_delay,
     max_delay = max_delay,
     n = max_delay + 1

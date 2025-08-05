@@ -72,7 +72,7 @@ use}
 \item{fun_to_aggregate}{Function to apply across the \code{k} reference dates,
 default is \code{sum}.}
 
-\item{k}{Width of reference dates to apply transform to, default is \code{1}}
+\item{k}{Width of reference dates to apply transform to, default is \code{7}}
 }
 \value{
 scoringutils forecast quantile object

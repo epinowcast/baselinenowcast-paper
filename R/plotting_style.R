@@ -31,8 +31,8 @@ plot_components <- function() {
   pal_mps <- brewer.pal(12, "Paired")
   # nolint start
   model_colors <- c(
-    "KIT simple nowcast original" = "darkorange",
-    "KIT simple nowcast revised" = "darkgreen",
+    "original KIT simple nowcast" = "darkorange",
+    "revised KIT simple nowcast" = "darkgreen",
     "baselinenowcast" = "purple4",
     "Default" = "purple4",
     "Weekday filter" = "darkturquoise",
@@ -46,6 +46,7 @@ plot_components <- function() {
     "baselinenowcast_model2" = "blue3",
     "baselinenowcast_model3" = "maroon",
     "baselinenowcast base" = "purple4",
+    "baselinenowcast base \nspecification" = "purple4",
     "baselinenowcast weekday\nfilter small training volume" = "blue3",
     "baselinenowcast weekday\nfilter large training volume" = "maroon"
   )

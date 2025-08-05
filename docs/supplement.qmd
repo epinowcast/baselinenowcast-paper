@@ -40,7 +40,7 @@ $$X_{t,>d} = \sum_{i = d+1} ^{D} X_{t,i}$$
 representing the number of cases still missing after $d$ days of delay. In the following we use uppercase letters ($X_t$) for random variables, lower case ($x_t$) for the corresponding observations, and hats ($\hat{x}_t$) for estimated / imputed values. The matrix $\mathbf{x}$ with entries $x_{t,d}, t = 1, \dots, t^*, d = 1, \dots, D$ is referred to as the *reporting matrix*:
 
 |   | $d = 0$ | $d = 1$ | $d=2$ | $...$ | $d= D-1$ | $d= D$ |
-|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+|----|----|----|----|----|----|----|
 | $t=1$ | $x_{1,0}$ | $x_{1,1}$ | $x_{1,2}$ | $...$ | $x_{1,D-1}$ | $x_{1, D}$ |
 | $t=2$ | $x_{2,0}$ | $x_{2,1}$ | $x_{2,2}$ | $...$ | $x_{2,D-1}$ | $x_{2, D}$ |
 | $t=3$ | $x_{3,0}$ | $x_{3,1}$ | $x_{3,2}$ | $...$ | $x_{3,D-1}$ | $x_{3, D}$ |
@@ -237,13 +237,13 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ## Additional figures
 
-### German Nowcast Hub validation using the original KIT simple nowcast implementation
+### German COVID-19 Nowcast Hub validation: using the original KIT simple nowcast implementation
 
 ![Fig. S1 Validation of baseline nowcasting model using German COVID-19 data compared to original implementation of the KIT simple nowcast. A. Illustration of the nowcasting task from 5 nowcast dates throughout the study period. Nowcasts from our baseline model (purple) and the original implementation of the KIT simple nowcast model plotted against eventually observed values aggregated across all age groups, coloured by model. Observed data are shown as solid lines with gray indicating data available at the nowcast date and red indicating the final evaluation data. Dashed vertical lines indicate the date of the nowcasts. Shading indicates prediction intervals of each nowcast. Nowcasts are shown from horizons 0 to -28 days. B. Overall performance comparison between models aggregated across performance in individual age strata, with decomposed WIS (dispersion, overprediction, underprediction) displayed as stacked bar charts with different shading for direct comparison. C. Performance over time, displaying daily mean WIS scores summarised across age strata and 28 horizon days, coloured by model. D. Performance by age group, showing WIS scores across different age groups on the x-axis with grouped bars for both models and stacked shaded components displaying the decomposition of scores. E. Mean reporting delay over time, visualised as multiple coloured lines representing each age group, with the national average shown as a thicker black line. Mean reporting delays were calculated using the last 40 reference dates, corresponding to the maximum delay, for each nowcast date and age group. F: Delay distribution presented as cumulative distribution functions (CDFs), with overlaid curves for each age group and the national average highlighted as a thicker black line.](../output/figs/supp/fig_hub_validation_KIT_original.png){#figs1}
 
 ![Fig. S2 Empirical coverage of baselinenowcast method and real-time KIT simple nowcast at 50% and 95% prediction intervals. Shading indicates prediction intervals, colours indicate model.](../output/figs/supp/bar_chart_cov_ag_rt.png){#figs5}
 
-### German Nowcast Hub validation additional figures
+### German Nowcast Hub validation
 
 ![Fig. S3 Relative WIS by age group of baselinenowcast compared to KIT simple nowcast revised. Vertical line at 1.0 indicates parity with KIT simple nowcast revised.](../output/figs/supp/rel_wis_by_age_group.png){#figs3}
 
@@ -257,7 +257,7 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ![Fig S8. Empirical coverage at 50% and 95% prediction intervals by age group for each model. Shading indicates prediction intervals, colour indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/cov_by_age_group.png){#figs8}
 
-### Model permutation study
+### Performance of different baselinenowcast model specifications applied to German COVID-19 data
 
 ![Fig S9. Absolute WIS by nowcast horizon for each model configuration. Colour indicates model configuration, shading indicates WIS decomposed by dispersion, overprediction, and underprediction.](../output/figs/supp/mp_wis_by_horizon.png){#figs9}
 
@@ -267,7 +267,7 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ![Fig S12. Relative WIS over time across all age groups for each model configuration. Colours indicate model configuration. Horizontal dashed line indicates parity with the default configuration.](../output/figs/supp/rel_wis_over_time_mp_all_ag.png){#figs12}
 
-### UKHSA norovirus surveillance model comparison
+### Case study: UKHSA norovirus surveillance
 
 ![Fig S13. Absolute WIS over time (by week) for each model. colour indicates model, shading indicates WIS broken down by dispersion, overprediction, and underprediction.](../output/figs/supp/wis_over_time_noro.png){#figs13}
 

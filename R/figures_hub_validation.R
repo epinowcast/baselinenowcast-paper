@@ -608,7 +608,7 @@ get_plot_bar_chart_coverage <- function(
 #' @param scores_by_age_group Dataframe of the summarised scores by age group
 #'    and model
 #' @param KIT_comparison_model Character string indicating which of the KIT
-#'     models to compare to. Default is `"KIT simple nowcast revised"`.
+#'     models to compare to. Default is `"revised KIT simple nowcast"`.
 #' @param fig_file_dir Path to save figure. Default is
 #'    `file.path("output", "figs", "supp")`.
 #' @inheritParams make_fig_hub_validation
@@ -622,7 +622,7 @@ get_plot_bar_chart_coverage <- function(
 #' @returns ggplot object
 get_plot_rel_wis_by_age_group <- function(
     scores_by_age_group,
-    KIT_comparison_model = "KIT simple nowcast revised",
+    KIT_comparison_model = "revised KIT simple nowcast",
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
@@ -750,7 +750,7 @@ get_plot_mean_wis_by_horizon <- function(
 get_plot_rel_wis_by_horizon <- function(
     scores,
     strata,
-    KIT_comparison_model = "KIT simple nowcast revised",
+    KIT_comparison_model = "revised KIT simple nowcast",
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {

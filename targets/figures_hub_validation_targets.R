@@ -1,65 +1,65 @@
 figures_hub_validation_targets <- list(
-  # Filter the plot target inputs to exclude KIT simple nowcast revised-------
+  # Filter the plot target inputs to exclude revised KIT simple nowcast-------
   tar_target(
     name = validation_scores2,
     command = validation_scores |>
-      filter(model != "KIT simple nowcast revised")
+      filter(model != "revised KIT simple nowcast")
   ),
   tar_target(
     name = combined_nowcasts2,
     command = combined_nowcasts |>
-      filter(model != "KIT simple nowcast revised")
+      filter(model != "revised KIT simple nowcast")
   ),
   tar_target(
     name = validation_coverage2,
     command = validation_coverage |>
-      filter(model != "KIT simple nowcast revised")
+      filter(model != "revised KIT simple nowcast")
   ),
   tar_target(
     name = scores_by_age_group2,
     command = scores_by_age_group |>
-      filter(model != "KIT simple nowcast revised")
+      filter(model != "revised KIT simple nowcast")
   ),
   tar_target(
     name = scores_over_time_ag2,
     command = scores_over_time_ag |>
-      filter(model != "KIT simple nowcast revised")
+      filter(model != "revised KIT simple nowcast")
   ),
   tar_target(
     name = scores_over_time_ntl2,
     command = scores_over_time_ntl |>
-      filter(model != "KIT simple nowcast revised")
+      filter(model != "revised KIT simple nowcast")
   ),
   # Alt: filter the plot target inputs to exclude KIT simple nowcast ------
   tar_target(
     name = validation_scoresr,
     command = validation_scores |>
-      filter(model != "KIT simple nowcast original")
+      filter(model != "original KIT simple nowcast")
   ),
   tar_target(
     name = combined_nowcastsr,
     command = combined_nowcasts |>
-      filter(model != "KIT simple nowcast original")
+      filter(model != "original KIT simple nowcast")
   ),
   tar_target(
     name = validation_coverager,
     command = validation_coverage |>
-      filter(model != "KIT simple nowcast original")
+      filter(model != "original KIT simple nowcast")
   ),
   tar_target(
     name = scores_by_age_groupr,
     command = scores_by_age_group |>
-      filter(model != "KIT simple nowcast original")
+      filter(model != "original KIT simple nowcast")
   ),
   tar_target(
     name = scores_over_time_agr,
     command = scores_over_time_ag |>
-      filter(model != "KIT simple nowcast original")
+      filter(model != "original KIT simple nowcast")
   ),
   tar_target(
     name = scores_over_time_ntlr,
     command = scores_over_time_ntl |>
-      filter(model != "KIT simple nowcast original")
+      filter(model != "original KIT simple nowcast")
   ),
   # Subplots for Supp Figure Hub validation vs KIT real-time ---------------------------
   tar_target(
@@ -243,7 +243,7 @@ figures_hub_validation_targets <- list(
     command = get_plot_rel_wis_by_horizon(
       validation_scoresr,
       strata = "age groups",
-      KIT_comparison_model = "KIT simple nowcast revised",
+      KIT_comparison_model = "revised KIT simple nowcast",
       fig_file_name = "rel_wis_comp_revised_ag"
     )
   ),
@@ -252,7 +252,7 @@ figures_hub_validation_targets <- list(
     command = get_plot_rel_wis_by_horizon(
       validation_scoresr,
       strata = "national",
-      KIT_comparison_model = "KIT simple nowcast revised",
+      KIT_comparison_model = "revised KIT simple nowcast",
       fig_file_name = "rel_wis_comp_revised_ntl"
     )
   ),

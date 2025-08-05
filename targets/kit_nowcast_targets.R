@@ -26,7 +26,7 @@ kit_nowcast_targets <- list(
         predicted = value
       ) |>
       mutate(
-        model = "KIT simple nowcast original"
+        model = "original KIT simple nowcast"
       )
   ),
   tar_target(
@@ -67,7 +67,7 @@ kit_nowcast_targets <- list(
         predicted = value
       ) |>
       mutate(
-        model = "KIT simple nowcast revised"
+        model = "revised KIT simple nowcast"
       )
   ),
   tar_target(

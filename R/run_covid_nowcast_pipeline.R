@@ -38,6 +38,7 @@
 #' @importFrom lubridate ymd days
 #' @importFrom scoringutils as_forecast_sample transform_forecasts log_shift
 #'    as_forecast_quantile
+#' @importFrom dplyr select filter mutate distinct arrange left_join desc
 #' @returns scoringutils forecast quantile object
 
 run_covid_nowcast_pipeline <- function(
@@ -57,20 +58,27 @@ run_covid_nowcast_pipeline <- function(
     plot_quantiles,
     k = 7,
     fun_to_aggregate = sum) {
+  triangle <- get_triangle(
+    long_df = long_df_all_strata,
+    nowcast_date = nowcast_date,
+    max_delay = max_delay,
+    age_group = age_group_to_nowcast,
+    partial_rep_tri = TRUE
+  )
+  triangle_for_delay <- get_triangle(
+    long_df = long_df_all_strata,
+    nowcast_date = nowcast_date,
+    max_delay = max_delay,
+    age_group = ifelse(borrow, "00+", age_group_to_nowcast),
+    partial_rep_tri = partial_rep_tri
+  )
   if (isTRUE(weekday_filter)) {
     # Create triangle, triangle for delay,
     # delay_pmf, point nowcast mat, and dispersion by binding together
     # across the weekdays
     weekday_nums <- 1:7
-    point_nowcast_mat <- c()
-    disp_params <- c()
-    triangle <- triangle1day <- get_triangle(
-      long_df = long_df_all_strata,
-      nowcast_date = nowcast_date,
-      max_delay = max_delay,
-      age_group = age_group_to_nowcast,
-      partial_rep_tri = TRUE
-    )
+    point_nowcast_mat <- data.frame()
+    disp_params <- data.frame()
     for (i in seq_along(weekday_nums)) {
       long_df_all_strata_1wday <- long_df_all_strata[wday(
         long_df_all_strata$reference_date
@@ -96,12 +104,11 @@ run_covid_nowcast_pipeline <- function(
         n = floor(n_history_delay / 7)
       )
       point_nowcast_mat1wday <- apply_delay(
-        reporting_triangle = triangle1day,
+        reporting_triangle = triangle1wday,
         delay_pmf = delay_pmf1wday
       )
       first_struct_val <- sum(!is.na(triangle1wday[nrow(triangle1wday), ]))
-      reps_of_7 <- floor((ncol(triangle1wday) - first_struct_val) / 7)
-      last_struct_val <- (ncol(triangle1wday) - first_struct_val) %% 7
+      reps_of_7 <- floor((ncol(triangle1wday) - first_struct_val - 1) / 7)
       this_structure <- c(
         first_struct_val,
         rep(7, reps_of_7)
@@ -114,7 +121,7 @@ run_covid_nowcast_pipeline <- function(
         fun_to_aggregate = sum,
         k = 1 # This is where I am a bit confused but I think it should be 1
       )
-      reference_dates <- long_df_all_strata_1day |>
+      reference_dates <- long_df_all_strata_1wday |>
         filter(
           reference_date <= nowcast_date,
           age_group == age_group_to_nowcast
@@ -127,49 +134,31 @@ run_covid_nowcast_pipeline <- function(
           time = row_number()
         )
 
-      ptnowcast1_w_date <- data.frame(point_nowcast_mat, time = row_number()) |>
-        left_join(date_df, by = time)
-      disp_w_date <- data.frame(disp_params, time = row_number()) |>
+      ptnowcast1_w_date <- data.frame(point_nowcast_mat1wday,
+        time = seq_len(nrow(point_nowcast_mat1wday))
+      ) |>
+        left_join(date_df, by = "time")
+      disp_w_date <- data.frame(disp_params = disp_params1day) |>
         mutate(
-          time = rev(row_number)
-        ) |>
-        left_join(date_df, by = time)
+          reference_date = rev(date_df$reference_date)[1:length(disp_params1day)]
+        )
 
-      triangle <- bind_rows(
-        triangle,
-        triangle1_w_date
-      )
       point_nowcast_mat <- bind_rows(
         point_nowcast_mat,
-        point_nowcast_mat1wday
+        ptnowcast1_w_date
       )
       disp_params <- bind_rows(disp_params, disp_w_date)
     }
-
     point_nowcast_mat <- point_nowcast_mat |>
-      arrange(desc(reference_date)) |>
+      arrange(reference_date) |>
       select(-time, -reference_date) |>
       as.matrix()
+    # Dispersion needs to be in order from most to least recent
     disp_params <- disp_params |>
-      arrange(desc(-reference_date)) |>
-      select(-time, -reference_date) |>
+      arrange(desc(reference_date)) |>
+      select(-reference_date) |>
       pull()
   } else {
-    triangle <- get_triangle(
-      long_df = long_df_all_strata,
-      nowcast_date = nowcast_date,
-      max_delay = max_delay,
-      age_group = age_group_to_nowcast,
-      partial_rep_tri = TRUE
-    )
-    triangle_for_delay <- get_triangle(
-      long_df = long_df_all_strata,
-      nowcast_date = nowcast_date,
-      max_delay = max_delay,
-      age_group = ifelse(borrow, "00+", age_group_to_nowcast),
-      partial_rep_tri = partial_rep_tri
-    )
-
     delay_pmf <- estimate_delay(
       reporting_triangle = triangle_for_delay,
       max_delay = max_delay,
@@ -177,7 +166,7 @@ run_covid_nowcast_pipeline <- function(
     )
 
     point_nowcast_mat <- apply_delay(
-      rep_tri_to_nowcast = triangle,
+      reporting_triangle = triangle,
       delay_pmf = delay_pmf
     )
 

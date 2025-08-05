@@ -32,7 +32,6 @@ Depends:
 Imports:
   dplyr,
   ggplot2,
-  patchwork,
   zoo,
   readr,
   epinowcast,
@@ -66,6 +65,6 @@ RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Remotes:
   epinowcast=epinowcast/epinowcast@v0.3.0,
-  baselinenowcast=epinowcast/baselinenowcast@v0.1.1-beta
+  baselinenowcast=epinowcast/baselinenowcast
 Config/roxyglobals/filename: globals.R
 Config/roxyglobals/unique: FALSE

@@ -2,7 +2,7 @@
 #'
 #' @inheritParams run_noro_nowcast_pipeline
 #' @importFrom cli cli_abort
-#' @importFrom baselinenowcast get_delay_estimate
+#' @importFrom baselinenowcast estimate_delay
 #' @returns Data.frame of delays with metadata
 get_noro_delay_outputs <- function(noro_df,
                                    nowcast_date,
@@ -66,7 +66,7 @@ get_noro_delay_outputs <- function(noro_df,
       select(-reference_date, -nowcast_date) |>
       as.matrix()
 
-    delay_pmf <- get_delay_estimate(
+    delay_pmf <- estimate_delay(
       reporting_triangle = triangle,
       max_delay = max_delay,
       n = max_delay + 1

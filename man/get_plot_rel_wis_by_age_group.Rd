@@ -6,7 +6,7 @@
 \usage{
 get_plot_rel_wis_by_age_group(
   scores_by_age_group,
-  KIT_comparison_model = "KIT simple nowcast revised",
+  KIT_comparison_model = "revised KIT simple nowcast",
   fig_file_name = NULL,
   fig_file_dir = file.path("output", "figs", "supp"),
   save = TRUE
@@ -17,7 +17,7 @@ get_plot_rel_wis_by_age_group(
 and model}
 
 \item{KIT_comparison_model}{Character string indicating which of the KIT
-models to compare to. Default is \code{"KIT simple nowcast revised"}.}
+models to compare to. Default is \code{"revised KIT simple nowcast"}.}
 
 \item{fig_file_name}{Character string indicating name of the figure to be
 saved as the file name. Default is \code{NULL}.}

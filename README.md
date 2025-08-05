@@ -20,8 +20,8 @@ This README is organized into the following sections:
 ## Data sources
 
 ### Raw data used to produce nowcasts generated in this code-base
-The pre-processed reporting triangle used to generate the German COVID-19 nowcasts is available at \[`COVID-19_hospitalizations_preprocessed.csv`](https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv).
-The synthetic data that can be used to generate norovirus nowcasts for England from UKHSA (United Kingdom Health Security Agency) is available at \[`cases_with_noise.csv`](https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv).
+The pre-processed reporting triangle used to generate the German COVID-19 nowcasts is available at [`COVID-19_hospitalizations_preprocessed.csv`](https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv).
+The synthetic data that can be used to generate norovirus nowcasts for England from UKHSA (United Kingdom Health Security Agency) is available at [`cases_with_noise.csv`](https://raw.githubusercontent.com/jonathonmellor/norovirus-nowcast/refs/heads/main/outputs/data/cases_with_noise.csv).
 
 We note that for the norovirus nowcasts, all outputs were produced by co-authors at UKHSA.
 Nowcasts and the data used to evaluate them were run within UKHSA with outputs shared with us.
@@ -29,5 +29,5 @@ Results can be approximately reproduced using entirely the synthetic data provid
 
 ### Nowcasted quantiles produced outside this code-base
 
-The original and revised implementations of the KIT simple nowcast quantiles on the latest German COVID-19 hospitalization data are available at \<https:://github.com/kaitejohnson/hospitalization-nowcast-hub/data-processed_retrospective>.
-The nowcasted quantiles for norovirus for the GAM, epinowcast, naive baseline, and baselinenowcast specifications are available at  \<https:://github.com/jonathonmellor/norovirus-nowcast-baselinenowcast/outputs/data/original>.
+The original and revised implementations of the KIT simple nowcast quantiles on the latest German COVID-19 hospitalization data are available at [`data-processed_retrospective`](https:://github.com/kaitejohnson/hospitalization-nowcast-hub/data-processed_retrospective).
+The nowcasted quantiles for norovirus for the GAM, epinowcast, naive baseline, and baselinenowcast specifications are available at [`data/original`](https:://github.com/jonathonmellor/norovirus-nowcast-baselinenowcast/outputs/data/original), with the quantiles fit to the synethic data available at [`data/synthetic`](https:://github.com/jonathonmellor/norovirus-nowcast-baselinenowcast/outputs/data/synthetic)

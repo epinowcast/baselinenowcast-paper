@@ -19,6 +19,7 @@ get_nowcast_quantiles(
   n_history_uncertainty,
   borrow,
   partial_rep_tri,
+  weekday_filter,
   age_group,
   quantiles,
   fun_to_aggregate = sum,
@@ -63,7 +64,10 @@ is borrowed from another strata.}
 
 \item{partial_rep_tri}{Boolean indicating whether or not a partially
 complete reporting triangle is used or the latest complete triangle is
-use}
+used.}
+
+\item{weekday_filter}{Boolean indicating whether or not to estimate delays
+and perform nowcasting on individual weekdays and recombine.}
 
 \item{age_group}{Character string indicating the age group.}
 

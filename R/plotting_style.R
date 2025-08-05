@@ -84,6 +84,7 @@ plot_components <- function() {
     "Complete reporting triangle" = pal_mps[8],
     "200% increased training volume" = pal_mps[1],
     "50% reduced training volume" = "maroon",
+    "Weekday filter" = "skyblue",
     "Delay:180,\nUncertainty:60" = pal_mps[1],
     "Delay:41,\nUncertainty:19" = pal_mps[5],
     "Delay:50,\nUncertainty:10" = pal_mps[6],

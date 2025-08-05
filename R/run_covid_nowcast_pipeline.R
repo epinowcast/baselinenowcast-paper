@@ -238,6 +238,7 @@ run_covid_nowcast_pipeline <- function(
     n_history_uncertainty = n_history_uncertainty,
     borrow = borrow,
     partial_rep_tri = partial_rep_tri,
+    weekday_filter = weekday_filter,
     age_group = age_group_to_nowcast,
     quantiles = quantiles,
     fun_to_aggregate = fun_to_aggregate,
@@ -280,6 +281,7 @@ run_covid_nowcast_pipeline <- function(
       age_group = age_group_to_nowcast,
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
+      weekday_filter = weekday_filter,
       borrow = borrow,
       partial_rep_tri = partial_rep_tri
     )

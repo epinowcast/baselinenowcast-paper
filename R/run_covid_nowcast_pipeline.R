@@ -140,7 +140,7 @@ run_covid_nowcast_pipeline <- function(
         left_join(date_df, by = "time")
       disp_w_date <- data.frame(disp_params = disp_params1day) |>
         mutate(
-          reference_date = rev(date_df$reference_date)[1:length(disp_params1day)]
+          reference_date = rev(date_df$reference_date)[seq_along(disp_params1day)] # nolint
         )
 
       point_nowcast_mat <- bind_rows(

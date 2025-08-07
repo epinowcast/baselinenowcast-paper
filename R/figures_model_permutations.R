@@ -142,7 +142,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       )
     ) +
     xlab("") +
-    ylab("7-day hospitalisation incidence") +
+    ylab("7-day hospitalisation\nincidence") +
     guides(
       color = "none",
       fill = "none"
@@ -214,6 +214,8 @@ get_plot_bar_chart_scores_mp <- function(scores,
             "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
+          model_variation == "Weekday filter" ~
+            "Weekday\nfilter",
           TRUE ~ model_variation
         )
     )
@@ -234,6 +236,9 @@ get_plot_bar_chart_scores_mp <- function(scores,
     )) |> # nolint
     bind_rows(mutate(scores_base,
       model_variation = "Training volume"
+    )) |> # nolint
+    bind_rows(mutate(scores_base,
+      model_variation = "Weekday\nfilter"
     ))
 
   p <- ggplot(
@@ -252,7 +257,8 @@ get_plot_bar_chart_scores_mp <- function(scores,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      strip.text = element_text(size = 18)
     ) +
     labs(
       y = "WIS", x = ""
@@ -364,8 +370,7 @@ get_plot_rel_wis_over_time_mp <- function(scores,
     guides(color = "none") +
     scale_y_continuous(trans = "log10") +
     # theme( axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ylab("Relative WIS") +
-    theme(axis.title.y = element_text(size = 16))
+    ylab("rWIS")
 
   return(p)
 }
@@ -409,6 +414,8 @@ get_plot_coverage_by_mp <- function(all_coverage,
             "Borrow for delay and\nuncertainty estimation",
           model_variation == "Reporting triangle completeness" ~
             "Reporting triangle\ncompleteness",
+          model_variation == "Weekday filter" ~
+            "Weekday\nfilter",
           TRUE ~ model_variation
         )
     )
@@ -427,7 +434,8 @@ get_plot_coverage_by_mp <- function(all_coverage,
     bind_rows(mutate(coverage_base,
       model_variation = "Reporting triangle\ncompleteness"
     )) |> # nolint
-    bind_rows(mutate(coverage_base, model_variation = "Training volume"))
+    bind_rows(mutate(coverage_base, model_variation = "Training volume")) |>
+    bind_rows(mutate(coverage_base, model_variation = "Weekday\nfilter"))
 
   plot_comps <- plot_components()
   p <- ggplot(coverage_perms) +
@@ -447,7 +455,8 @@ get_plot_coverage_by_mp <- function(all_coverage,
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
-      strip.background = element_rect(color = NA, fill = NA)
+      strip.background = element_rect(color = NA, fill = NA),
+      strip.text = element_text(size = 16)
     ) +
     scale_fill_manual(
       name = "Model permutation",
@@ -463,6 +472,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
     labs(
       y = "Empirical coverage", x = ""
     ) +
+    theme(axis.title.y = element_text(size = 10)) +
     guides(
       # Can used fill = "none" if we want to remove color
       alpha = guide_legend(
@@ -549,7 +559,7 @@ get_plot_rel_wis_by_horizon_mp <- function(scores,
     scale_y_continuous(trans = "log10", limits = c(0.6, 2.5)) +
     labs(
       x = "Horizon (days)",
-      y = "Relative WIS"
+      y = "rWIS"
     ) +
     guides(
       color = "none",
@@ -1134,12 +1144,16 @@ make_panel_A_model_perms <- function(
 #' @param rel_wis_over_time_mp_rep_tri1 underlay relative WIS
 #' @param plot_nowcasts_t_mp_volume1 larger nowcasts over time
 #' @param rel_wis_over_time_mp_volume1 underlay relative WIS
+#' @param plot_nowcasts_t_mp_wday1 larger nowcasts over time
+#' @param rel_wis_over_time_mp_wday1 underlay relative WIS
 #' @param plot_nowcasts_t_mp_borrow2 larger nowcasts over time
 #' @param rel_wis_over_time_mp_borrow2 underlay relative WIS
 #' @param plot_nowcasts_t_mp_rep_tri2 larger nowcasts over time
 #' @param rel_wis_over_time_mp_rep_tri2 underlay relative WIS
 #' @param plot_nowcasts_t_mp_volume2 larger nowcasts over time
 #' @param rel_wis_over_time_mp_volume2 underlay relative WIS
+#' @param plot_nowcasts_t_mp_wday2 larger nowcasts over time
+#' @param rel_wis_over_time_mp_wday2 underlay relative WIS
 #'
 #' @returns patchwork ggplot object
 make_panel_A_mps_2_ags <- function(
@@ -1149,22 +1163,29 @@ make_panel_A_mps_2_ags <- function(
     rel_wis_over_time_mp_rep_tri1,
     plot_nowcasts_t_mp_volume1,
     rel_wis_over_time_mp_volume1,
+    plot_nowcasts_t_mp_wday1,
+    rel_wis_over_time_mp_wday1,
     plot_nowcasts_t_mp_borrow2,
     rel_wis_over_time_mp_borrow2,
     plot_nowcasts_t_mp_rep_tri2,
     rel_wis_over_time_mp_rep_tri2,
     plot_nowcasts_t_mp_volume2,
-    rel_wis_over_time_mp_volume2) {
+    rel_wis_over_time_mp_volume2,
+    plot_nowcasts_t_mp_wday2,
+    rel_wis_over_time_mp_wday2) {
   fig_layout <- "
-  AAGG
-  AAGG
-  BBHH
-  CCII
-  CCII
-  DDJJ
-  EEKK
-  EEKK
-  FFLL
+  AAII
+  AAII
+  BBJJ
+  CCKK
+  CCKK
+  DDLL
+  EEMM
+  EEMM
+  FFNN
+  GGOO
+  GGOO
+  HHPP
   "
 
   fig_panel_A <- (plot_nowcasts_t_mp_borrow1 + labs(tag = " A i") +
@@ -1177,14 +1198,20 @@ make_panel_A_mps_2_ags <- function(
     (plot_nowcasts_t_mp_volume1 + labs(tag = "v")) +
     (rel_wis_over_time_mp_volume1 + labs(tag = "vi") +
       theme(plot.tag.position = c(-0.01, 1.01))) +
-    (plot_nowcasts_t_mp_borrow2 + labs(tag = "vii") +
-      theme(plot.tag.position = c(-0.01, 0.7))) +
-    (rel_wis_over_time_mp_borrow2 + labs(tag = "viii")) +
-    (plot_nowcasts_t_mp_rep_tri2 + labs(tag = "ix")) +
-    (rel_wis_over_time_mp_rep_tri2 + labs(tag = "x") +
+    (plot_nowcasts_t_mp_wday1 + labs(tag = "vii")) +
+    (rel_wis_over_time_mp_wday1 + labs(tag = "viii") +
       theme(plot.tag.position = c(-0.01, 1.01))) +
-    (plot_nowcasts_t_mp_volume2 + labs(tag = "xi")) +
-    (rel_wis_over_time_mp_volume2 + labs(tag = "xii") +
+    (plot_nowcasts_t_mp_borrow2 + labs(tag = "ix") +
+      theme(plot.tag.position = c(-0.01, 0.7))) +
+    (rel_wis_over_time_mp_borrow2 + labs(tag = "x")) +
+    (plot_nowcasts_t_mp_rep_tri2 + labs(tag = "xi")) +
+    (rel_wis_over_time_mp_rep_tri2 + labs(tag = "xii") +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
+    (plot_nowcasts_t_mp_volume2 + labs(tag = "xiii")) +
+    (rel_wis_over_time_mp_volume2 + labs(tag = "xiv") +
+      theme(plot.tag.position = c(-0.01, 1.01))) +
+    (plot_nowcasts_t_mp_wday2 + labs(tag = "xv")) +
+    (rel_wis_over_time_mp_wday2 + labs(tag = "xvi") +
       theme(plot.tag.position = c(-0.01, 1.01))) +
     plot_layout(
       design = fig_layout,
@@ -1277,7 +1304,7 @@ make_fig_model_perms <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 26,
+      width = 30,
       height = 20
     )
   }

@@ -12,12 +12,16 @@ make_panel_A_mps_2_ags(
   rel_wis_over_time_mp_rep_tri1,
   plot_nowcasts_t_mp_volume1,
   rel_wis_over_time_mp_volume1,
+  plot_nowcasts_t_mp_wday1,
+  rel_wis_over_time_mp_wday1,
   plot_nowcasts_t_mp_borrow2,
   rel_wis_over_time_mp_borrow2,
   plot_nowcasts_t_mp_rep_tri2,
   rel_wis_over_time_mp_rep_tri2,
   plot_nowcasts_t_mp_volume2,
-  rel_wis_over_time_mp_volume2
+  rel_wis_over_time_mp_volume2,
+  plot_nowcasts_t_mp_wday2,
+  rel_wis_over_time_mp_wday2
 )
 }
 \arguments{
@@ -33,6 +37,10 @@ make_panel_A_mps_2_ags(
 
 \item{rel_wis_over_time_mp_volume1}{underlay relative WIS}
 
+\item{plot_nowcasts_t_mp_wday1}{larger nowcasts over time}
+
+\item{rel_wis_over_time_mp_wday1}{underlay relative WIS}
+
 \item{plot_nowcasts_t_mp_borrow2}{larger nowcasts over time}
 
 \item{rel_wis_over_time_mp_borrow2}{underlay relative WIS}
@@ -44,6 +52,10 @@ make_panel_A_mps_2_ags(
 \item{plot_nowcasts_t_mp_volume2}{larger nowcasts over time}
 
 \item{rel_wis_over_time_mp_volume2}{underlay relative WIS}
+
+\item{plot_nowcasts_t_mp_wday2}{larger nowcasts over time}
+
+\item{rel_wis_over_time_mp_wday2}{underlay relative WIS}
 }
 \value{
 patchwork ggplot object

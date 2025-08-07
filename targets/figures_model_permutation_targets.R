@@ -36,6 +36,15 @@ figures_model_permutation_targets <- list(
       fig_file_name = "nowcasts_over_time_00_04_volume"
     )
   ),
+  tar_target(
+    name = plot_nowcasts_t_mp_00_04_wday,
+    command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
+      age_group_to_plot = "00-04",
+      permutation_grouping = "Weekday filter",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_00_04_wday"
+    )
+  ),
   # Make the ones for the 60-79 year old age group
   tar_target(
     name = plot_nowcasts_t_mp_60_79_borrow,
@@ -64,6 +73,15 @@ figures_model_permutation_targets <- list(
       fig_file_name = "nowcasts_over_time_60_79_volume"
     )
   ),
+  tar_target(
+    name = plot_nowcasts_t_mp_60_79_wday,
+    command = get_plot_nowcasts_over_time_mp(combined_nowcasts_mp,
+      age_group_to_plot = "60-79",
+      permutation_grouping = "Weekday filter",
+      horizon_to_plot = 0,
+      fig_file_name = "nowcasts_over_time_60_79_wday"
+    )
+  ),
   # Make the relative WIS subplots --------------------------------
   tar_target(
     name = rel_wis_over_time_mp_00_04_borrow,
@@ -90,6 +108,14 @@ figures_model_permutation_targets <- list(
     )
   ),
   tar_target(
+    name = rel_wis_over_time_mp_00_04_wday,
+    command = get_plot_rel_wis_over_time_mp(scores_mp,
+      permutation_grouping = "Weekday filter",
+      strata = "age groups",
+      age_group_to_plot = "00-04"
+    )
+  ),
+  tar_target(
     name = rel_wis_over_time_mp_60_79_borrow,
     command = get_plot_rel_wis_over_time_mp(scores_mp,
       permutation_grouping = "Borrow for delay and uncertainty estimation",
@@ -109,6 +135,14 @@ figures_model_permutation_targets <- list(
     name = rel_wis_over_time_mp_60_79_volume,
     command = get_plot_rel_wis_over_time_mp(scores_mp,
       permutation_grouping = "Training volume",
+      strata = "age groups",
+      age_group_to_plot = "60-79"
+    )
+  ),
+  tar_target(
+    name = rel_wis_over_time_mp_60_79_wday,
+    command = get_plot_rel_wis_over_time_mp(scores_mp,
+      permutation_grouping = "Weekday filter",
       strata = "age groups",
       age_group_to_plot = "60-79"
     )
@@ -155,12 +189,16 @@ figures_model_permutation_targets <- list(
       rel_wis_over_time_mp_00_04_rep_tri,
       plot_nowcasts_t_mp_00_04_volume,
       rel_wis_over_time_mp_00_04_volume,
+      plot_nowcasts_t_mp_00_04_wday,
+      rel_wis_over_time_mp_00_04_wday,
       plot_nowcasts_t_mp_60_79_borrow,
       rel_wis_over_time_mp_60_79_borrow,
       plot_nowcasts_t_mp_60_79_rep_tri,
       rel_wis_over_time_mp_60_79_rep_tri,
       plot_nowcasts_t_mp_60_79_volume,
-      rel_wis_over_time_mp_60_79_volume
+      rel_wis_over_time_mp_60_79_volume,
+      plot_nowcasts_t_mp_60_79_wday,
+      rel_wis_over_time_mp_60_79_wday
     )
   ),
   tar_target(

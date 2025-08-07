@@ -258,6 +258,7 @@ sum_scores |>
   filter(!model_variation_string %in% c(
     "Borrowed estimates from all age groups",
     "Complete reporting triangle",
+    "Weekday filter",
     "Default"
   )) |>
   kable(caption = "Model permutations training volume: relative scores by age group")
@@ -325,6 +326,29 @@ sum_scores |>
     model_var_rel_max = model_variation_string[which.max(rel_wis)]
   ) |>
   kable(caption = "Model permutations: complete reporting triangle min and max scores by age group")
+
+# Weekday filter
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Weekday filter") |>
+  kable(caption = "Model permutations Weekday filter: relative scores by age group")
+
+sum_scores |>
+  left_join(default_scores, by = "age_group") |>
+  mutate(rel_wis = wis / default_wis) |>
+  select(model_variation_string, rel_wis, age_group) |>
+  filter(model_variation_string == "Weekday filter") |>
+  summarise(
+    min_rel_wis = min(rel_wis),
+    age_group_min = age_group[which.min(rel_wis)],
+    model_var_rel_min = model_variation_string[which.min(rel_wis)],
+    max_rel_wis = max(rel_wis),
+    age_group_max = age_group[which.max(rel_wis)],
+    model_var_rel_max = model_variation_string[which.max(rel_wis)]
+  ) |>
+  kable(caption = "Model permutations: weekday filter min and max scores by age group")
 ```
 
 Model permutations horizon

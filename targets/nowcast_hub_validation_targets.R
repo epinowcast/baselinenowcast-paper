@@ -8,7 +8,8 @@ nowcast_hub_validation_targets <- list(
         n_history_delay == 60,
         n_history_uncertainty == 60,
         borrow == FALSE,
-        partial_rep_tri == TRUE
+        partial_rep_tri == TRUE,
+        weekday_filter == FALSE,
       ) |>
       mutate(nowcast_date = as.Date(nowcast_date)) |>
       select(colnames(all_nowcasts_kit)) |>
@@ -26,7 +27,8 @@ nowcast_hub_validation_targets <- list(
         n_history_delay == 60,
         n_history_uncertainty == 60,
         borrow == FALSE,
-        partial_rep_tri == TRUE
+        partial_rep_tri == TRUE,
+        weekday_filter == FALSE
       )
   ),
   tar_target(
@@ -37,7 +39,8 @@ nowcast_hub_validation_targets <- list(
         n_history_delay == 60,
         n_history_uncertainty == 60,
         borrow == FALSE,
-        partial_rep_tri == TRUE
+        partial_rep_tri == TRUE,
+        weekday_filter == FALSE
       ) |>
       # Estimate a delay for each age group across nowcast dates
       group_by(age_group, delay_time) |>
@@ -53,7 +56,8 @@ nowcast_hub_validation_targets <- list(
         n_history_delay == 60,
         n_history_uncertainty == 60,
         borrow == FALSE,
-        partial_rep_tri == TRUE
+        partial_rep_tri == TRUE,
+        weekday_filter == FALSE
       ) |>
       select(colnames(all_scores_kit)) |>
       mutate(
@@ -109,7 +113,8 @@ nowcast_hub_validation_targets <- list(
         n_history_delay == 60,
         n_history_uncertainty == 60,
         borrow == FALSE,
-        partial_rep_tri == TRUE
+        partial_rep_tri == TRUE,
+        weekday_filter == FALSE
       ) |>
       select(colnames(all_coverage_kit)) |>
       mutate(

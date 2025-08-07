@@ -456,7 +456,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
       axis.ticks.x = element_blank(),
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA),
-      strip.text = element_text(size = 16)
+      strip.text = element_text(size = 18)
     ) +
     scale_fill_manual(
       name = "Model permutation",
@@ -1039,7 +1039,7 @@ get_plot_wis_by_week_mp <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 20,
+      width = 25,
       height = 8
     )
   }
@@ -1410,7 +1410,7 @@ get_plot_rel_wis_over_time_all <- function(scores,
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 10,
+      width = 15,
       height = 10
     )
   }

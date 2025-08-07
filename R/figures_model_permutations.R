@@ -472,7 +472,6 @@ get_plot_coverage_by_mp <- function(all_coverage,
     labs(
       y = "Empirical coverage", x = ""
     ) +
-    theme(axis.title.y = element_text(size = 10)) +
     guides(
       # Can used fill = "none" if we want to remove color
       alpha = guide_legend(

@@ -268,7 +268,7 @@ get_plot_bar_chart_scores_mp <- function(scores,
       scales = "free_x"
     ) +
     scale_fill_manual(
-      name = "Model permutation",
+      name = "Method specification",
       values = plot_colors$permutation_colors
     ) +
     scale_alpha_manual(
@@ -459,7 +459,7 @@ get_plot_coverage_by_mp <- function(all_coverage,
       strip.text = element_text(size = 18)
     ) +
     scale_fill_manual(
-      name = "Model permutation",
+      name = "Method specification",
       values = plot_comps$permutation_colors
     ) +
     scale_alpha_manual(
@@ -674,7 +674,7 @@ get_plot_rel_decomposed_wis <- function(scores,
       axis.text.x = element_blank()
     ) +
     scale_color_manual(
-      name = "Model permutation",
+      name = "Method specificaition",
       values = plot_comps$permutation_colors
     ) +
     # nolint start
@@ -691,7 +691,7 @@ get_plot_rel_decomposed_wis <- function(scores,
     scale_y_continuous(trans = "log10") +
     labs(
       x = "",
-      y = "Relative WIS"
+      y = "rWIS"
     ) +
     guides(
       # Can used fill = "none" if we want to remove color
@@ -772,7 +772,7 @@ get_plot_wis_by_age_group_mp <- function(
   ) +
     geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(
-      name = "Model permutation",
+      name = "Method specification",
       values = plot_comps$permutation_colors
     ) +
     get_plot_theme() +
@@ -875,7 +875,7 @@ get_plot_wis_by_horizon_mp <- function(
   ) +
     geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(
-      name = "Model permutation",
+      name = "Method specification",
       values = plot_comps$permutation_colors
     ) +
     get_plot_theme() +
@@ -998,7 +998,7 @@ get_plot_wis_by_week_mp <- function(
   ) +
     geom_bar(stat = "identity", position = "stack") +
     scale_fill_manual(
-      name = "Model permutation",
+      name = "Method specification",
       values = plot_comps$permutation_colors
     ) +
     get_plot_theme() +
@@ -1303,8 +1303,9 @@ make_fig_model_perms <- function(
         fig_file_dir,
         glue("{fig_file_name}.png")
       ),
-      width = 30,
-      height = 20
+      width = 32,
+      height = 22,
+      dpi = 300
     )
   }
 
@@ -1383,7 +1384,7 @@ get_plot_rel_wis_over_time_all <- function(scores,
     ) +
     facet_wrap(~model_variation, nrow = 3) +
     scale_color_manual(
-      name = "Model permutation",
+      name = "Method specification",
       values = plot_colors$permutation_colors
     ) +
     xlab("") +

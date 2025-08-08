@@ -245,11 +245,11 @@ In order to validate our `baselinenowcast` method against a revised version with
 
 ### German Nowcast Hub validation
 
-![Fig. S3 Relative WIS by age group of baselinenowcast compared to KIT simple nowcast revised. Vertical line at 1.0 indicates parity with KIT simple nowcast revised.](../output/figs/supp/rel_wis_by_age_group.png){#figs3}
+![Fig. S3 Relative WIS by age group of baselinenowcast compared to the revised KIT simple nowcast. Vertical line at 1.0 indicates parity with KIT simple nowcast revised.](../output/figs/supp/rel_wis_by_age_group.png){#figs3}
 
 ![Fig. S4 Mean WIS by nowcast horizon for each model. colours indicate models.](../output/figs/supp/mean_wis_by_horizon_ag.png){#figs4}
 
-![Fig. S5 Relative WIS of baselinenowcast horizon compared to KIT simple nowcast revised.](../output/figs/supp/rel_wis_by_horizon_ag.png)
+![Fig. S5 Relative WIS of baselinenowcast horizon compared to revised KIT simple nowcast.](../output/figs/supp/rel_wis_by_horizon_ag.png)
 
 ![Fig. S6 Empirical coverage at 50% and 95% prediction intervals. Shading indicates prediction intervals, colour indicates models, vertical lines indicate the target prediction intervals.](../output/figs/supp/bar_chart_cov_ag.png){#figs6}
 

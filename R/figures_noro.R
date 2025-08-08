@@ -85,7 +85,8 @@ get_plot_mult_nowcasts_noro <- function(all_nowcasts,
       axis.text.x = element_text(
         vjust = 1,
         hjust = 1,
-        angle = 45
+        angle = 45,
+        size = 16
       ),
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA)
@@ -244,10 +245,11 @@ get_plot_rel_wis_over_time <- function(scores) {
       axis.text.x = element_text(
         vjust = 1,
         hjust = 1,
-        angle = 45
+        angle = 45,
+        size = 16
       )
     ) +
-    labs(x = "", y = "Relative\nWIS") +
+    labs(x = "", y = "rWIS") +
     guides(color = "none")
 
   return(p)
@@ -387,7 +389,8 @@ get_plot_mean_delay_t_by_wday <- function(delay_dfs,
       axis.text.x = element_text(
         vjust = 1,
         hjust = 1,
-        angle = 45
+        angle = 45,
+        size = 16
       ),
       strip.placement = "outside",
       strip.background = element_rect(color = NA, fill = NA)
@@ -628,19 +631,19 @@ make_panel_A_noro <- function(
   panel_A_noro <- (plot_noro_nowcasts_baseline +
     theme(plot.tag.position = c(-0.01, 0.6))) +
     (rel_wis_by_week_noro_baseline +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     (plot_noro_nowcasts_GAM +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     (rel_wis_by_week_noro_GAM +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     (plot_noro_nowcasts_enw +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     (rel_wis_by_week_noro_enw +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     (plot_noro_nowcasts_bnc +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     (rel_wis_by_week_noro_bnc +
-       theme(plot.tag.position = c(-0.01, 1))) +
+      theme(plot.tag.position = c(-0.01, 1))) +
     plot_layout(
       design = fig_layout,
       axes = "collect"
@@ -707,7 +710,7 @@ make_fig_noro <- function(panel_A_noro,
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
     legend.justification = "center",
-    plot.tag = element_text(size = 18)
+    plot.tag = element_text(size = 20)
   )
 
   dir_create(fig_file_dir)
@@ -720,7 +723,8 @@ make_fig_noro <- function(panel_A_noro,
         glue("{fig_file_name}.png")
       ),
       width = 24,
-      height = 24
+      height = 24,
+      dpi = 300
     )
   }
   return(fig_noro)

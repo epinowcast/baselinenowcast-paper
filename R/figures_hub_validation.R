@@ -209,7 +209,7 @@ get_plot_nowcast_illustration <- function(combined_nowcasts,
       )
     ) +
     xlab("") +
-    ylab("7-day hospitalisation incidence") +
+    ylab("7-day hospitalisation\nincidence") +
     guides(
       color = guide_legend(title.position = "top"),
       fill = guide_legend(title.position = "top"),
@@ -499,7 +499,7 @@ get_plot_of_delay_cdf_by_age <- function(avg_delays_by_age) {
       labels = NULL
     ) +
     xlab("Delay (days)") +
-    ylab("Cumulative delay distribution") +
+    ylab("Cumulative delay\ndistribution") +
     get_plot_theme() +
     guides(
       color = "none"
@@ -1059,7 +1059,7 @@ make_fig_hub_validation <- function(
     legend.position = "top",
     legend.title = element_text(hjust = 0.5),
     legend.justification = "center",
-    plot.tag = element_text(size = 18)
+    plot.tag = element_text(size = 20)
   )
 
   dir_create(fig_file_dir)
@@ -1071,7 +1071,8 @@ make_fig_hub_validation <- function(
         glue("{fig_file_name}.png")
       ),
       width = 24,
-      height = 16
+      height = 16,
+      dpi = 300
     )
   }
 

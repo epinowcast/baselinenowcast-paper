@@ -11,7 +11,7 @@ get_plot_theme <- function() {
       plot.background = element_rect(fill = "white"),
       legend.text = element_text(size = 20),
       legend.title = element_text(size = 20),
-      axis.text.x = element_text(size = 24),
+      axis.text.x = element_text(size = 20),
       axis.text.y = element_text(size = 20),
       axis.title = element_text(size = 20),
       strip.text = element_text(size = 20)

@@ -11,9 +11,9 @@ write_config <- function(noro_nowcast_dates = NULL,
   # Use the august 8th data, as is in the paper
   covid_url <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/11c745322c055cfbd4f0c8f72241642a50aea399/data-truth/COVID-19/COVID-19_hospitalizations_preprocessed.csv"
   # Lock to specific commit for KIT nowcasts
-  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/KITmetricslab/hospitalization-nowcast-hub/refs/heads/main/data-processed/KIT-simple_nowcast"
+  KIT_nowcast_url_prefix <- "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/refs/heads/main/data-processed_retrospective/KIT-simple_nowcast_original"
   # point to the bug fixed quantiles, locking in on specific commit
-  KIT_nowcast_revised_url_prefix <- "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/refs/heads/main//data-processed_retrospective/KIT-simple_nowcast_revised"
+  KIT_nowcast_revised_url_prefix <- "https://raw.githubusercontent.com/kaitejohnson/hospitalization-nowcast-hub/refs/heads/main/data-processed_retrospective/KIT-simple_nowcast_revised"
   if (is.null(noro_nowcast_dates)) {
     noro_nowcast_dates <- as.character(
       seq(
@@ -88,7 +88,8 @@ write_config <- function(noro_nowcast_dates = NULL,
       n_history_delay = round(0.5 * base_n_history),
       n_history_uncertainty = round(0.5 * base_n_history),
       borrow = base_borrow,
-      partial_rep_tri = partial_rep_tri
+      partial_rep_tri = partial_rep_tri,
+      weekday_filter = FALSE
     )
   # result_df should be 7* length of df_base_covid
   if (permutations_covid) {
@@ -125,6 +126,7 @@ write_config <- function(noro_nowcast_dates = NULL,
       n_history_dispersion = result_df |> pull(n_history_uncertainty) |> as.vector(),
       borrow = result_df |> pull(borrow) |> as.vector(),
       partial_rep_tri = result_df |> pull(partial_rep_tri) |> as.vector(),
+      weekday_filter = result_df |> pull(weekday_filter) |> as.vector(),
       max_delay = 40,
       days_to_eval = 29, # 0 to - 28 horizon)
       quantiles = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975),
@@ -146,7 +148,7 @@ create_pairwise_variations <- function(df_base_covid,
                                        max_delay = max_delay) {
   # Original parameters
   params <- c("n_history_delay", "n_history_uncertainty")
-  params_bool <- c("borrow", "partial_rep_tri")
+  params_bool <- c("borrow", "partial_rep_tri", "weekday_filter")
 
   # Loop through each numeric parameter
   # Create pairwise variations

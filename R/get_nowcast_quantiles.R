@@ -25,6 +25,8 @@
 #' @param partial_rep_tri Boolean indicating whether or not a partially
 #'    complete reporting triangle is used or the latest complete triangle is
 #'    used.
+#' @param weekday_filter Boolean indicating whether or not to estimate delays
+#'    and perform nowcasting on individual weekdays and recombine.
 #' @param age_group Character string indicating the age group.
 #' @param quantiles Vector of quantiles to generate.
 #' @param fun_to_aggregate Function to apply across the `k` reference dates,
@@ -51,6 +53,7 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
                                   n_history_uncertainty,
                                   borrow,
                                   partial_rep_tri,
+                                  weekday_filter,
                                   age_group,
                                   quantiles,
                                   fun_to_aggregate = sum,
@@ -77,7 +80,8 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
       n_history_delay = n_history_delay,
       n_history_uncertainty = n_history_uncertainty,
       borrow = borrow,
-      partial_rep_tri = partial_rep_tri
+      partial_rep_tri = partial_rep_tri,
+      weekday_filter = weekday_filter
     )
 
 
@@ -91,7 +95,8 @@ get_nowcast_quantiles <- function(point_nowcast_matrix,
       "n_history_delay",
       "n_history_uncertainty",
       "borrow",
-      "partial_rep_tri"
+      "partial_rep_tri",
+      "weekday_filter"
     ),
     observed = "observed",
     predicted = "total_count",

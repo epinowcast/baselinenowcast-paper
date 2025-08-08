@@ -11,6 +11,7 @@ run_covid_nowcast_pipeline(
   age_group_to_nowcast,
   borrow,
   partial_rep_tri,
+  weekday_filter,
   n_history_delay,
   n_history_uncertainty,
   eval_timeframe,
@@ -39,6 +40,9 @@ is borrowed from another strata.}
 \item{partial_rep_tri}{Boolean indicating whether or not a partially
 complete reporting triangle is used or the latest complete triangle is
 used.}
+
+\item{weekday_filter}{Boolean indicating whether or not to estimate delays
+and perform nowcasting on individual weekdays and recombine.}
 
 \item{n_history_delay}{Integer indicating number of reference times used for
 delay estimate.}

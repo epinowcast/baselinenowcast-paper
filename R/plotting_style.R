@@ -11,8 +11,9 @@ get_plot_theme <- function() {
       plot.background = element_rect(fill = "white"),
       legend.text = element_text(size = 20),
       legend.title = element_text(size = 20),
-      axis.text.x = element_text(size = 16),
-      axis.title = element_text(size = 18),
+      axis.text.x = element_text(size = 20),
+      axis.text.y = element_text(size = 20),
+      axis.title = element_text(size = 20),
       strip.text = element_text(size = 20)
     )
 
@@ -35,6 +36,7 @@ plot_components <- function() {
     "revised KIT simple nowcast" = "darkgreen",
     "baselinenowcast" = "purple4",
     "Default" = "purple4",
+    "Weekday filter" = "darkturquoise",
     "base" = "purple4",
     "filter weekday small training volume" = "blue3",
     "filter weekday large training volume" = "maroon",
@@ -85,6 +87,7 @@ plot_components <- function() {
     "Complete reporting triangle" = pal_mps[8],
     "200% increased training volume" = pal_mps[1],
     "50% reduced training volume" = "maroon",
+    "Weekday filter" = "darkturquoise",
     "Delay:180,\nUncertainty:60" = pal_mps[1],
     "Delay:41,\nUncertainty:19" = pal_mps[5],
     "Delay:50,\nUncertainty:10" = pal_mps[6],

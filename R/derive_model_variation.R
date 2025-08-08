@@ -12,14 +12,16 @@ derive_model_variation <- function(df) {
     mutate(
       training_volume = n_history_delay + n_history_uncertainty,
       model_variation = case_when(
-        training_volume != 120 & !borrow & partial_rep_tri ~
+        training_volume != 120 & !borrow & partial_rep_tri & !weekday_filter ~
           "Training volume",
-        training_volume == 120 & !borrow & !partial_rep_tri ~
+        training_volume == 120 & !borrow & !partial_rep_tri & !weekday_filter ~
           "Reporting triangle completeness",
-        training_volume == 120 & !borrow & partial_rep_tri ~
+        training_volume == 120 & !borrow & partial_rep_tri & !weekday_filter ~
           "Default",
-        training_volume == 120 & borrow & partial_rep_tri ~
+        training_volume == 120 & borrow & partial_rep_tri & !weekday_filter ~
           "Borrow for delay and uncertainty estimation",
+        training_volume == 120 & !borrow & partial_rep_tri & weekday_filter ~
+          "Weekday filter",
         .default = "Other"
       ),
       model_variation_string = dplyr::case_match(
@@ -32,6 +34,8 @@ derive_model_variation <- function(df) {
           "Borrowed estimates from all age groups",
         "Default" ~
           "Default",
+        "Weekday filter" ~
+          "Weekday filter",
         .default = model_variation
       ),
       model_variation_string = case_when(
@@ -50,7 +54,8 @@ derive_model_variation <- function(df) {
       "Borrowed estimates from all age groups",
       "Complete reporting triangle",
       "200% increased training volume",
-      "50% reduced training volume"
+      "50% reduced training volume",
+      "Weekday filter"
     )
   )
 

@@ -106,13 +106,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
       ),
       guide = guide_legend(
         nrow = 2,
-        title.position = "top",
-        override.aes = list(
-          alpha = c(
-            "95%" = 0.2,
-            "50%" = 0.4
-          )
-        )
+        title.position = "top"
       )
     ) +
     facet_wrap(~facet_title, nrow = 3) +
@@ -133,10 +127,6 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
         title.position = "top",
         nrow = 3,
         override.aes = list(
-          color = c(
-            "Final evaluation data" = "red",
-            "Data as of nowcast date" = "gray"
-          ),
           linewidth = 1
         )
       )
@@ -155,7 +145,7 @@ get_plot_nowcasts_over_time_mp <- function(combined_nowcasts,
   if (isTRUE(save)) {
     dir_create(fig_file_dir)
     ggsave(
-      plot = p,
+      plot = p + guides(fill = guide_legend("Method specification")),
       filename = file.path(
         fig_file_dir,
         glue("{fig_file_name}.png")

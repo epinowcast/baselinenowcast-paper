@@ -652,6 +652,60 @@ make_panel_A_noro <- function(
   return(panel_A_noro)
 }
 
+#' Make panel A norovirus figure
+#'
+#' @param plot_noro_nowcasts_baseline nowcasts over time
+#' @param rel_wis_by_week_noro_baseline  relative WIS
+#' @param plot_noro_nowcasts_GAM nowcasts over time
+#' @param rel_wis_by_week_noro_GAM  relative WIS
+#' @param plot_noro_nowcasts_enw nowcasts over time
+#' @param rel_wis_by_week_noro_enw relative WIS
+#'
+#' @returns ggplot
+#' @autoglobal
+#' @importFrom glue glue
+#' @importFrom patchwork plot_layout plot_annotation
+#' @importFrom ggplot2 ggsave theme
+#' @importFrom fs dir_create
+make_panel_A_noro_nv <- function(
+    plot_noro_nowcasts_baseline,
+    rel_wis_by_week_noro_baseline,
+    plot_noro_nowcasts_GAM,
+    rel_wis_by_week_noro_GAM,
+    plot_noro_nowcasts_enw,
+    rel_wis_by_week_noro_enw) {
+  fig_layout <- "
+  AAA
+  AAA
+  BBB
+  CCC
+  CCC
+  DDD
+  EEE
+  EEE
+  FFF
+  "
+
+  panel_A_noro <- (plot_noro_nowcasts_baseline +
+    theme(plot.tag.position = c(-0.01, 0.6))) +
+    (rel_wis_by_week_noro_baseline +
+      theme(plot.tag.position = c(-0.01, 1))) +
+    (plot_noro_nowcasts_GAM +
+      theme(plot.tag.position = c(-0.01, 1))) +
+    (rel_wis_by_week_noro_GAM +
+      theme(plot.tag.position = c(-0.01, 1))) +
+    (plot_noro_nowcasts_enw +
+      theme(plot.tag.position = c(-0.01, 1))) +
+    (rel_wis_by_week_noro_enw +
+      theme(plot.tag.position = c(-0.01, 1))) +
+    plot_layout(
+      design = fig_layout,
+      axes = "collect"
+    )
+
+  return(panel_A_noro)
+}
+
 #' Make panel for main norovirus figure
 #'
 #' @param panel_A_noro A
@@ -948,6 +1002,8 @@ get_plot_wis_over_time_noro <- function(
 #' Get a plot of decomposed WIS by weekday for each model
 #'
 #' @param scores Dataframe of the scores by age group, horizon, and model
+#' @param nrow_legend Integer indiating number of rows ot make legedm default
+#'    is 3.
 #' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal
 #' @importFrom ggplot2 ggplot geom_bar aes labs scale_fill_manual
@@ -960,6 +1016,7 @@ get_plot_wis_over_time_noro <- function(
 #' @returns ggplot object
 get_plot_wis_by_weekday <- function(
     scores,
+    nrow_legend = 3,
     fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs", "supp"),
     save = TRUE) {
@@ -1084,7 +1141,7 @@ get_plot_wis_by_weekday <- function(
     guides(
       alpha = "none",
       fill = guide_legend(
-        nrow = 3,
+        nrow = nrow_legend,
         title.position = "top", title.hjust = 0.5
       )
     )

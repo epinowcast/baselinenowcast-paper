@@ -77,8 +77,30 @@ figures_noro_targets <- list(
     )
   ),
   tar_target(
+    name = panel_A_noro_nv,
+    command = make_panel_A_noro_nv(
+      plot_noro_nowcasts_Mellor_baseline,
+      rel_wis_by_week_noro_Mellor_baseline,
+      plot_noro_nowcasts_GAM,
+      rel_wis_by_week_noro_GAM,
+      plot_noro_nowcasts_epinowcast,
+      rel_wis_by_week_noro_epinowcast
+    )
+  ),
+  tar_target(
     name = bar_chart_wis_noro,
     command = get_bar_chart_sum_scores_noro(noro_scores)
+  ),
+  tar_target(
+    name = noro_scores_nv,
+    command = noro_scores |> filter(!model %in% c(
+      "baselinenowcast weekday\nfilter small training volume",
+      "baselinenowcast weekday\nfilter large training volume"
+    ))
+  ),
+  tar_target(
+    name = bar_chart_wis_noro_nv,
+    command = get_bar_chart_sum_scores_noro(noro_scores_nv)
   ),
   tar_target(
     name = rel_wis_by_week_noro,
@@ -87,6 +109,10 @@ figures_noro_targets <- list(
   tar_target(
     name = rel_wis_by_weekday,
     command = get_plot_rel_wis_by_weekday(noro_scores)
+  ),
+  tar_target(
+    name = rel_wis_by_weekday_nv,
+    command = get_plot_rel_wis_by_weekday(noro_scores_nv)
   ),
   tar_target(
     name = plot_mean_delay_t_by_wday,
@@ -105,6 +131,13 @@ figures_noro_targets <- list(
     )
   ),
   tar_target(
+    name = wis_by_weekday_nv,
+    command = get_plot_wis_by_weekday(noro_scores_nv,
+      fig_file_name = "wis_by_weekday_nv",
+      nrow_legend = 2
+    )
+  ),
+  tar_target(
     name = distrib_mean_delay_weekday,
     command = get_plot_distrib_delays(all_delay_dfs_noro)
   ),
@@ -119,6 +152,20 @@ figures_noro_targets <- list(
       plot_mean_delay_t_by_wday,
       plot_cdf_by_weekday,
       fig_file_name = "noro"
+    )
+  ),
+  # revised figure
+  tar_target(
+    name = fig_noro_nv,
+    command = make_fig_noro(
+      panel_A_noro_nv,
+      bar_chart_wis_noro_nv,
+      rel_wis_by_weekday_nv,
+      distrib_mean_delay_weekday,
+      wis_by_weekday_nv,
+      plot_mean_delay_t_by_wday,
+      plot_cdf_by_weekday,
+      fig_file_name = "noro_nv"
     )
   ),
   # Supplement ---------------------------------------------------------------

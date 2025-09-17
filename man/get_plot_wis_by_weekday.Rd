@@ -6,6 +6,7 @@
 \usage{
 get_plot_wis_by_weekday(
   scores,
+  nrow_legend = 3,
   fig_file_name = NULL,
   fig_file_dir = file.path("output", "figs", "supp"),
   save = TRUE
@@ -13,6 +14,9 @@ get_plot_wis_by_weekday(
 }
 \arguments{
 \item{scores}{Dataframe of the scores by age group, horizon, and model}
+
+\item{nrow_legend}{Integer indiating number of rows ot make legedm default
+is 3.}
 
 \item{fig_file_name}{Character string indicating name of the figure to be
 saved as the file name. Default is \code{NULL}.}

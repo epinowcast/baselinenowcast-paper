@@ -15,7 +15,7 @@ get_plot_wis_by_weekday(
 \arguments{
 \item{scores}{Dataframe of the scores by age group, horizon, and model}
 
-\item{nrow_legend}{Integer indiating number of rows ot make legedm default
+\item{nrow_legend}{Integer indicating number of rows to make legend. Default
 is 3.}
 
 \item{fig_file_name}{Character string indicating name of the figure to be

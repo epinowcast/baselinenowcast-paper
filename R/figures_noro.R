@@ -1002,7 +1002,7 @@ get_plot_wis_over_time_noro <- function(
 #' Get a plot of decomposed WIS by weekday for each model
 #'
 #' @param scores Dataframe of the scores by age group, horizon, and model
-#' @param nrow_legend Integer indiating number of rows ot make legedm default
+#' @param nrow_legend Integer indicating number of rows to make legend. Default
 #'    is 3.
 #' @inheritParams get_plot_rel_wis_by_age_group
 #' @autoglobal

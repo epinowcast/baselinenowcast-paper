@@ -1,4 +1,6 @@
-# MIT License
+# MIT License (applies to software code)
+
+See LICENSE-CC-BY.md for the license covering documentation, figures, and data.
 
 Copyright (c) 2025 baselinenowcastpaper authors
 

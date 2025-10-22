@@ -31,3 +31,9 @@ Results can be approximately reproduced using entirely the synthetic data provid
 
 The original and revised implementations of the KIT simple nowcast quantiles on the latest German COVID-19 hospitalization data are available at [`data-processed_retrospective`](https://github.com/kaitejohnson/hospitalization-nowcast-hub/data-processed_retrospective).
 The nowcasted quantiles for norovirus for the GAM, epinowcast, naive baseline, and baselinenowcast specifications are available at [`data/original`](https://github.com/jonathonmellor/norovirus-nowcast-baselinenowcast/outputs/data/original), with the quantiles fit to the synthetic data available at [`data/synthetic`](https://github.com/jonathonmellor/norovirus-nowcast-baselinenowcast/outputs/data/synthetic)
+
+## License
+
+This repository is dual-licensed:
+- **Code**: MIT License (see [LICENSE-MIT.md](LICENSE-MIT.md))
+- **Documentation, figures, and data**: CC-BY 4.0 (see [LICENSE-CC-BY.md](LICENSE-CC-BY.md))

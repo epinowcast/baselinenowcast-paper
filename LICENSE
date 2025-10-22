@@ -1,2 +1,10 @@
-YEAR: 2025
-COPYRIGHT HOLDER: baselinenowcastpaper authors
+Dual License
+
+This repository uses two licenses:
+
+1. Software code (R files, scripts, etc.): MIT License
+   See LICENSE-MIT.md for full text
+
+2. Documentation, figures, data, and other creative content:
+   Creative Commons Attribution 4.0 International (CC-BY 4.0)
+   See LICENSE-CC-BY.md for full text

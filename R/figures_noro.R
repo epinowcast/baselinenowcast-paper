@@ -723,19 +723,35 @@ make_panel_A_noro_nv <- function(
 #' @importFrom patchwork plot_layout plot_annotation wrap_plots
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
-make_fig_noro <- function(panel_A_noro,
-                          bar_chart_wis_noro,
-                          rel_wis_by_weekday,
-                          wis_by_weekday,
-                          distrib_mean_delay_weekday,
-                          plot_mean_delay_t_by_wday,
-                          plot_cdf_by_weekday,
-                          fig_file_name,
-                          fig_file_dir = file.path("output", "figs"),
-                          save = TRUE) {
+make_fig_noro <- function(
+    plot_noro_nowcasts_Mellor_baseline,
+    rel_wis_by_week_noro_Mellor_baseline,
+    plot_noro_nowcasts_GAM,
+    rel_wis_by_week_noro_GAM,
+    plot_noro_nowcasts_epinowcast,
+    rel_wis_by_week_noro_epinowcast,
+    bar_chart_wis_noro,
+    rel_wis_by_weekday,
+    wis_by_weekday,
+    distrib_mean_delay_weekday,
+    plot_mean_delay_t_by_wday,
+    plot_cdf_by_weekday,
+    fig_file_name,
+    fig_file_dir = file.path("output", "figs"),
+    save = TRUE) {
   if (save && is.null(fig_file_name)) {
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
+
+  panel_A_noro <- make_panel_A_noro_nv(
+    plot_noro_nowcasts_Mellor_baseline,
+    rel_wis_by_week_noro_Mellor_baseline,
+    plot_noro_nowcasts_GAM,
+    rel_wis_by_week_noro_GAM,
+    plot_noro_nowcasts_epinowcast,
+    rel_wis_by_week_noro_epinowcast
+  )
+
   fig_layout <- "
   AAABB
   AAACC
@@ -774,8 +790,9 @@ make_fig_noro <- function(panel_A_noro,
       plot = fig_noro,
       filename = file.path(
         fig_file_dir,
-        glue("{fig_file_name}.png")
+        glue("{fig_file_name}.svg")
       ),
+      device = "svg",
       width = 24,
       height = 24,
       dpi = 300

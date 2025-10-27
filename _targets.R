@@ -18,6 +18,7 @@ library(scoringutils)
 library(RColorBrewer)
 library(patchwork)
 library(fs)
+library(qs2)
 
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
@@ -37,6 +38,7 @@ tar_option_set(
     "purrr",
     "readr", "tidyr",
     "zoo",
+    "qs2",
     "epinowcast",
     "scoringutils",
     "RColorBrewer",

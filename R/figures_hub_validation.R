@@ -1054,13 +1054,14 @@ make_fig_hub_validation <- function(
     ) +
     plot_annotation(
       tag_levels = "A",
-      tag_sep = ""
-    ) & theme(
-    legend.position = "top",
-    legend.title = element_text(hjust = 0.5),
-    legend.justification = "center",
-    plot.tag = element_text(size = 20)
-  )
+      tag_sep = "",
+      theme = theme(
+        legend.position = "top",
+        legend.title = element_text(hjust = 0.5),
+        legend.justification = "center",
+        plot.tag = element_text(size = 20)
+      )
+    )
 
   dir_create(fig_file_dir)
   if (isTRUE(save)) {
@@ -1072,9 +1073,21 @@ make_fig_hub_validation <- function(
       ),
       width = 24,
       height = 16,
-      dpi = 300
+      dpi = 600
+    )
+    ggsave(
+      plot = fig_hub_validation,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.tiff")
+      ),
+      device = "tiff",
+      dpi = 600,
+      compression = "lzw",
+      type = "cairo",
+      width = 24,
+      height = 16
     )
   }
-
   return(fig_hub_validation)
 }

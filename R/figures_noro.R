@@ -724,12 +724,7 @@ make_panel_A_noro_nv <- function(
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
 make_fig_noro <- function(
-    plot_noro_nowcasts_Mellor_baseline,
-    rel_wis_by_week_noro_Mellor_baseline,
-    plot_noro_nowcasts_GAM,
-    rel_wis_by_week_noro_GAM,
-    plot_noro_nowcasts_epinowcast,
-    rel_wis_by_week_noro_epinowcast,
+    panel_A_noro,
     bar_chart_wis_noro,
     rel_wis_by_weekday,
     wis_by_weekday,
@@ -742,15 +737,6 @@ make_fig_noro <- function(
   if (save && is.null(fig_file_name)) {
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
-
-  panel_A_noro <- make_panel_A_noro_nv(
-    plot_noro_nowcasts_Mellor_baseline,
-    rel_wis_by_week_noro_Mellor_baseline,
-    plot_noro_nowcasts_GAM,
-    rel_wis_by_week_noro_GAM,
-    plot_noro_nowcasts_epinowcast,
-    rel_wis_by_week_noro_epinowcast
-  )
 
   fig_layout <- "
   AAABB
@@ -775,13 +761,15 @@ make_fig_noro <- function(
     plot_annotation(
       tag_levels = "A",
       tag_suffix = "", # adds a period after each letter
-      tag_sep = "" # no separator between tag levels
-    ) & theme(
-    legend.position = "top",
-    legend.title = element_text(hjust = 0.5),
-    legend.justification = "center",
-    plot.tag = element_text(size = 20)
-  )
+      tag_sep = "", # no separator between tag levels
+      theme = theme(
+        legend.position = "top",
+        legend.title = element_text(hjust = 0.5),
+        legend.justification = "center",
+        plot.tag = element_text(size = 20)
+      )
+    )
+
 
   dir_create(fig_file_dir)
 
@@ -790,12 +778,24 @@ make_fig_noro <- function(
       plot = fig_noro,
       filename = file.path(
         fig_file_dir,
-        glue("{fig_file_name}.svg")
+        glue("{fig_file_name}.tiff")
       ),
-      device = "svg",
+      device = "tiff",
+      dpi = 600,
+      compression = "lzw",
+      type = "cairo",
+      width = 24,
+      height = 24
+    )
+    ggsave(
+      plot = fig_noro,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.png")
+      ),
       width = 24,
       height = 24,
-      dpi = 300
+      dpi = 600
     )
   }
   return(fig_noro)

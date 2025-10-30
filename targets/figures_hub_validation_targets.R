@@ -67,14 +67,16 @@ figures_hub_validation_targets <- list(
     command = get_plot_bar_chart_sum_scores(
       joined_scores = validation_scores2,
       strata = "age groups"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = horiz_bar_chart_sum_scores_ntl,
     command = get_plot_bar_chart_sum_scores(
       joined_scores = validation_scores2,
       strata = "national"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_nowcasts_over_time,
@@ -82,7 +84,8 @@ figures_hub_validation_targets <- list(
       age_group_to_plot = "00+",
       horizon_to_plot = -14,
       facet = FALSE
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_nowcast_illustration,
@@ -97,7 +100,8 @@ figures_hub_validation_targets <- list(
       ),
       age_group_to_plot = "00+",
       facet = FALSE
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_nowcasts_over_time_h_25,
@@ -105,7 +109,8 @@ figures_hub_validation_targets <- list(
       age_group_to_plot = "00+",
       horizon_to_plot = -25,
       facet = TRUE
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_nowcasts_over_time_h_7,
@@ -113,33 +118,39 @@ figures_hub_validation_targets <- list(
       age_group_to_plot = "00+",
       horizon_to_plot = -7,
       facet = TRUE
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_wis_comp_over_time_ntl,
     command = get_plot_wis_over_time(
       scores_over_time_ntl2,
       strata = "national"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_wis_comp_over_time_ag,
     command = get_plot_wis_over_time(
       scores_over_time_ag2,
       strata = "age groups"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = bar_chart_scores_by_age_group,
-    command = get_plot_score_by_age_group(scores_by_age_group2)
+    command = get_plot_score_by_age_group(scores_by_age_group2),
+    format = "qs"
   ),
   tar_target(
     name = plot_mean_delay_over_time_by_age,
-    command = get_plot_mean_delay_over_time(delay_over_time_validation)
+    command = get_plot_mean_delay_over_time(delay_over_time_validation),
+    format = "qs"
   ),
   tar_target(
     name = plot_mean_cdf_delay_by_age,
-    command = get_plot_of_delay_cdf_by_age(mean_delay_validation)
+    command = get_plot_of_delay_cdf_by_age(mean_delay_validation),
+    format = "qs"
   ),
 
   # Subplots for Main Text Figure Hub validation vs KIT nowcast revised -------
@@ -148,14 +159,16 @@ figures_hub_validation_targets <- list(
     command = get_plot_bar_chart_sum_scores(
       joined_scores = validation_scoresr,
       strata = "age groups"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = horiz_bar_chart_sum_scores_ntlr,
     command = get_plot_bar_chart_sum_scores(
       joined_scores = validation_scoresr,
       strata = "national"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_nowcasts_over_timer,
@@ -163,7 +176,8 @@ figures_hub_validation_targets <- list(
       age_group_to_plot = "00+",
       horizon_to_plot = -14,
       facet = FALSE
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_nowcast_illustrationr,
@@ -178,7 +192,8 @@ figures_hub_validation_targets <- list(
       ),
       age_group_to_plot = "00+",
       facet = FALSE
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_wis_comp_over_time_ntlr,
@@ -192,11 +207,13 @@ figures_hub_validation_targets <- list(
     command = get_plot_wis_over_time(
       scores_over_time_agr,
       strata = "age groups"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = bar_chart_scores_by_age_groupr,
-    command = get_plot_score_by_age_group(scores_by_age_groupr)
+    command = get_plot_score_by_age_group(scores_by_age_groupr),
+    format = "qs"
   ),
   # Supplemental figures------------------------------------------------------
   tar_target(
@@ -204,7 +221,8 @@ figures_hub_validation_targets <- list(
     command = get_plot_rel_wis_by_age_group(
       scores_by_age_groupr,
       fig_file_name = "rel_wis_by_age_group"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_mean_wis_by_horizon_ntl,
@@ -212,7 +230,8 @@ figures_hub_validation_targets <- list(
       validation_scoresr,
       strata = "national",
       fig_file_name = "mean_wis_by_horizon_ntl"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_mean_wis_by_horizon_ag,
@@ -220,7 +239,8 @@ figures_hub_validation_targets <- list(
       validation_scoresr,
       strata = "age groups",
       fig_file_name = "mean_wis_by_horizon_ag",
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_rel_wis_by_horizon_ntl,
@@ -228,7 +248,8 @@ figures_hub_validation_targets <- list(
       validation_scoresr,
       strata = "national",
       fig_file_name = "rel_wis_by_horizon_ntl"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_rel_wis_by_horizon_ag,
@@ -236,7 +257,8 @@ figures_hub_validation_targets <- list(
       validation_scoresr,
       strata = "age groups",
       fig_file_name = "rel_wis_by_horizon_ag"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_rel_wis_by_horizon_ag_revised,
@@ -245,7 +267,8 @@ figures_hub_validation_targets <- list(
       strata = "age groups",
       KIT_comparison_model = "revised KIT simple nowcast",
       fig_file_name = "rel_wis_comp_revised_ag"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_rel_wis_by_horizon_ntl_revised,
@@ -254,7 +277,8 @@ figures_hub_validation_targets <- list(
       strata = "national",
       KIT_comparison_model = "revised KIT simple nowcast",
       fig_file_name = "rel_wis_comp_revised_ntl"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = horiz_bar_chart_coverage_ntl,
@@ -262,7 +286,8 @@ figures_hub_validation_targets <- list(
       validation_coverager,
       strata = "national",
       fig_file_name = "bar_chart_cov_ntl"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = horiz_bar_chart_coverage_ag,
@@ -270,7 +295,8 @@ figures_hub_validation_targets <- list(
       validation_coverager,
       strata = "age groups",
       fig_file_name = "bar_chart_cov_ag"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = horiz_bar_chart_coverage_ag2,
@@ -278,7 +304,8 @@ figures_hub_validation_targets <- list(
       validation_coverage2,
       strata = "age groups",
       fig_file_name = "bar_chart_cov_ag_rt"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_coverage_by_horizon_ntl,
@@ -286,7 +313,8 @@ figures_hub_validation_targets <- list(
       validation_coverager,
       strata = "national",
       fig_file_name = "cov_by_horizon_ntl"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_coverage_by_horizon_ag,
@@ -294,14 +322,16 @@ figures_hub_validation_targets <- list(
       validation_coverager,
       strata = "age groups",
       fig_file_name = "cov_by_horizon_ag"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_coverage_by_age_group,
     command = get_plot_coverage_by_age_group(
       validation_coverager,
       fig_file_name = "cov_by_age_group"
-    )
+    ),
+    format = "qs"
   ),
 
   # Make panels---------------------------------------------------------

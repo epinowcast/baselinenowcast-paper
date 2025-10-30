@@ -5,7 +5,8 @@ figures_noro_targets <- list(
       all_nowcasts = noro_nowcasts |>
         filter(model %in% c("GAM", "baselinenowcast base")),
       facet_title = "GAM"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_noro_nowcasts_epinowcast,
@@ -13,7 +14,8 @@ figures_noro_targets <- list(
       all_nowcasts = noro_nowcasts |>
         filter(model %in% c("epinowcast", "baselinenowcast base")),
       facet_title = "epinowcast"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_noro_nowcasts_Mellor_baseline,
@@ -72,14 +74,14 @@ figures_noro_targets <- list(
   tar_target(
     name = panel_A_noro,
     command = make_panel_A_noro(
-      plot_noro_nowcasts_Mellor_baseline,
-      rel_wis_by_week_noro_Mellor_baseline,
-      plot_noro_nowcasts_GAM,
-      rel_wis_by_week_noro_GAM,
-      plot_noro_nowcasts_epinowcast,
-      rel_wis_by_week_noro_epinowcast,
-      plot_noro_nowcasts_bnc_variants,
-      rel_wis_by_week_noro_bnc
+      plot_noro_nowcasts_baseline = plot_noro_nowcasts_Mellor_baseline,
+      rel_wis_by_week_noro_baseline = rel_wis_by_week_noro_Mellor_baseline,
+      plot_noro_nowcasts_GAM = plot_noro_nowcasts_GAM,
+      rel_wis_by_week_noro_GAM = rel_wis_by_week_noro_GAM,
+      plot_noro_nowcasts_enw = plot_noro_nowcasts_epinowcast,
+      rel_wis_by_week_noro_enw = rel_wis_by_week_noro_epinowcast,
+      plot_noro_nowcasts_bnc = plot_noro_nowcasts_bnc_variants,
+      rel_wis_by_week_noro_bnc = rel_wis_by_week_noro_bnc
     ),
     format = "qs"
   ),
@@ -96,7 +98,8 @@ figures_noro_targets <- list(
   ),
   tar_target(
     name = bar_chart_wis_noro,
-    command = get_bar_chart_sum_scores_noro(noro_scores)
+    command = get_bar_chart_sum_scores_noro(noro_scores),
+    format = "qs"
   ),
   tar_target(
     name = noro_scores_nv,
@@ -111,11 +114,13 @@ figures_noro_targets <- list(
   ),
   tar_target(
     name = rel_wis_by_week_noro,
-    command = get_plot_rel_wis_over_time(noro_scores)
+    command = get_plot_rel_wis_over_time(noro_scores),
+    format = "qs"
   ),
   tar_target(
     name = rel_wis_by_weekday,
-    command = get_plot_rel_wis_by_weekday(noro_scores)
+    command = get_plot_rel_wis_by_weekday(noro_scores),
+    format = "qs"
   ),
   tar_target(
     name = rel_wis_by_weekday_nv,
@@ -125,17 +130,20 @@ figures_noro_targets <- list(
     name = plot_mean_delay_t_by_wday,
     command = get_plot_mean_delay_t_by_wday(
       delay_dfs = all_delay_dfs_noro
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = plot_cdf_by_weekday,
-    command = get_plot_cdf_by_weekday(delay_dfs = all_delay_dfs_noro)
+    command = get_plot_cdf_by_weekday(delay_dfs = all_delay_dfs_noro),
+    format = "qs"
   ),
   tar_target(
     name = wis_by_weekday,
     command = get_plot_wis_by_weekday(noro_scores,
       fig_file_name = "wis_by_weekday"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = wis_by_weekday_nv,
@@ -146,26 +154,22 @@ figures_noro_targets <- list(
   ),
   tar_target(
     name = distrib_mean_delay_weekday,
-    command = get_plot_distrib_delays(all_delay_dfs_noro)
+    command = get_plot_distrib_delays(all_delay_dfs_noro),
+    format = "qs"
   ),
   tar_target(
     name = fig_noro,
     command = make_fig_noro(
-      plot_noro_nowcasts_Mellor_baseline,
-      rel_wis_by_week_noro_Mellor_baseline,
-      plot_noro_nowcasts_GAM,
-      rel_wis_by_week_noro_GAM,
-      plot_noro_nowcasts_epinowcast,
-      rel_wis_by_week_noro_epinowcast,
       panel_A_noro,
       bar_chart_wis_noro,
       rel_wis_by_weekday,
-      distrib_mean_delay_weekday,
       wis_by_weekday,
+      distrib_mean_delay_weekday,
       plot_mean_delay_t_by_wday,
       plot_cdf_by_weekday,
       fig_file_name = "noro"
-    )
+    ),
+    format = "qs"
   ),
   # revised figure
   # tar_target(

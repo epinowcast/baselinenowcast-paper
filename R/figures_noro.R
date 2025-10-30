@@ -731,7 +731,7 @@ make_fig_noro <- function(
     distrib_mean_delay_weekday,
     plot_mean_delay_t_by_wday,
     plot_cdf_by_weekday,
-    fig_file_name,
+    fig_file_name = NULL,
     fig_file_dir = file.path("output", "figs"),
     save = TRUE) {
   if (save && is.null(fig_file_name)) {

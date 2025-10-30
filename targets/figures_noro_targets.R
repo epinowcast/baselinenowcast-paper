@@ -94,7 +94,8 @@ figures_noro_targets <- list(
       rel_wis_by_week_noro_GAM,
       plot_noro_nowcasts_epinowcast,
       rel_wis_by_week_noro_epinowcast
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = bar_chart_wis_noro,
@@ -110,7 +111,8 @@ figures_noro_targets <- list(
   ),
   tar_target(
     name = bar_chart_wis_noro_nv,
-    command = get_bar_chart_sum_scores_noro(noro_scores_nv)
+    command = get_bar_chart_sum_scores_noro(noro_scores_nv),
+    format = "qs"
   ),
   tar_target(
     name = rel_wis_by_week_noro,
@@ -124,7 +126,8 @@ figures_noro_targets <- list(
   ),
   tar_target(
     name = rel_wis_by_weekday_nv,
-    command = get_plot_rel_wis_by_weekday(noro_scores_nv)
+    command = get_plot_rel_wis_by_weekday(noro_scores_nv),
+    format = "qs"
   ),
   tar_target(
     name = plot_mean_delay_t_by_wday,
@@ -150,7 +153,8 @@ figures_noro_targets <- list(
     command = get_plot_wis_by_weekday(noro_scores_nv,
       fig_file_name = "wis_by_weekday_nv",
       nrow_legend = 2
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = distrib_mean_delay_weekday,
@@ -183,31 +187,36 @@ figures_noro_targets <- list(
       plot_mean_delay_t_by_wday,
       plot_cdf_by_weekday,
       fig_file_name = "noro_nv"
-    )
+    ),
+    format = "qs"
   ),
   # Supplement ---------------------------------------------------------------
   tar_target(
     name = rel_delay_over_time,
     command = get_plot_rel_delay_t_by_wday(all_delay_dfs_noro,
       fig_file_name = "rel_mean_delay_over_time_noro"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = wis_over_time,
     command = get_plot_wis_over_time_noro(noro_scores,
       fig_file_name = "wis_over_time_noro"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = coverage_by_model_noro,
     command = get_plot_cov_by_model_noro(noro_coverage,
       fig_file_name = "noro_coverage"
-    )
+    ),
+    format = "qs"
   ),
   tar_target(
     name = coverage_by_model_wday_noro,
     command = get_plot_cov_by_mod_wday_noro(noro_coverage,
       fig_file_name = "noro_cov_wday"
-    )
+    ),
+    format = "qs"
   )
 )

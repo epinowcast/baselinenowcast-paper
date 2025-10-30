@@ -210,16 +210,12 @@ combined_noro_delay_df <- tar_combine(
 plot_targets <- list(
   ### EDA figures for norovirus and covid
   EDA_plot_targets,
-  #
-  # ### Figures for German Nowcast Hub validation
+  ### Figures for German Nowcast Hub validation
   figures_hub_validation_targets,
-  #
-  # ### Figures for comparing baselinenowcast model specificaitons
+  ### Figures for comparing baselinenowcast model specificaitons
   figures_model_permutation_targets,
-
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
   figures_noro_targets,
-
   ### Summary report with all metrics reported in paper
   tar_render(
     report,

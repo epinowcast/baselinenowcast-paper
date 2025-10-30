@@ -172,19 +172,19 @@ figures_noro_targets <- list(
     format = "qs"
   ),
   # revised figure
-  # tar_target(
-  #   name = fig_noro_nv,
-  #   command = make_fig_noro(
-  #     panel_A_noro_nv,
-  #     bar_chart_wis_noro_nv,
-  #     rel_wis_by_weekday_nv,
-  #     distrib_mean_delay_weekday,
-  #     wis_by_weekday_nv,
-  #     plot_mean_delay_t_by_wday,
-  #     plot_cdf_by_weekday,
-  #     fig_file_name = "noro_nv"
-  #   )
-  # ),
+  tar_target(
+    name = fig_noro_nv,
+    command = make_fig_noro(
+      panel_A_noro_nv,
+      bar_chart_wis_noro_nv,
+      rel_wis_by_weekday_nv,
+      distrib_mean_delay_weekday,
+      wis_by_weekday_nv,
+      plot_mean_delay_t_by_wday,
+      plot_cdf_by_weekday,
+      fig_file_name = "noro_nv"
+    )
+  ),
   # Supplement ---------------------------------------------------------------
   tar_target(
     name = rel_delay_over_time,

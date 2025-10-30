@@ -723,19 +723,21 @@ make_panel_A_noro_nv <- function(
 #' @importFrom patchwork plot_layout plot_annotation wrap_plots
 #' @importFrom ggplot2 ggsave theme
 #' @importFrom fs dir_create
-make_fig_noro <- function(panel_A_noro,
-                          bar_chart_wis_noro,
-                          rel_wis_by_weekday,
-                          wis_by_weekday,
-                          distrib_mean_delay_weekday,
-                          plot_mean_delay_t_by_wday,
-                          plot_cdf_by_weekday,
-                          fig_file_name,
-                          fig_file_dir = file.path("output", "figs"),
-                          save = TRUE) {
+make_fig_noro <- function(
+    panel_A_noro,
+    bar_chart_wis_noro,
+    rel_wis_by_weekday,
+    wis_by_weekday,
+    distrib_mean_delay_weekday,
+    plot_mean_delay_t_by_wday,
+    plot_cdf_by_weekday,
+    fig_file_name = NULL,
+    fig_file_dir = file.path("output", "figs"),
+    save = TRUE) {
   if (save && is.null(fig_file_name)) {
     stop("When `save = TRUE`, `fig_file_name` must be supplied.", call. = FALSE)
   }
+
   fig_layout <- "
   AAABB
   AAACC
@@ -759,13 +761,15 @@ make_fig_noro <- function(panel_A_noro,
     plot_annotation(
       tag_levels = "A",
       tag_suffix = "", # adds a period after each letter
-      tag_sep = "" # no separator between tag levels
-    ) & theme(
-    legend.position = "top",
-    legend.title = element_text(hjust = 0.5),
-    legend.justification = "center",
-    plot.tag = element_text(size = 20)
-  )
+      tag_sep = "", # no separator between tag levels
+      theme = theme(
+        legend.position = "top",
+        legend.title = element_text(hjust = 0.5),
+        legend.justification = "center",
+        plot.tag = element_text(size = 20)
+      )
+    )
+
 
   dir_create(fig_file_dir)
 
@@ -774,11 +778,24 @@ make_fig_noro <- function(panel_A_noro,
       plot = fig_noro,
       filename = file.path(
         fig_file_dir,
+        glue("{fig_file_name}.tiff")
+      ),
+      device = "tiff",
+      dpi = 600,
+      compression = "lzw",
+      type = "cairo",
+      width = 24,
+      height = 24
+    )
+    ggsave(
+      plot = fig_noro,
+      filename = file.path(
+        fig_file_dir,
         glue("{fig_file_name}.png")
       ),
       width = 24,
       height = 24,
-      dpi = 300
+      dpi = 600
     )
   }
   return(fig_noro)

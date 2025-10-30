@@ -1272,17 +1272,20 @@ make_fig_model_perms <- function(
       design = fig_layout,
       axes = "collect",
       guides = "collect"
-    ) & theme(
-    legend.position = "top",
-    legend.title = element_text(hjust = 0.5),
-    legend.justification = "center",
-    plot.tag = element_text(size = 18),
-    plot.title.position = "plot", # Position title relative to plot area
-    plot.title = element_text(
-      hjust = 0.5, # Center the title
-      vjust = -4 # Move title down (negative moves down)
+    ) +
+    plot_annotation(
+      theme = theme(
+        legend.position = "top",
+        legend.title = element_text(hjust = 0.5),
+        legend.justification = "center",
+        plot.tag = element_text(size = 18),
+        plot.title.position = "plot", # Position title relative to plot area
+        plot.title = element_text(
+          hjust = 0.5, # Center the title
+          vjust = -4 # Move title down (negative moves down)
+        )
+      )
     )
-  )
 
   dir_create(fig_file_dir)
 
@@ -1295,7 +1298,20 @@ make_fig_model_perms <- function(
       ),
       width = 32,
       height = 22,
-      dpi = 300
+      dpi = 600
+    )
+    ggsave(
+      plot = fig_model_perm,
+      filename = file.path(
+        fig_file_dir,
+        glue("{fig_file_name}.tiff")
+      ),
+      device = "tiff",
+      width = 32,
+      height = 22,
+      dpi = 600,
+      compression = "lzw",
+      type = "cairo"
     )
   }
 

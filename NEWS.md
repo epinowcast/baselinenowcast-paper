@@ -1,5 +1,6 @@
 # baselinenowcastpaper 0.0.0.1000
 
+-   Make higher resolution figures for publication.
 -   Update package version of baselinenowcast.
 -   Add derivation of zero-handling approximation and fix mathematical description of uncertainty quantification.
 -   Make all subplots and supplementary figures for the norovirus case study using fake data for the Mellor et al outputs.

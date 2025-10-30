@@ -18,6 +18,7 @@ library(scoringutils)
 library(RColorBrewer)
 library(patchwork)
 library(fs)
+library(qs2)
 
 # load functions
 functions <- list.files(here("R"), full.names = TRUE)
@@ -37,6 +38,7 @@ tar_option_set(
     "purrr",
     "readr", "tidyr",
     "zoo",
+    "qs2",
     "epinowcast",
     "scoringutils",
     "RColorBrewer",
@@ -208,16 +210,12 @@ combined_noro_delay_df <- tar_combine(
 plot_targets <- list(
   ### EDA figures for norovirus and covid
   EDA_plot_targets,
-
   ### Figures for German Nowcast Hub validation
   figures_hub_validation_targets,
-
   ### Figures for comparing baselinenowcast model specificaitons
   figures_model_permutation_targets,
-
   ### Figure comparing baselinenowcast performance to other norovirus nowcasts
   figures_noro_targets,
-
   ### Summary report with all metrics reported in paper
   tar_render(
     report,

@@ -40,7 +40,7 @@ $$X_{t,>d} = \sum_{i = d+1} ^{D} X_{t,i}$$
 representing the number of cases still missing after $d$ days of delay. In the following we use uppercase letters ($X_t$) for random variables, lower case ($x_t$) for the corresponding observations, and hats ($\hat{x}_t$) for estimated / imputed values. The matrix $\mathbf{x}$ with entries $x_{t,d}, t = 1, \dots, t^*, d = 1, \dots, D$ is referred to as the *reporting matrix*:
 
 |   | $d = 0$ | $d = 1$ | $d=2$ | $...$ | $d= D-1$ | $d= D$ |
-|----|----|----|----|----|----|----|
+|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
 | $t=1$ | $x_{1,0}$ | $x_{1,1}$ | $x_{1,2}$ | $...$ | $x_{1,D-1}$ | $x_{1, D}$ |
 | $t=2$ | $x_{2,0}$ | $x_{2,1}$ | $x_{2,2}$ | $...$ | $x_{2,D-1}$ | $x_{2, D}$ |
 | $t=3$ | $x_{3,0}$ | $x_{3,1}$ | $x_{3,2}$ | $...$ | $x_{3,D-1}$ | $x_{3, D}$ |
@@ -118,7 +118,7 @@ $$
 This, however, is not well-behaved if no cases at $t$ have been observed yet, i.e., $x_{t, \leq t^* - t} = 0$. Then $\hat{x}_t$ is likewise zero, which yields problems in our uncertainty quantification method (see next section). Motivated by a Bayesian argument (see [Zero-handling](#zero-handling-approximation) below) we therefore use the expression
 
 $$
-\hat{x}_t = \frac{x_{t, \leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\hat{\pi}_{t, \leq t^*-t}}
+\hat{x}_t = \frac{x_{t, \leq t^*-t} + 1 - \pi_{\leq t^*-t}}{\hat{\pi}_{\leq t^*-t}}
 $$ {#eq-correction}
 
 instead. This yields essentially identical results for large $x_{t, \leq t^* - t}$, but produces positive $\hat{x}_t$ even for preliminary zero values $x_{t, \leq t^* - t} = 0$.
@@ -131,7 +131,7 @@ $$
 
 ### Uncertainty quantification
 
-To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ past nowcasting time points. See the Methods: Overview section for more details on the default settings used in the package to define the number of $M$ past nowcasting time points used.
+To estimate the uncertainty in the nowcasts, we use the nowcast errors from $M$ past nowcasting time points, with each past nowcast produced using $N$ reference times for delay estimation. This means that the total set of reference times used for uncertainty estimation is $N + M$, which partially overlap with the set of reference times $N$ used for delay estimation. See the Methods: Overview section for more details on the default settings used in the package to define the number of $M$ past nowcasting time points used.
 
 #### Generation of retrospective reporting triangles
 
@@ -146,8 +146,6 @@ $$
 $$
 
 for $t = s^* - D + 1, \dots, s^*$ and $d = s^* - t + 1, \dots D$.
-
-Note that estimation is again based on the last $N$ rows of the respective reporting triangle, which must consequently contain at least $M + N$ rows in total.
 
 #### Fit a negative binomial observation model to past nowcast errors (per nowcast horizon)
 
@@ -231,7 +229,7 @@ $$ which corresponds to the corrected point estimate provided in equation @eq-co
 
 ### Description of KIT simple nowcast implementation issue and revised nowcasts
 
-When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a value that in some cases is eventually observed, rather than beign excluded as they should have been. This has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
+When verifying the KIT simple nowcast implementation, we noticed that the code used to generate the KIT simple nowcasts in real-time contained an additional indexed element in the delay PMF for all counts observed beyond the maximum delay thus far. In the generation of retrospective nowcasts, these values were being handled as having been observed as 0s, when in fact they had yet to be observed in all of the retrospective nowcasts. This resulted in a comparison of a 0 to a value that in some cases is eventually observed, rather than being excluded as they should have been. This has the impact of inflating the dispersion estimates, and may explain why the KIT simple nowcast method in Wolffram et al. [@Wolffram2023] overcovers relative to the other methods. In the latest implementation in the RESPINOW Hub [@respinow_hub_2025], the authors have removed the density beyond the maximum delay column from their implementation, and thus it no longer contains this issue.
 
 In order to validate our `baselinenowcast` method against a revised version with the bug fixed, we regenerated the nowcasts using the pre-processed reporting triangle in the German Nowcast Hub repository [@hospitalization_nowcast_hub_2025] and generated retrospective nowcasts, referring to these in the main text and supplement as the KIT simple nowcast revised. To facilitate a fair comparison to the original implementation, we also reran the original implementation on the same pre-processed reporting triangle and present those results below, with the original implementation labeled as "KIT simple nowcast original:.
 

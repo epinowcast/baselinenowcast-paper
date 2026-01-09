@@ -65,6 +65,6 @@ RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Remotes:
   epinowcast=epinowcast/epinowcast@v0.3.0,
-  baselinenowcast=epinowcast/baselinenowcast
+  baselinenowcast=epinowcast/baselinenowcast@v0.1.2-beta
 Config/roxyglobals/filename: globals.R
 Config/roxyglobals/unique: FALSE

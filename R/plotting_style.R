@@ -30,16 +30,6 @@ plot_components <- function() {
   pal_age_groups <- brewer.pal(6, "Spectral")
   pal_weekday <- brewer.pal(7, "Set3")
 
-  #   pal_weekday <- c(
-  #   "darkred",
-  #   "#E41A1C",
-  #   "#F781BF",
-  #   "#FF7F00",
-  #   "#FFFF33",
-  #   "#A65628",
-  #   "#999999"
-  #
-  # )
   pal_mps <- brewer.pal(12, "Paired")
   # nolint start
   model_colors <- c(

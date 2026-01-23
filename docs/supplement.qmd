@@ -242,6 +242,14 @@ When applying `baselinenowcast` or any nowcasting framework to real world data, 
 
 -   Report date comes before the reference date, resulting in a negative delay: This might be a true negative delay if a patient had been tested elsewhere before arriving at the ED, or it might be a data entry error. The choice of how to handle this depends on the surveillance system of the data being generated. We discuss this further in the package vignette on [nowcasting from line list data](https://baselinenowcast.epinowcast.org/articles/nssp_nowcast.html#obtain-counts-of-cases-by-reference-date-visit-date-and-report-date-time-of-first-diagnosis)
 
+## Dealing with edge cases in real world data
+
+When applying `baselinenowcast` or any nowcasting framework to real world data, a number of possible edge cases can arise. Here we document a few such edge cases and provide some potential work arounds, with the caveat being that the best solution will likely be based on knowledge of the surveillance system.
+
+-   Downward revisions in case counts or summary metrics: This is likely to occur cases get "subtracted" e.g. a count of 10 cases on day X later gets revised down to 8 cases. One way to handle this, which is what we did in this analysis, is to essentially "smooth" instances of this so that the reporting triangle contained only non-negative entries. This is most appropriate if they are believed to be erroneous, rather than a part of the reporting process that we'd want to model. However, the framework presented here can handle these by removing this pre-processing step and modifying the observation model, which we recommend investigating if negative revision is something systematic in your data. Documentation on [pre-processing negative values](https://baselinenowcast.epinowcast.org/reference/preprocess_negative_values.html?q=prepro#ref-usage) can be found in the package documents.
+-   Reference times refer to different primary events: For example, the number of cases might be indexed by symptom onset date, but if this information is missing, by visit start date. In this case, we recommend choosing a single primary event to reference by -- e.g. consistently using visit start date if symptom onset date is missing.
+-   Report date comes before the reference date, resulting in a negative delay: This might be a true negative delay if a patient had been tested elsewhere before arriving at the ED, or it might be a data entry error. The choice of how to handle this depends on the surveillance system of the data being generated. We discuss this further in the package vignette on [nowcasting from line list data](https://baselinenowcast.epinowcast.org/articles/nssp_nowcast.html#obtain-counts-of-cases-by-reference-date-visit-date-and-report-date-time-of-first-diagnosis)
+
 ## Additional figures
 
 ### German COVID-19 Nowcast Hub validation: using the original KIT simple nowcast implementation

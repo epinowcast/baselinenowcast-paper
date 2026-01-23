@@ -13,7 +13,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.5.1 (2025-06-13)",
+  "runtimePlatform": "R version 4.5.2 (2025-10-31)",
   "author": [
     {
       "@type": "Person",
@@ -284,8 +284,7 @@
     "10": {
       "@type": "SoftwareApplication",
       "identifier": "baselinenowcast",
-      "name": "baselinenowcast",
-      "sameAs": "https://github.com/baselinenowcast=epinowcast/baselinenowcast"
+      "name": "baselinenowcast"
     },
     "11": {
       "@type": "SoftwareApplication",
@@ -373,7 +372,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1589.885KB",
+  "fileSize": "1605.483KB",
   "releaseNotes": "https://github.com/epinowcast/baselinenowcast-paper/blob/main/NEWS.md",
   "readme": "https://github.com/epinowcast/baselinenowcast-paper/blob/main/README.md"
 }

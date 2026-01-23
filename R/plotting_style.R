@@ -28,7 +28,8 @@ get_plot_theme <- function() {
 #' @importFrom RColorBrewer brewer.pal
 plot_components <- function() {
   pal_age_groups <- brewer.pal(6, "Spectral")
-  pal_weekday <- brewer.pal(7, "Set1")
+  pal_weekday <- brewer.pal(7, "Set3")
+
   pal_mps <- brewer.pal(12, "Paired")
   # nolint start
   model_colors <- c(
